@@ -10,6 +10,25 @@ namespace NoSQL_Project.Controllers
 
 		public UserController(IUserRepository repo) => _repo = repo;
 
+		/*public IActionResult Login(LoginModel loginModel)
+		{
+			if (ModelState.IsValid)
+			{
+				var user = _repo.GetByLoginCredentials(loginModel.Email, loginModel.Password);
+				if (user == null)
+				{
+					ViewBag.ErrorMessage = "Incorrect combination of username and password.";
+					return View(loginModel);
+				}
+				else
+				{
+
+					
+				}
+
+			}
+
+		}*/
 		public IActionResult Index()
 		{
 			var users = _repo.GetAll();
@@ -17,10 +36,8 @@ namespace NoSQL_Project.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Create(string name, string email)
+		public IActionResult Create()
 		{
-			var user = new User { Name = name, Email = email };
-			_repo.Add(user);
 			return RedirectToAction("Index");
 		}
 	}

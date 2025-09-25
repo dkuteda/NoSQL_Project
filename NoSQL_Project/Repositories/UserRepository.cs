@@ -28,5 +28,11 @@ namespace NoSQL_Project.Repositories
 
 		public void Delete(string id) =>
 			_users.DeleteOne(u => u.Id == id);
+
+		public bool IsEmailUnique(string email) =>
+			_users.Find(u => u.Email == email).FirstOrDefault() == null;
+
+		public User? GetByLoginCredentials(string email, string password) =>
+			_users.Find(u => u.Email == email && u.Password == password).FirstOrDefault();
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using NoSQL_Project.Enums;
+using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace NoSQL_Project.Models
 {
@@ -15,10 +17,16 @@ namespace NoSQL_Project.Models
 
 		// A simple string field for the user's name.
 		// Default = "" so it's never null when creating a new User.
-		public string Name { get; set; } = "";
+		public string FirstName { get; set; } = "";
+		public string LastName { get; set; } = "";
+		public string Name { get { return FirstName + " " + LastName; } }
+		public string Password { get; set; } = "";
+		public UserRole UserRole { get; set; } = UserRole.employee;
 
 		// A simple string field for the user's email.
 		// Later we could add validation (e.g. DataAnnotations).
 		public string Email { get; set; } = "";
+		public  string PhoneNumber { get; set; } = "";
+		public Location Location { get; set; } = Location.Haarlem;
 	}
 }

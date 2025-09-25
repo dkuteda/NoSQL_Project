@@ -1,8 +1,9 @@
 ﻿using NoSQL_Project.Models;
+using NoSQL_Project.Enums;	
 
-namespace NoSQL_Project.Repositories.Interfaces
+namespace NoSQL_Project.Services
 {
-	public interface IUserRepository
+	public interface IUserServices
 	{
 		List<User> GetAll();
 		void Add(User user);
