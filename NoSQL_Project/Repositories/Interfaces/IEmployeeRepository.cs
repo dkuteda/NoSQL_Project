@@ -1,0 +1,14 @@
+﻿using NoSQL_Project.Models;
+
+namespace NoSQL_Project.Repositories.Interfaces
+{
+	public interface IEmployeeRepository
+	{
+		Task<List<Employees>> GellAsync();
+		Task<Employees> GetByIdAsync(string id);
+		Task Createasync(Employees employees);
+		Task Deleteasync(string id);
+		Task Updateasync(string id , Employees employees);
+		 //Employees? GetByLoginCredentials(string email, string password);
+	}
+}

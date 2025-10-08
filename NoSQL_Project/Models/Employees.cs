@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace NoSQL_Project.Models
 {
-	public class User
+	public class Employees
 	{
 		// This will be the primary key in MongoDB.
 		// [BsonId] tells MongoDB this field is the "_id".
@@ -20,7 +20,7 @@ namespace NoSQL_Project.Models
 		public string FirstName { get; set; } = "";
 		public string LastName { get; set; } = "";
 		public string Name { get { return FirstName + " " + LastName; } }
-		public string Password { get; set; } = "";
+		
 		public UserRole UserRole { get; set; } = UserRole.employee;
 
 		// A simple string field for the user's email.

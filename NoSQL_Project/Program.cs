@@ -30,7 +30,7 @@ namespace NoSQL_Project
 				return new MongoClient(settings);
 			});
 
-			builder.Services.AddScoped<IUserRepository, UserRepository>();
+			builder.Services.AddScoped<IUserRepository, EmployeeRepository>();
 
 			// 2) Register IMongoDatabase as SCOPED (new per HTTP request)
 			// WHY: Fits the ASP.NET request lifecycle and keeps each request cleanly separated.
