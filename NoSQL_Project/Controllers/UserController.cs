@@ -1,44 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
+using System.Data;
+using NoSQL_Project.Enums;
+using NoSQL_Project.ViewModels;
+using NoSQL_Project.Repositories;
 
 namespace NoSQL_Project.Controllers
 {
 	public class UserController : Controller
 	{
-		private readonly IUserRepository _repo;
+		private readonly IEmployeeRepository _repo;
 
-		public UserController(IUserRepository repo) => _repo = repo;
+		public UserController(IEmployeeRepository repo) => _repo = repo;
 
-		/*public IActionResult Login(LoginModel loginModel)
-		{
-			if (ModelState.IsValid)
-			{
-				var user = _repo.GetByLoginCredentials(loginModel.Email, loginModel.Password);
-				if (user == null)
-				{
-					ViewBag.ErrorMessage = "Incorrect combination of username and password.";
-					return View(loginModel);
-				}
-				else
-				{
-
-					
-				}
-
-			}
-
-		}*/
 		public IActionResult Index()
 		{
-			var users = _repo.GetAll();
-			return View(users);
+			var employees = _repo.GellAsync();
+			return View(employees);
 		}
-
-		[HttpPost]
-		public IActionResult Create()
+		[HttpGet]
+		public IActionResult AddEmployee()
 		{
-			return RedirectToAction("Index");
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = new Employees(),
+				UserRoleOptions = Enum.GetValues(typeof(UserRole))
+					.Cast<UserRole>()
+					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() })
+				GenderOptions = Enum.GetValues(typeof(Gender))
+					.Cast<Gender>()
+					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
+				LocationOptions = Enum.GetValues(typeof(Location))
+					.Cast<Location>()
+					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
+
+			};
+			return View(viewModel);
 		}
 	}
 }
