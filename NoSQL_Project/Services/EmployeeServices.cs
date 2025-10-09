@@ -15,10 +15,6 @@ namespace NoSQL_Project.Services
 		{
 			_employeeRepo = employeeRepository;
 		}
-		public async Task Createasync(Employees employee)
-		{
-			await _employeeRepo.AddEmployeeAsync(employee);
-		}
 		public async Task<List<Employees>> GellAsync()
 		{
 			return await _employeeRepo.GellAsync();
@@ -32,6 +28,11 @@ namespace NoSQL_Project.Services
 		public async Task AddEmployeeAsync(Employees employees)
 		{			
 			await _employeeRepo.AddEmployeeAsync(employees);
+		}
+
+		public async Task UpdateEmployeeAsync(Employees employees) 
+		{
+			await _employeeRepo.UpdateEmployeeAsync(employees);
 		}
 	}
 }

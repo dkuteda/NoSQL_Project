@@ -45,11 +45,11 @@
 					<td>@employee.Location</td>
 					<td>@(employee.IsActive ? "Active" : "Inactive")</td>
 					<td>
-						<a href="@Url.Action("UpdateEmployee", "Employee", new { id = employee.EmployeeId })">
+						<a href="@Url.Action("UpdateEmployee", "Employees", new { id = employee.EmployeeId })">
 							Edit
 						</a>
 						|
-						<a href="@Url.Action("DeleteEmployee", "Employee", new { id = employee.EmployeeId })">
+						<a href="@Url.Action("DeleteEmployee", "Employees", new { id = employee.EmployeeId })">
 							Delete
 						</a>
 					</td>

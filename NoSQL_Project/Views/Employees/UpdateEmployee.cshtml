@@ -1,0 +1,75 @@
+﻿@model NoSQL_Project.ViewModels.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Update Employee";
+}
+
+<!-- 1) SHOW ANY “ERROR” ALERT SENT VIA ViewBag -->
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<h2>Update Employee</h2>
+
+<div class="container container-main">
+    <h1 class="text-center text-primary">Update Employee</h1>
+
+    <form asp-action="UpdateEmployee" method="post" class="mt-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Employee.EmployeeId" />
+
+        <div class="mb-3">
+            <label asp-for="Employee.FirstName" class="form-label"></label>
+            <input asp-for="Employee.FirstName" class="form-control" required />
+            <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Employee.LastName" class="form-label"></label>
+            <input asp-for="Employee.LastName" class="form-control" required />
+            <span asp-validation-for="Employee.LastName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Employee.Gender"></label>
+            <select asp-for="Employee.Gender" asp-items="Model.GenderOptions" class="form-control"></select>
+            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Employee.Email" class="form-label"></label>
+            <input asp-for="Employee.Email" class="form-control" required />
+            <span asp-validation-for="Employee.Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Employee.PhoneNumber" class="form-label"></label>
+            <input asp-for="Employee.PhoneNumber" class="form-control" required />
+            <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Employee.UserRole"></label>
+            <select asp-for="Employee.UserRole" asp-items="Model.UserRoleOptions" class="form-control"></select>
+            <span asp-validation-for="Employee.UserRole" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Employee.Location"></label>
+            <select asp-for="Employee.Location" asp-items="Model.LocationOptions" class="form-control"></select>
+            <span asp-validation-for="Employee.Location" class="text-danger"></span>
+        </div>
+
+        <div class="form-group form-check mb-3">
+            <input asp-for="Employee.IsActive" class="form-check-input" />
+            <label asp-for="Employee.IsActive" class="form-check-label"></label>
+            <span asp-validation-for="Employee.IsActive" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Employee</button>
+        <a href="/Employees/Index" class="btn btn-secondary">Back to Employee list</a>
+    </form>
+</div>

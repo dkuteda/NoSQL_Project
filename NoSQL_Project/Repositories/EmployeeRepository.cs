@@ -27,7 +27,7 @@ namespace NoSQL_Project.Repositories
 		{
 			await _employees.InsertOneAsync(employees);
 		}
-		public async Task UpdateEmoloyeeAsync(Employees employees)
+		public async Task UpdateEmployeeAsync(Employees employees)
 		{
 			await _employees.ReplaceOneAsync(s => s.EmployeeId == employees.EmployeeId, employees);
 		}

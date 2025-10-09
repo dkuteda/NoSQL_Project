@@ -8,5 +8,6 @@ namespace NoSQL_Project.Services
 		Task<List<Employees>> GellAsync();
 		Task<Employees> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employees employees);
+		Task UpdateEmployeeAsync(Employees employees);
 	}
 }

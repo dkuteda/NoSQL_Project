@@ -75,5 +75,58 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
+
+		[HttpGet]
+		public IActionResult UpdateEmployee(string id)
+		{
+			var employee = _employeeService.GetByIdAsync(id).Result; // Synchronously wait for the result
+			if (employee == null)
+			{
+				return NotFound();
+			}
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = employee,
+				UserRoleOptions = Enum.GetValues(typeof(UserRole))
+					.Cast<UserRole>()
+					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
+				GenderOptions = Enum.GetValues(typeof(Gender))
+					.Cast<Gender>()
+					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
+				LocationOptions = Enum.GetValues(typeof(Location))
+					.Cast<Location>()
+					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
+			};
+			return View(viewModel);
+		}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateEmployee(Employees employee) // Changed to async Task<IActionResult>
+		{
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = employee,
+				UserRoleOptions = Enum.GetValues(typeof(UserRole))
+					.Cast<UserRole>()
+					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
+				GenderOptions = Enum.GetValues(typeof(Gender))
+				.Cast<Gender>()
+				.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
+				LocationOptions = Enum.GetValues(typeof(Location))
+					.Cast<Location>()
+					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
+			};
+			try
+			{
+				await _employeeService.UpdateEmployeeAsync(employee); // Added await
+				TempData["SuccessMessage"] = "Employee has been updated successfully";
+				return RedirectToAction("Index");
+			}
+			catch (Exception ex)
+			{
+				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+				return View(viewModel);
+			}
+		}
 	}
 }
