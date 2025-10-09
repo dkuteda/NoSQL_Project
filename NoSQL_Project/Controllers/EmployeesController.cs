@@ -6,18 +6,19 @@ using System.Data;
 using NoSQL_Project.Enums;
 using NoSQL_Project.ViewModels;
 using NoSQL_Project.Repositories;
+using NoSQL_Project.Services;
 
 namespace NoSQL_Project.Controllers
 {
 	public class EmployeesController : Controller
 	{
-		private readonly IEmployeeRepository _employeeRepo;
+		private readonly IEmployeeServices _employeeService;
 
-		public EmployeesController(IEmployeeRepository repo) => _employeeRepo = repo;
+		public EmployeesController(IEmployeeServices employeeService) => _employeeService = employeeService;
 
 		public async Task<IActionResult> Index()
 		{
-			List<Employees> employees = await _employeeRepo.GellAsync();
+			List<Employees> employees = await _employeeService.GellAsync();
 			EmployeeViewModel employeeViewModel = new EmployeeViewModel
 			{
 				EmployeesList = employees
@@ -64,7 +65,7 @@ namespace NoSQL_Project.Controllers
 
 			try
 			{
-				await _employeeRepo.AddEmployeeAsync(employee); // Added await
+				await _employeeService.AddEmployeeAsync(employee); // Added await
 				TempData["SuccessMessage"] = "Employee has been added successfully";
 				return RedirectToAction("Index");
 			}

@@ -7,9 +7,6 @@ namespace NoSQL_Project.Services
 	{
 		Task<List<Employees>> GellAsync();
 		Task<Employees> GetByIdAsync(string id);
-		Task Createasync(Employees employees);
-		Task Deleteasync(string id);
-		Task Updateasync(string id , Employees employees);
-		//Employees? GetByLoginCredentials(string email, string password);
+		Task AddEmployeeAsync(Employees employees);
 	}
 }

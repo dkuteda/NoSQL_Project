@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 using NoSQL_Project.Repositories;
 using NoSQL_Project.Repositories.Interfaces;
+using NoSQL_Project.Services;
 
 namespace NoSQL_Project
 {
@@ -31,6 +32,7 @@ namespace NoSQL_Project
 			});
 
 			builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+			builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
 
 			// 2) Register IMongoDatabase as SCOPED (new per HTTP request)
 			// WHY: Fits the ASP.NET request lifecycle and keeps each request cleanly separated.
