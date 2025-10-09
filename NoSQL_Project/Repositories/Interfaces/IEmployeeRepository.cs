@@ -6,7 +6,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 	{
 		Task<List<Employees>> GellAsync();
 		Task<Employees> GetByIdAsync(string id);
-		Task Createasync(Employees employees);
+		Task AddEmployeeAsync(Employees employees);
 		Task Deleteasync(string id);
 		Task Updateasync(string id , Employees employees);
 		 //Employees? GetByLoginCredentials(string email, string password);

@@ -23,7 +23,7 @@ namespace NoSQL_Project.Repositories
 		{
 			return await _employees.Find(s => s.Id == id).FirstOrDefaultAsync();
 		}
-		public async Task Createasync(Employees employees)
+		public async Task AddEmployeeAsync(Employees employees)
 		{
 			await _employees.InsertOneAsync(employees);
 		}
