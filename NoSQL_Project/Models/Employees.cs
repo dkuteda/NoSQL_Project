@@ -19,7 +19,6 @@ namespace NoSQL_Project.Models
 		// Default = "" so it's never null when creating a new User.
 		public string FirstName { get; set; } = "";
 		public string LastName { get; set; } = "";
-		public string Name { get { return FirstName + " " + LastName; } }
 		
 		public UserRole UserRole { get; set; } = UserRole.employee;
 
