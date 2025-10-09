@@ -34,6 +34,10 @@ namespace NoSQL_Project.Services
 		{
 			await _employeeRepo.UpdateEmployeeAsync(employees);
 		}
+		public async Task<bool> SoftDeleteAsync(string id)
+		{
+			return await _employeeRepo.SoftDeleteAsync(id);
+		}
 	}
 }
 

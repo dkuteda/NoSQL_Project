@@ -4,70 +4,152 @@
     ViewData["Title"] = "Add Employee";
 }
 
-<!-- 1) SHOW ANY “ERROR” ALERT SENT VIA ViewBag -->
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger">
-        @ViewBag.ErrorMessage
+<div class="form-page-header">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-user-plus me-3"></i>Add New Employee
+        </h1>
+        <p class="lead mb-0">Create a new team member account</p>
     </div>
-}
-
-<div class="container container-main">
-    <h1 class="text-center text-primary">Create Employee</h1>
-
-    <form asp-action="AddEmployee" method="post" class="mt-4">
-        @Html.AntiForgeryToken()
-
-        <div class="mb-3">
-            <label asp-for="Employee.FirstName" class="form-label"></label>
-            <input asp-for="Employee.FirstName" class="form-control" required />
-            <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Employee.LastName" class="form-label"></label>
-            <input asp-for="Employee.LastName" class="form-control" required />
-            <span asp-validation-for="Employee.LastName" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Employee.Gender"></label>
-            <select asp-for="Employee.Gender" asp-items="Model.GenderOptions" class="form-control"></select>
-            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Employee.Email" class="form-label"></label>
-            <input asp-for="Employee.Email" class="form-control" required />
-            <span asp-validation-for="Employee.Email" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Employee.PhoneNumber" class="form-label"></label>
-            <input asp-for="Employee.PhoneNumber" class="form-control" required />
-            <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Employee.UserRole"></label>
-            <select asp-for="Employee.UserRole" asp-items="Model.UserRoleOptions" class="form-control"></select>
-            <span asp-validation-for="Employee.UserRole" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Employee.Location"></label>
-            <select asp-for="Employee.Location" asp-items="Model.LocationOptions" class="form-control"></select>
-			<span asp-validation-for="Employee.Location" class="text-danger"></span>
-		</div>
-
-        <div class="form-group form-check">
-            <input asp-for="Employee.IsActive" class="form-check-input" />
-            <label asp-for="Employee.IsActive" class="form-check-label"></label>
-            <span asp-validation-for="Employee.IsActive" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Add Employee</button>
-    </form>
 </div>
 
-<a href="/Employee/Index">Back to Employee list</a>
+<div class="container">
+    <div class="form-container">
+        <!-- Error Alert -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+            </div>
+        }
+
+        <form asp-action="AddEmployee" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-user-circle"></i>Personal Information
+                </h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.FirstName" class="form-label">
+                                <i class="fas fa-signature me-2"></i>First Name
+                            </label>
+                            <input asp-for="Employee.FirstName" class="form-control" required
+                                   placeholder="Enter first name" />
+                            <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.LastName" class="form-label">
+                                <i class="fas fa-signature me-2"></i>Last Name
+                            </label>
+                            <input asp-for="Employee.LastName" class="form-control" required
+                                   placeholder="Enter last name" />
+                            <span asp-validation-for="Employee.LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.Gender" class="form-label">
+                                <i class="fas fa-venus-mars me-2"></i>Gender
+                            </label>
+                            <select asp-for="Employee.Gender" asp-items="Model.GenderOptions"
+                                    class="form-control form-control-select">
+                                <option value="">Select Gender</option>
+                            </select>
+                            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.Location" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Location
+                            </label>
+                            <select asp-for="Employee.Location" asp-items="Model.LocationOptions"
+                                    class="form-control form-control-select">
+                                <option value="">Select Location</option>
+                            </select>
+                            <span asp-validation-for="Employee.Location" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-address-book"></i>Contact Information
+                </h3>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.Email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email Address
+                    </label>
+                    <input asp-for="Employee.Email" class="form-control" required
+                           type="email" placeholder="employee@company.com" />
+                    <span asp-validation-for="Employee.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.PhoneNumber" class="form-label">
+                        <i class="fas fa-phone me-2"></i>Phone Number
+                    </label>
+                    <input asp-for="Employee.PhoneNumber" class="form-control" required
+                           placeholder="+1234567890" />
+                    <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Employment Details Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-briefcase"></i>Employment Details
+                </h3>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.UserRole" class="form-label">
+                        <i class="fas fa-user-tag me-2"></i>Role
+                    </label>
+                    <select asp-for="Employee.UserRole" asp-items="Model.UserRoleOptions"
+                            class="form-control form-control-select">
+                        <option value="">Select Role</option>
+                    </select>
+                    <span asp-validation-for="Employee.UserRole" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-enhanced">
+                    <div class="form-check">
+                        <input asp-for="Employee.IsActive" class="form-check-input" />
+                        <label asp-for="Employee.IsActive" class="form-check-label">
+                            <i class="fas fa-check-circle me-2"></i>Active Employee
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">
+                        Active employees can log in and receive ticket assignments.
+                    </small>
+                    <span asp-validation-for="Employee.IsActive" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="btn-group-form">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Create Employee
+                    </button>
+                    <a href="/Employees/Index" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

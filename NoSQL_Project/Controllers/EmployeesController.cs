@@ -101,7 +101,7 @@ namespace NoSQL_Project.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateEmployee(Employees employee) // Changed to async Task<IActionResult>
+		public async Task<IActionResult> UpdateEmployee(Employees employee)
 		{
 			var viewModel = new EmployeeViewModel
 			{
@@ -125,6 +125,49 @@ namespace NoSQL_Project.Controllers
 			catch (Exception ex)
 			{
 				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+				return View(viewModel);
+			}
+		}
+
+		[HttpGet]
+		public IActionResult SoftDeleteEmployee(string id) 
+		{
+			var employee = _employeeService.GetByIdAsync(id).Result;
+			if (employee == null)
+			{
+				return NotFound();
+			}
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = employee,
+			};
+			return View(viewModel);
+		}
+		[HttpPost, ActionName("SoftDeleteEmployee")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SoftDeleteEmployeeConfirmed(string id)
+		{
+			try
+			{
+				bool isDeleted = await _employeeService.SoftDeleteAsync(id);
+				if (isDeleted)
+				{
+					TempData["SuccessMessage"] = "Employee has been deactivated successfully";
+				}
+				else
+				{
+					TempData["ErrorMessage"] = "Employee not found or already inactive";
+				}
+				return RedirectToAction("Index");
+			}
+			catch (Exception ex)
+			{
+				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+				var employee = await _employeeService.GetByIdAsync(id);
+				var viewModel = new EmployeeViewModel
+				{
+					Employee = employee,
+				};
 				return View(viewModel);
 			}
 		}

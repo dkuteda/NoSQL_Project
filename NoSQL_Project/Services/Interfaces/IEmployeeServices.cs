@@ -9,5 +9,6 @@ namespace NoSQL_Project.Services
 		Task<Employees> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employees employees);
 		Task UpdateEmployeeAsync(Employees employees);
+		Task<bool> SoftDeleteAsync(string id);
 	}
 }

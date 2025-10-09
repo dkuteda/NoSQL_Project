@@ -8,5 +8,6 @@ namespace NoSQL_Project.Repositories.Interfaces
 		Task<Employees> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employees employees);
 		Task UpdateEmployeeAsync(Employees employees);
+		Task<bool> SoftDeleteAsync(string id);
 	}
 }

@@ -17,7 +17,11 @@ namespace NoSQL_Project.Repositories
 
 		public async Task<List<Employees>> GellAsync()
 		{
-			return await _employees.Find(s => true).ToListAsync();
+			return await _employees
+				.Find(s => true)
+				.SortByDescending(e => e.IsActive)  // Active first (true comes before false)
+				.ThenBy(e => e.FirstName)           // Then alphabetically by FirstName
+				.ToListAsync();	
 		}
 		public async Task<Employees> GetByIdAsync(string id)
 		{
@@ -31,9 +35,17 @@ namespace NoSQL_Project.Repositories
 		{
 			await _employees.ReplaceOneAsync(s => s.EmployeeId == employees.EmployeeId, employees);
 		}
-		public async Task Deleteasync(string id)
+		public async Task<bool> SoftDeleteAsync(string id)
 		{
-			await _employees.DeleteOneAsync(s => s.EmployeeId == id);
+			var employee = await GetByIdAsync(id);
+			if (employee == null || !employee.IsActive)
+				return false; // Not found or already inactive
+
+			var filter = Builders<Employees>.Filter.Eq(e => e.EmployeeId, id);
+			var update = Builders<Employees>.Update.Set(e => e.IsActive, false);
+
+			var result = await _employees.UpdateOneAsync(filter, update);
+			return result.IsAcknowledged && result.ModifiedCount > 0;
 		}
 		//public async Task<Employees?> GetByLoginCredentialAsync(string email, string password)
 		//{

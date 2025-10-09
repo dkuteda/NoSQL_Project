@@ -1,0 +1,151 @@
+﻿@model NoSQL_Project.ViewModels.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Deactivate Employee";
+}
+
+<div class="form-page-header" style="background: linear-gradient(135deg, #c44536 0%, #d63031 100%);">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-user-slash me-3"></i>Deactivate Employee
+        </h1>
+        <p class="lead mb-0">Temporarily disable employee access</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-container">
+        <!-- Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            </div>
+        }
+
+        <!-- Error Message -->
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Confirmation Warning -->
+        <div class="delete-confirmation text-center">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-danger mb-3">Deactivation Warning</h3>
+            <p class="mb-4">
+                You are about to deactivate this employee. They will no longer be able to access the system
+                or receive new ticket assignments. This action can be reversed later.
+            </p>
+        </div>
+
+        <!-- Employee Information -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-user-circle"></i>Employee Details
+            </h3>
+
+            <div class="employee-details">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl>
+                            <dt><i class="fas fa-user me-2"></i>Name:</dt>
+                            <dd>@Model.Employee.FirstName @Model.Employee.LastName</dd>
+
+                            <dt><i class="fas fa-envelope me-2"></i>Email:</dt>
+                            <dd>@Model.Employee.Email</dd>
+
+                            <dt><i class="fas fa-phone me-2"></i>Phone:</dt>
+                            <dd>@Model.Employee.PhoneNumber</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl>
+                            <dt><i class="fas fa-user-tag me-2"></i>Role:</dt>
+                            <dd>@Model.Employee.UserRole</dd>
+
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Location:</dt>
+                            <dd>@Model.Employee.Location</dd>
+
+                            <dt><i class="fas fa-circle me-2"></i>Status:</dt>
+                            <dd>
+                                @if (Model.Employee.IsActive)
+                                {
+                                    <span class="badge bg-success">Currently Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Already Inactive</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Form -->
+        <form asp-action="SoftDeleteEmployee" method="post" id="deleteForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Employee.EmployeeId" />
+
+            <div class="form-group-enhanced text-center">
+                <label for="confirmationText" class="form-label h5">
+                    <i class="fas fa-shield-alt me-2"></i>Security Confirmation
+                </label>
+                <p class="text-muted mb-3">
+                    To confirm deactivation, please type <strong class="text-danger">DEACTIVATE</strong> in the box below:
+                </p>
+                <input type="text" id="confirmationText" class="form-control confirmation-input"
+                       placeholder="TYPE: DEACTIVATE" oninput="toggleDeleteButton()"
+                       style="max-width: 300px; margin: 0 auto;" />
+            </div>
+
+            <div class="form-actions">
+                <div class="btn-group-form">
+                    <button type="submit" id="deleteButton" class="btn btn-danger btn-lg" disabled>
+                        <i class="fas fa-user-slash me-2"></i>Confirm Deactivation
+                    </button>
+                    <a href="@Url.Action("Index", "Employees")" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDeleteButton() {
+            const confirmationText = document.getElementById('confirmationText');
+            const deleteButton = document.getElementById('deleteButton');
+            const requiredText = 'DEACTIVATE';
+
+            if (confirmationText.value.toUpperCase() === requiredText) {
+                deleteButton.disabled = false;
+                deleteButton.classList.remove('btn-secondary');
+                deleteButton.classList.add('btn-danger');
+            } else {
+                deleteButton.disabled = true;
+                deleteButton.classList.remove('btn-danger');
+                deleteButton.classList.add('btn-secondary');
+            }
+        }
+
+        document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            const confirmationText = document.getElementById('confirmationText');
+            if (confirmationText.value.toUpperCase() !== 'DEACTIVATE') {
+                e.preventDefault();
+                alert('Please type "DEACTIVATE" to confirm the deactivation.');
+                return false;
+            }
+
+            return confirm('Final confirmation: Are you sure you want to deactivate this employee?');
+        });
+    </script>
+}
