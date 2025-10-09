@@ -12,7 +12,7 @@ namespace NoSQL_Project.Repositories
 
 		public EmployeeRepository(IMongoDatabase db)
 		{
-			_employees = db.GetCollection<Employees>("employees");
+			_employees = db.GetCollection<Employees>("Employees");
 		}
 
 		public async Task<List<Employees>> GellAsync()
@@ -21,7 +21,7 @@ namespace NoSQL_Project.Repositories
 		}
 		public async Task<Employees> GetByIdAsync(string id)
 		{
-			return await _employees.Find(s => s.Id == id).FirstOrDefaultAsync();
+			return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
 		}
 		public async Task AddEmployeeAsync(Employees employees)
 		{
@@ -29,11 +29,11 @@ namespace NoSQL_Project.Repositories
 		}
 		public async Task Updateasync(string id, Employees employees)
 		{
-			await _employees.ReplaceOneAsync(e => e.Id == id, employees);
+			await _employees.ReplaceOneAsync(e => e.EmployeeId == id, employees);
 		}
 		public async Task Deleteasync(string id)
 		{
-			await _employees.DeleteOneAsync(s => s.Id == id);
+			await _employees.DeleteOneAsync(s => s.EmployeeId == id);
 		}
 		//public async Task<Employees?> GetByLoginCredentialAsync(string email, string password)
 		//{

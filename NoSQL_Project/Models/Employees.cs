@@ -9,7 +9,7 @@ namespace NoSQL_Project.Models
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
-		public string? Id { get; set; }
+		public string? EmployeeId { get; set; }
 		public string FirstName { get; set; } = "";
 		public string LastName { get; set; } = "";
 		public Gender Gender { get; set; } = Gender.other;

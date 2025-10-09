@@ -1,0 +1,60 @@
+﻿@model NoSQL_Project.ViewModels.EmployeeViewModel
+
+@if (TempData["SuccessMessage"] != null)
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@TempData["SuccessMessage"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<div class="text-center">
+	<h1 class="display-4">Employee Management</h1>
+	<p>Welcome to the Employee Management!</p>
+</div>
+
+<a href="/Employee/AddEmployee" class="menu-create-button">+ Create new Employee.</a>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>First Name</th>
+			<th>Last Name</th>
+			<th>Gender</th>
+			<th>Email</th>
+			<th>Phone Number</th>
+			<th>Role</th>
+			<th>Location</th>
+			<th>Activity</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@{
+			foreach (var employee in Model.EmployeesList)
+			{
+				var rowStyle = "";
+
+				<tr @rowStyle>
+					<td>@employee.FirstName</td>
+					<td>@employee.LastName</td>
+					<th>@employee.Gender</th>
+					<td>@employee.Email</td>
+					<td>@employee.PhoneNumber</td>
+					<td>@employee.UserRole</td>
+					<td>@employee.Location</td>
+					<td>@(employee.IsActive ? "Active" : "Inactive")</td>
+					<td>
+						<a href="@Url.Action("UpdateEmployee", "Employee", new { id = employee.EmployeeId })">
+							Edit
+						</a>
+						|
+						<a href="@Url.Action("DeleteEmployee", "Employee", new { id = employee.EmployeeId })">
+							Delete
+						</a>
+					</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>
