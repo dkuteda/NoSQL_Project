@@ -28,6 +28,7 @@ namespace NoSQL_Project.Controllers
 
 			return View(employeeViewModel);
 		}
+
 		[HttpGet]
 		public IActionResult Login()
 		{

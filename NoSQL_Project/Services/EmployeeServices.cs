@@ -11,10 +11,12 @@ namespace NoSQL_Project.Services
 	public class EmployeeServices : IEmployeeServices
 	{
 		private readonly IEmployeeRepository _employeeRepo;
+
 		public EmployeeServices(IEmployeeRepository employeeRepository)
 		{
 			_employeeRepo = employeeRepository;
 		}
+
 		public async Task<List<Employees>> GellAsync()
 		{
 			return await _employeeRepo.GellAsync();
