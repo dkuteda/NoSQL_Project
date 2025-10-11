@@ -13,6 +13,8 @@ namespace NoSQL_Project.Models
 		public string FirstName { get; set; } = "";
 		public string LastName { get; set; } = "";
 
+		public string Password { get; set; } = "";
+
 		[BsonRepresentation(BsonType.String)]
 		public Gender Gender { get; set; } = Gender.other;
 

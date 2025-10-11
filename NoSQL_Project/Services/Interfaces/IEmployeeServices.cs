@@ -10,5 +10,6 @@ namespace NoSQL_Project.Services
 		Task AddEmployeeAsync(Employees employees);
 		Task UpdateEmployeeAsync(Employees employees);
 		Task<bool> SoftDeleteAsync(string id);
+		Task<Employees?> GetByLoginCredentialAsync(string firstName, string password);
 	}
 }

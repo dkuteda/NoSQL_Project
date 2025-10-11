@@ -7,6 +7,8 @@ using NoSQL_Project.Enums;
 using NoSQL_Project.ViewModels;
 using NoSQL_Project.Repositories;
 using NoSQL_Project.Services;
+using Microsoft.AspNetCore.Http;
+
 
 namespace NoSQL_Project.Controllers
 {
@@ -26,6 +28,43 @@ namespace NoSQL_Project.Controllers
 
 			return View(employeeViewModel);
 		}
+		[HttpGet]
+		public IActionResult Login()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(LoginModel loginModel)
+		{
+			if (!ModelState.IsValid)
+				return View(loginModel);
+
+			// Check credentials (service handles hashing)
+			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.FirstName, loginModel.Password);
+
+			if (employee == null)
+			{
+				ModelState.AddModelError(string.Empty, "Invalid email or password.");
+				return View(loginModel);
+			}
+
+			// ✅ Store in session
+			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
+			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
+			
+
+			// Redirect to employee dashboard or ticket index
+			return RedirectToAction("Index");
+		}
+
+		public IActionResult Logout()
+		{
+			HttpContext.Session.Clear();
+			return RedirectToAction("Login");
+		}
+
 		[HttpGet]
 		public IActionResult AddEmployee()
 		{

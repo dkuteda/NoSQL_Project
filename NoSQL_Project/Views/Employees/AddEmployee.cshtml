@@ -106,6 +106,16 @@
                            placeholder="+1234567890" />
                     <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="form-group-enhanced">
+                        <label asp-for="Employee.Password" class="form-label">
+                            <i class="fas fa-key me-2"></i> Password
+                        </label>
+                        <input asp-for="Employee.Password" type="password" class="form-control" required placeholder="Enter password" />
+                        <span asp-validation-for="Employee.Password" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
             <!-- Employment Details Section -->
