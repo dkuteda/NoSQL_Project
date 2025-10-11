@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NoSQL_Project.Models;
 using NoSQL_Project.Services;
 using NoSQL_Project.Services.Interfaces;
+using NoSQL_Project.ViewModels;
 
 namespace NoSQL_Project.Controllers
 {
@@ -10,9 +12,15 @@ namespace NoSQL_Project.Controllers
 
         public TicketController(ITicketServices ticketService) => _ticketService = ticketService;
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<Ticket> tickets = await _ticketService.GellAsync();
+            TicketViewModel ticketViewModel = new TicketViewModel
+            {
+                TicketList = tickets
+            };
+
+            return View(ticketViewModel);
         }
     }
 }
