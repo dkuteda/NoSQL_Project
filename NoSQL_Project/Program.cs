@@ -14,10 +14,10 @@ namespace NoSQL_Project
 
 			var builder = WebApplication.CreateBuilder(args);
 
-			// 1) Register MongoClient as a SINGLETON (one shared instance for the whole app)
-			// WHY: MongoClient is thread-safe and internally manages a connection pool.
-			// Reusing one instance is fast and efficient. Creating many clients would waste resources.
-			builder.Services.AddSingleton<IMongoClient>(sp =>
+            // 1) Register MongoClient as a SINGLETON (one shared instance for the whole app)
+            // WHY: MongoClient is thread-safe and internally manages a connection pool.
+            // Reusing one instance is fast and efficient. Creating many clients would waste resources.
+            builder.Services.AddSingleton<IMongoClient>(sp =>
 			{
 				// Read the connection string from configuration (env var via .env)
 				var conn = builder.Configuration["Mongo:ConnectionString"];

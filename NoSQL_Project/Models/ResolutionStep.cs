@@ -11,7 +11,7 @@ namespace NoSQL_Project.Models
 
         public string? Id { get; set; }
         public int ResolutionStepNr { get; set; }
-        public Employees presentHandler { get; set; }
+        public Employees PresentHandler { get; set; }
         public string Action { get; set; }
     }
 }

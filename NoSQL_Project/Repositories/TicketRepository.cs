@@ -9,7 +9,7 @@ namespace NoSQL_Project.Repositories
 
         public TicketRepository(IMongoDatabase db)
         {
-            _tickets = db.GetCollection<Ticket>("Ticket");
+            _tickets = db.GetCollection<Ticket>("tickets");
         }
 
         public async Task<List<Ticket>> GellAsync()
