@@ -1,10 +1,10 @@
 ﻿using NoSQL_Project.Models;
-using NoSQL_Project.Repositories;
 using NoSQL_Project.Repositories.Interfaces;
+using NoSQL_Project.Services.Interfaces;
 
 namespace NoSQL_Project.Services
 {
-    public class TicketServices
+    public class TicketServices : ITicketServices
     {
         private readonly ITicketRepository _ticketRepo;
 

@@ -1,9 +1,10 @@
 ﻿using MongoDB.Driver;
 using NoSQL_Project.Models;
+using NoSQL_Project.Repositories.Interfaces;
 
 namespace NoSQL_Project.Repositories
 {
-    public class TicketRepository
+    public class TicketRepository : ITicketRepository
     {
         private readonly IMongoCollection<Ticket> _tickets;
 

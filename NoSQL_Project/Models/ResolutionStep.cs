@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using NoSQL_Project.Enums;
 
 namespace NoSQL_Project.Models
 {
@@ -8,10 +7,11 @@ namespace NoSQL_Project.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-
         public string? Id { get; set; }
         public int ResolutionStepNr { get; set; }
-        public Employees PresentHandler { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string PresentHandler { get; set; }
         public string Action { get; set; }
     }
 }

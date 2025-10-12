@@ -10,14 +10,32 @@ namespace NoSQL_Project.Models
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
-		public string? TicketId { get; set; }
+		public required string TicketId { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; } = "";
-		public TicketStatus Status { get; set; } = TicketStatus.open;
+
+        [BsonRepresentation(BsonType.String)]
+        public TicketStatus Status { get; set; } = TicketStatus.open;
+
+        [BsonRepresentation(BsonType.String)]
         public Priority Priority { get; set; } = Priority.normal;
-		public DateTime Deadline { get; set; }
-        public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
-		public TypeOfIncident TypeOfIncident { get; set; } = TypeOfIncident.software;
-		public List<ResolutionStep> ResolutionSteps { get; set; }
+
+        [BsonRepresentation(BsonType.DateTime)]
+        public DateTime Deadline { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string CreatedBy { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string HandledBy { get; set; }
+
+        [BsonRepresentation(BsonType.DateTime)]
+        public DateTime CreatedAt { get; set; }
+
+        [BsonRepresentation(BsonType.String)]
+        public TypeOfIncident TypeOfIncident { get; set; } = TypeOfIncident.software;
+
+        [BsonElement("ResolutionSteps")]
+        public List<ResolutionStep> ResolutionSteps { get; set; }
 	}
 }
