@@ -5,7 +5,7 @@ namespace NoSQL_Project.ViewModels
 {
     public class TicketViewModel
     {
-        public Ticket ticket { get; set; }
+        public Ticket Ticket { get; set; }
 
         // Emuns
         public IEnumerable<SelectListItem> TypeOfIncidentOptions { get; set; }
