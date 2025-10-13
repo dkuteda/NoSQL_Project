@@ -1,0 +1,28 @@
+﻿@{
+    var userRole = Context.Session.GetString("UserRole");
+}
+
+<div class="sidebar bg-dark text-white p-3" style="min-height:100vh; width:220px; position:fixed;">
+    <h4 class="text-center mb-4">Menu</h4>
+
+    @if (userRole == "employee")
+    {
+        <a asp-controller="Tickets" asp-action="Create" class="d-block mb-2 text-white">+ Create Ticket</a>
+        <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">My Tickets</a>
+    }
+    else if (userRole == "service_desk_employee ")
+    {
+        <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">All Tickets</a>
+        <a asp-controller="Employee" asp-action="Index" class="d-block mb-2 text-white">Employee List</a>
+    }
+    else if (userRole == "manager")
+    {
+        <a asp-controller="Manager" asp-action="Dashboard" class="d-block mb-2 text-white">Dashboard</a>
+        <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">All Tickets</a>
+        <a asp-controller="Employees" asp-action="Index" class="d-block mb-2 text-white">Employees</a>
+       
+    }
+
+    <hr />
+    <a asp-controller="Employee" asp-action="Logout" class="d-block mt-3 text-white">Logout</a>
+</div>
