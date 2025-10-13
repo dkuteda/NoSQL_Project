@@ -47,14 +47,19 @@ namespace NoSQL_Project.Repositories
 			var result = await _employees.UpdateOneAsync(filter, update);
 			return result.IsAcknowledged && result.ModifiedCount > 0;
 		}
-		public async Task<Employee?> GetByLoginCredentialAsync(string firstName, string password)
+		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{
-			var filter = Builders<Employee>.Filter.Eq(e => e.FirstName, firstName) &
+			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email) &
 						 Builders<Employee>.Filter.Eq(e => e.Password, password);
 
 			return await _employees.Find(filter).FirstOrDefaultAsync();
 		}
-
+		public async Task<bool> EmailAddressExistsAsync(string email)
+		{
+			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email);
+			var count = await _employees.CountDocumentsAsync(filter);
+			return count > 0;
+		}
 	}
 }
 

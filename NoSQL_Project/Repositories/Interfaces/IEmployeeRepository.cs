@@ -10,5 +10,6 @@ namespace NoSQL_Project.Repositories.Interfaces
 		Task UpdateEmployeeAsync(Employee employees);
 		Task<bool> SoftDeleteAsync(string id);
 		Task<Employee?> GetByLoginCredentialAsync(string email, string password);
+		Task<bool> EmailAddressExistsAsync(string email);
 	}
 }

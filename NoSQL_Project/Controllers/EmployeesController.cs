@@ -43,7 +43,7 @@ namespace NoSQL_Project.Controllers
 				return View(loginModel);
 
 			// Check credentials (service handles hashing)
-			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.FirstName, loginModel.Password);
+			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.Email, loginModel.Password);
 
 			if (employee == null)
 			{
