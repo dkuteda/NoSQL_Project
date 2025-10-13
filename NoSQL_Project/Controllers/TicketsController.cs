@@ -26,7 +26,7 @@ namespace NoSQL_Project.Controllers
             return View("TicketDashboard", ticketDashboardViewModel);
         }
 
-        [HttpGet]
+        [HttpGet ("UpdateTicket")]
         public IActionResult UpdateTicket()
         {
             return View();
