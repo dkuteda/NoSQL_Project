@@ -59,12 +59,16 @@ namespace NoSQL_Project.Controllers
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
-            //  Employee? loggedInEmployee = HttpContext.Session.GetObject<Employee>("LoggedInEmployee");
+            ViewData["EmployeeDetails"] = new EmployeeDetails() 
+            { 
+                EmployeeId = HttpContext.Session.GetString("EmployeeId"), 
+                FirstName = HttpContext.Session.GetString("EmployeeName")
+            };
             var viewModel = new TicketViewModel
             {
                 Ticket = new Ticket
                 {
-                    TicketId = Guid.NewGuid().ToString() // Set required TicketId
+                    TicketId = Guid.NewGuid().ToString() 
                 },
                 TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
                     .Cast<TypeOfIncident>()
@@ -77,21 +81,21 @@ namespace NoSQL_Project.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTicket(Ticket ticket)
+        [HttpPost("AddTicket")]
+        public async Task<IActionResult> AddTicket(TicketViewModel model)
         {
             try
             {
-                await _ticketService.CreateTicketAsync(ticket);
+                await _ticketService.CreateTicketAsync(model.Ticket);
 
-                TempData["ConfirmMessage"] = "User has been created correctly";
+                TempData["ConfirmMessage"] = "Ticket has been created incorrectly";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 ViewBag.ErrorMessage = $"{ex}";
-                return View(ticket);
+                return View("AddTicket");
             }
         }
     }

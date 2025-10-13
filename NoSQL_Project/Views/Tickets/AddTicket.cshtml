@@ -1,6 +1,7 @@
 ﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 @{
     ViewData["Title"] = "AddTicket";
+    EmployeeDetails? details = (EmployeeDetails?)ViewData["EmployeeDetails"];
 }
 <div class="form-page-header">
     <div class="container">
@@ -21,9 +22,9 @@
             </div>
         }
 
-        <form asp-action="CreateTicket" method="post">
+        <form action="/TicketDashboard/AddTicket" method="post">
 
-            <input type="hidden" name="CreatedBy" value="" />
+            <input type="hidden" name="CreatedBy" value="@details" />
             <input type="hidden" name="CreatedAt" value="@DateTime.Now" />
             <input type="hidden" name="Status" value="@NoSQL_Project.Enums.TicketStatus.open" />
 
@@ -66,7 +67,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" formaction="AddTicket">Send</button>
+            <button type="submit" class="btn btn-primary">Send</button>
             </form>
 
     </div>
