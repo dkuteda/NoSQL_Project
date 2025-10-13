@@ -13,12 +13,10 @@ namespace NoSQL_Project.Repositories
     public class TicketRepository : ITicketRepository
     {
         private readonly IMongoCollection<Ticket> _tickets;
-        private readonly IMongoCollection<Employee> _employees;
 
         public TicketRepository(IMongoDatabase db)
         {
             _tickets = db.GetCollection<Ticket>("tickets");
-            _employees = db.GetCollection<Employee>("Employees");
         }
 
         public async Task<List<Ticket>> GetAllTicketsAsync()
@@ -59,5 +57,15 @@ namespace NoSQL_Project.Repositories
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
             };
         }
+
+        public async Task CreateTicketAsync(Ticket ticket)
+        {
+            await _tickets.InsertOneAsync(ticket);
+        }
+
+        //public async Task UpdateTicket(Ticket Ticket)
+        //{
+
+        //}
     }
 }
