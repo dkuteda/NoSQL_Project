@@ -14,13 +14,13 @@ namespace NoSQL_Project.Controllers
 {
 	public class EmployeesController : Controller
 	{
-		private readonly IEmployeeServices _employeeService;
+		private readonly IEmployeeService _employeeService;
 
-		public EmployeesController(IEmployeeServices employeeService) => _employeeService = employeeService;
+		public EmployeesController(IEmployeeService employeeService) => _employeeService = employeeService;
 
 		public async Task<IActionResult> Index()
 		{
-			List<Employees> employees = await _employeeService.GellAsync();
+			List<Employee> employees = await _employeeService.GellAsync();
 			EmployeeViewModel employeeViewModel = new EmployeeViewModel
 			{
 				EmployeesList = employees
@@ -71,7 +71,7 @@ namespace NoSQL_Project.Controllers
 		{
 			var viewModel = new EmployeeViewModel
 			{
-				Employee = new Employees(),
+				Employee = new Employee(),
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
@@ -87,7 +87,7 @@ namespace NoSQL_Project.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AddEmployee(Employees employee) // Changed to async Task<IActionResult>
+		public async Task<IActionResult> AddEmployee(Employee employee) // Changed to async Task<IActionResult>
 		{
 			var viewModel = new EmployeeViewModel
 			{
@@ -141,7 +141,7 @@ namespace NoSQL_Project.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateEmployee(Employees employee)
+		public async Task<IActionResult> UpdateEmployee(Employee employee)
 		{
 			var viewModel = new EmployeeViewModel
 			{

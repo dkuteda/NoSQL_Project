@@ -8,19 +8,19 @@ namespace NoSQL_Project.Controllers
     [Route("TicketDashboard")]
     public class TicketsController : Controller
     {
-        private readonly ITicketServices _ticketService;
+        private readonly ITicketService _ticketService;
 
-        public TicketsController(ITicketServices ticketService) => _ticketService = ticketService;
+        public TicketsController(ITicketService ticketService) => _ticketService = ticketService;
 
         public async Task<IActionResult> Index()
         {
-            List<Ticket> tickets = await _ticketService.GellAsync();
-            TicketViewModel ticketViewModel = new TicketViewModel
+            List<TicketViewModel> tickets = await _ticketService.GetAllTicketsAsync();
+            TicketDashboardViewModel ticketDashboardViewModel = new TicketDashboardViewModel
             {
                 TicketList = tickets
             };
 
-            return View("TicketDashboard", ticketViewModel);
+            return View("TicketDashboard", ticketDashboardViewModel);
         }
     }
 }

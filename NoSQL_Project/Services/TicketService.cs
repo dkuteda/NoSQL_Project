@@ -1,21 +1,24 @@
 ﻿using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.Services.Interfaces;
+using NoSQL_Project.ViewModels;
 
 namespace NoSQL_Project.Services
 {
-    public class TicketServices : ITicketServices
+    public class TicketService : ITicketService
     {
         private readonly ITicketRepository _ticketRepo;
 
-        public TicketServices(ITicketRepository ticketRepository)
+        public TicketService(ITicketRepository ticketRepository)
         {
             _ticketRepo = ticketRepository;
         }
 
-        public async Task<List<Ticket>> GellAsync()
+        public async Task<List<TicketViewModel>> GetAllTicketsAsync()
         {
-            return await _ticketRepo.GellAsync();
+            return await _ticketRepo.GetAllTicketsAsync();
         }
+
+
     }
 }
