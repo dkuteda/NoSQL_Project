@@ -1,6 +1,8 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.ViewModels;
@@ -124,6 +126,36 @@ namespace NoSQL_Project.Repositories
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             await _tickets.ReplaceOneAsync(s => s.TicketId == ticket.TicketId, ticket);
+        }
+
+        public async Task<Ticket> GetByIdAsync(string id)
+        {
+            return await _tickets.Find(s => s.TicketId == id).FirstOrDefaultAsync();
+        }
+
+        public TicketViewModel FillTicketInfo(Ticket ticket)
+        {
+            return new TicketViewModel
+            {
+                TicketId = ticket.TicketId,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                Status = ticket.Status,
+                Priority = ticket.Priority,
+                Deadline = ticket.Deadline,
+                CreatedAt = ticket.CreatedAt,
+                HandledBy = ticket.HandledBy,
+                TypeOfIncident = ticket.TypeOfIncident,
+
+                // Enums converted to select options
+                TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
+            .Cast<TypeOfIncident>()
+            .Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString() }),
+
+                PriorityOptions = Enum.GetValues(typeof(Priority))
+            .Cast<Priority>()
+            .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
+            };
         }
     }
 }

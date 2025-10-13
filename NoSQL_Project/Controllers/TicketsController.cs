@@ -27,9 +27,16 @@ namespace NoSQL_Project.Controllers
         }
 
         [HttpGet ("UpdateTicket")]
-        public IActionResult UpdateTicket()
+        public IActionResult UpdateTicket(string id)
         {
-            return View();
+            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var ViewModel = _ticketService.FillTicketInfo(ticket);
+
+            return View(ViewModel);
         }
 
         [HttpPost]
