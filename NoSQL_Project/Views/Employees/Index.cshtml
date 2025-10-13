@@ -1,6 +1,12 @@
 ﻿@model NoSQL_Project.ViewModels.EmployeeViewModel
+@{
+    // Get logged-in user's role from session
+
+    var userRole = Context.Session.GetString("EmployeeRole");
+}
 
 @if (TempData["SuccessMessage"] != null)
+
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
@@ -13,13 +19,20 @@
     <p class="lead text-muted">Manage your team members with ease</p>
 </div>
 
-<a href="/Employees/AddEmployee" class="menu-create-button">
-    <i class="fas fa-plus-circle me-2"></i>Create New Employee
-</a>
+<!-- ✅ Only MANAGER can create new employees -->
+@if (userRole == "manager")
+
+{
+    <div class="text-end mb-3">
+        <a href="/Employees/AddEmployee" class="btn btn-success">
+            <i class="fas fa-plus-circle me-2"></i>Create New Employee
+        </a>
+    </div>
+}
 
 <div class="table-responsive">
-    <table class="table">
-        <thead>
+    <table class="table table-striped align-middle">
+        <thead class="table-dark">
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
@@ -29,13 +42,19 @@
                 <th>Role</th>
                 <th>Location</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <!-- ✅ Only manager gets Actions column -->
+                @if (userRole == "manager")
+
+                {
+                    <th>Actions</th>
+                }
             </tr>
         </thead>
         <tbody>
             @foreach (var employee in Model.EmployeesList)
             {
-                var rowClass = employee.IsActive ? "tr-active" : "tr-inactive";
+
+                var rowClass = employee.IsActive ? "table-success" : "table-secondary";
                 <tr class="@rowClass">
                     <td>@employee.FirstName</td>
                     <td>@employee.LastName</td>
@@ -46,28 +65,45 @@
                     <td>@employee.Location</td>
                     <td>
                         @if (employee.IsActive)
+
                         {
                             <span class="badge bg-success">Active</span>
                         }
+
                         else
+
                         {
                             <span class="badge bg-secondary">Inactive</span>
                         }
                     </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="@Url.Action("UpdateEmployee", "Employees", new { id = employee.EmployeeId })"
-                               class="btn btn-outline-primary">
-                                <i class="fas fa-edit me-1"></i>Edit
-                            </a>
-                            <a href="@Url.Action("SoftDeleteEmployee", "Employees", new { id = employee.EmployeeId })"
-                               class="btn btn-outline-danger">
-                                <i class="fas fa-user-slash me-1"></i>Delete
-                            </a>
-                        </div>
-                    </td>
+
+                    
+                    @if (userRole == "manager")
+                    {
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="@Url.Action("UpdateEmployee", "Employees", new { id = employee.EmployeeId })"
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <a href="@Url.Action("SoftDeleteEmployee", "Employees", new { id = employee.EmployeeId })"
+                                   class="btn btn-outline-danger">
+                                    <i class="fas fa-user-slash me-1"></i>Delete
+                                </a>
+                            </div>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<!-- 🔹 Optional: info if no employees exist -->
+@if (Model.EmployeesList == null || !Model.EmployeesList.Any())
+
+{
+    <div class="alert alert-info text-center mt-4">
+        <i class="fas fa-info-circle me-2"></i>No employees found.
+    </div>
+}

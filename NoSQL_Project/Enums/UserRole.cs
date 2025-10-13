@@ -2,6 +2,6 @@
 {
 	public enum UserRole
 	{
-		employee, service_desk_employee
+		employee, service_desk_employee , manager
 	}
 }
