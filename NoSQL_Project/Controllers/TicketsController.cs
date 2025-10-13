@@ -59,7 +59,22 @@ namespace NoSQL_Project.Controllers
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
-            return View();
+            //  Employee? loggedInEmployee = HttpContext.Session.GetObject<Employee>("LoggedInEmployee");
+            var viewModel = new TicketViewModel
+            {
+                Ticket = new Ticket
+                {
+                    TicketId = Guid.NewGuid().ToString() // Set required TicketId
+                },
+                TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
+                    .Cast<TypeOfIncident>()
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.ToString(),
+                        Text = e.ToString()
+                    })
+            };
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -67,19 +82,14 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
-                // add user via repository
-                _ticketService.CreateTicketAsync(ticket);
+                await _ticketService.CreateTicketAsync(ticket);
 
-                // confirm
                 TempData["ConfirmMessage"] = "User has been created correctly";
-
-                // go back to user list (via Index)
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                // something's wrong, go back to view with user
                 ViewBag.ErrorMessage = $"{ex}";
                 return View(ticket);
             }
