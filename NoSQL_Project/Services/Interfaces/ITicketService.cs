@@ -12,5 +12,7 @@ namespace NoSQL_Project.Services.Interfaces
         Task<Ticket> GetByIdAsync(string id);
 
         TicketViewModel FillTicketInfo(Ticket ticket);
+
+        Ticket ViewModelToTicket(TicketViewModel ticketViewModel);
     }
 }

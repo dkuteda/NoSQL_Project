@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.Net.Sockets;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -146,8 +147,18 @@ namespace NoSQL_Project.Repositories
                 CreatedAt = ticket.CreatedAt,
                 HandledBy = ticket.HandledBy,
                 TypeOfIncident = ticket.TypeOfIncident,
+                ResolutionSteps = ticket.ResolutionSteps.Select(resolutionStep => new ResolutionStepViewModel
+                {
+                    ResolutionStepNr = resolutionStep.ResolutionStepNr,
+                    Action = resolutionStep.Action,
+                    PresentHandlerName = resolutionStep.PresentHandler // You can populate this if you have access to the Employee collection
+                }).ToList(),
 
                 // Enums converted to select options
+                StatusOptions = Enum.GetValues(typeof(TicketStatus))
+            .Cast<TicketStatus>()
+            .Select(s => new SelectListItem { Text = s.ToString(), Value = s.ToString() }),
+
                 TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
             .Cast<TypeOfIncident>()
             .Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString() }),
@@ -156,6 +167,34 @@ namespace NoSQL_Project.Repositories
             .Cast<Priority>()
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
             };
+        }
+
+        public Ticket ViewModelToTicket(TicketViewModel ticketViewModel)
+        {
+            foreach (Ticket ticket in ticketViewModel.TicketList)
+            {
+                if (ticket.TicketId == ticketViewModel.TicketId)
+                {
+                    ticket.Title = ticketViewModel.Title;
+                    ticket.Description = ticketViewModel.Description;
+                    ticket.Status = ticketViewModel.Status;
+                    ticket.Priority = ticketViewModel.Priority;
+                    ticket.Deadline = ticketViewModel.Deadline;
+                    ticket.CreatedBy = ticketViewModel.CreatedBy.FirstName + ticketViewModel.CreatedBy.LastName;
+                    ticket.HandledBy = ticketViewModel.HandledBy;
+                    ticket.CreatedAt = ticketViewModel.CreatedAt;
+                    ticket.TypeOfIncident = ticketViewModel.TypeOfIncident;
+                    ticket.ResolutionSteps = ticketViewModel.ResolutionSteps.Select(viewModel => new ResolutionStep
+                    {
+                        ResolutionStepNr = viewModel.ResolutionStepNr,
+                        Action = viewModel.Action,
+                        PresentHandler = viewModel.PresentHandlerName
+                    }).ToList();
+                    return ticket;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -39,20 +39,25 @@ namespace NoSQL_Project.Controllers
             return View(ViewModel);
         }
 
-        [HttpPost]
+        [HttpPost ("UpdateTicket")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTicket(Ticket ticket)
+        public async Task<IActionResult> UpdateTicket(TicketViewModel ticketViewModel)
         {
+            Ticket ticket = _ticketService.ViewModelToTicket(ticketViewModel);
             try
             {
+                if (ticket == null)
+                {
+                    throw new Exception("TicketId not found");
+                }
                 await _ticketService.UpdateTicketAsync(ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return RedirectToAction("Index");
+                return RedirectToAction("TicketDashboard");
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                return View();
+                return View(ticketViewModel);
             }
         }
     }
