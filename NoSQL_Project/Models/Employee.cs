@@ -1,11 +1,10 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using NoSQL_Project.Enums;
-using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace NoSQL_Project.Models
 {
-	public class Employees
+	public class Employee
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]

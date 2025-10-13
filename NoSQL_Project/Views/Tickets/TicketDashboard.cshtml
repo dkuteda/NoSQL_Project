@@ -1,4 +1,7 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
+﻿@model NoSQL_Project.ViewModels.TicketDashboardViewModel
+@{
+    ViewData["Title"] = "TicketDashboard";
+}
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -42,7 +45,7 @@
                     <td>@ticket.Status</td>
                     <td>@ticket.Priority</td>
                     <td>@ticket.Deadline</td>
-                    <td>@ticket.Date</td>
+                    <td>@ticket.CreatedAt</td>
                     <td>
                         @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
                         {

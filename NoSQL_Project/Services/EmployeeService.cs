@@ -8,32 +8,32 @@ using System.Text;
 
 namespace NoSQL_Project.Services
 {
-	public class EmployeeServices : IEmployeeServices
+	public class EmployeeService : IEmployeeService
 	{
 		private readonly IEmployeeRepository _employeeRepo;
 
-		public EmployeeServices(IEmployeeRepository employeeRepository)
+		public EmployeeService(IEmployeeRepository employeeRepository)
 		{
 			_employeeRepo = employeeRepository;
 		}
 
-		public async Task<List<Employees>> GellAsync()
+		public async Task<List<Employee>> GellAsync()
 		{
 			return await _employeeRepo.GellAsync();
 		}
 
-		public async Task<Employees> GetByIdAsync(string id)
+		public async Task<Employee> GetByIdAsync(string id)
 		{
 			return await _employeeRepo.GetByIdAsync(id);
 		}
 
-		public async Task AddEmployeeAsync(Employees employees)
+		public async Task AddEmployeeAsync(Employee employees)
         {
             employees.Password = HashPassword(employees.Password);
             await _employeeRepo.AddEmployeeAsync(employees);
 		}
 
-		public async Task UpdateEmployeeAsync(Employees employees) 
+		public async Task UpdateEmployeeAsync(Employee employees) 
 		{
 			await _employeeRepo.UpdateEmployeeAsync(employees);
 		}
@@ -41,7 +41,7 @@ namespace NoSQL_Project.Services
 		{
 			return await _employeeRepo.SoftDeleteAsync(id);
 		}
-		public async Task<Employees?> GetByLoginCredentialAsync(string firstName, string password)
+		public async Task<Employee?> GetByLoginCredentialAsync(string firstName, string password)
 		{
 			// hash user-entered password before checking
 			var hashed = HashPassword(password);

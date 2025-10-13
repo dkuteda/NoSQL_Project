@@ -6,7 +6,7 @@ namespace NoSQL_Project.ViewModels
 {
 	public class EmployeeViewModel
 	{
-		public Employees Employee { get; set; } 
+		public Employee Employee { get; set; } 
 
 		// Used for Adding (so far) 
 		public IEnumerable<SelectListItem> UserRoleOptions { get; set; }
@@ -14,6 +14,6 @@ namespace NoSQL_Project.ViewModels
 		public IEnumerable<SelectListItem> LocationOptions { get; set; }
 
 		// Used for index
-		public List<Employees> EmployeesList { get; set; }
+		public List<Employee> EmployeesList { get; set; }
 	}
 }
