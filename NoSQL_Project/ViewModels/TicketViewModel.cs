@@ -5,6 +5,9 @@ namespace NoSQL_Project.ViewModels
 {
     public class TicketViewModel
     {
+        //used for CUD of a single ticket
+        public Ticket Ticket { get; set; }
+
         // Emuns
         public IEnumerable<SelectListItem> StatusOptions { get; set; }
         public IEnumerable<SelectListItem> TypeOfIncidentOptions { get; set; }

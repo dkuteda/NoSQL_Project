@@ -33,10 +33,5 @@ namespace NoSQL_Project.Services
         {
             return _ticketRepo.FillTicketInfo(ticket);
         }
-
-        public Ticket ViewModelToTicket(TicketViewModel ticketViewModel)
-        {
-            return _ticketRepo.ViewModelToTicket(ticketViewModel);
-        }
     }
 }

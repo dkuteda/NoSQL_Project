@@ -11,8 +11,6 @@ namespace NoSQL_Project.Services.Interfaces
 
         TicketViewModel FillTicketInfo(Ticket ticket);
 
-        Ticket ViewModelToTicket(TicketViewModel ticketViewModel);
-
         Task<List<Ticket>> GetAllTicketsAsync();
     }
 }
