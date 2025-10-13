@@ -51,13 +51,23 @@ namespace NoSQL_Project.Controllers
 				return View(loginModel);
 			}
 
+
 			// ✅ Store in session
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
-			
 
-			// Redirect to employee dashboard or ticket index
-			return RedirectToAction("Index");
+            switch (employee.UserRole.ToString().ToLower())
+            {
+                case "manager":
+                    return RedirectToAction("Dashboard", "Manager");
+                case "servicedesk":
+                    return RedirectToAction("Index", "Tickets");
+                default:
+                    return RedirectToAction("Create", "Tickets");
+            }
+
+
+           
 		}
 
 		public IActionResult Logout()
