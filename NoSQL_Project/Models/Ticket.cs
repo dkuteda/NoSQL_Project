@@ -37,10 +37,7 @@ namespace NoSQL_Project.Models
         [BsonElement("ResolutionSteps")]
         public List<ResolutionStep> ResolutionSteps { get; set; }
 
-        [BsonIgnore]
-        public Employee? Creator { get; set; }
+        public Ticket () {}
 
-        [BsonIgnore]
-        public Employee? Handler { get; set; }
 	}
 }
