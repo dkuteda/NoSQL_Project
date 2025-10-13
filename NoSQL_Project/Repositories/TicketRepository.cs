@@ -59,5 +59,15 @@ namespace NoSQL_Project.Repositories
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
             };
         }
+
+        public async Task CreateTicketAsync(Ticket ticket)
+        {
+            await _tickets.InsertOneAsync(ticket);
+        }
+
+        //public async Task UpdateTicket(Ticket Ticket)
+        //{
+
+        //}
     }
 }

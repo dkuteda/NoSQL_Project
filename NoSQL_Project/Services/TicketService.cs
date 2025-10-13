@@ -22,6 +22,9 @@ namespace NoSQL_Project.Services
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             await _ticketRepo.UpdateTicketAsync(ticket);
+        public async Task CreateTicketAsync(Ticket ticket)
+        {
+            await _ticketRepo.CreateTicketAsync(ticket);
         }
 
         public async Task<Ticket> GetByIdAsync(string id)

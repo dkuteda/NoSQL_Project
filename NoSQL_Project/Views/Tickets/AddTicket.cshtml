@@ -1,5 +1,188 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+
+﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 @{
+    ViewData["Title"] = "AddTicket";
 }
+<div class="form-page-header">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-user-plus me-3"></i>Create A Ticket
+        </h1>
+        <p class="lead mb-0">Let us know what's bugging you</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-container">
+        <!-- Error Alert -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+            </div>
+        }
+
+        <form asp-action="AddEmployee" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-user-circle"></i>Personal Information
+                </h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.FirstName" class="form-label">
+                                <i class="fas fa-signature me-2"></i>First Name
+                            </label>
+                            <input asp-for="Employee.FirstName" class="form-control" required
+                                   placeholder="Enter first name" />
+                            <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.LastName" class="form-label">
+                                <i class="fas fa-signature me-2"></i>Last Name
+                            </label>
+                            <input asp-for="Employee.LastName" class="form-control" required
+                                   placeholder="Enter last name" />
+                            <span asp-validation-for="Employee.LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.Gender" class="form-label">
+                                <i class="fas fa-venus-mars me-2"></i>Gender
+                            </label>
+                            <select asp-for="Employee.Gender" asp-items="Model.GenderOptions"
+                                    class="form-control form-control-select">
+                                <option value="">Select Gender</option>
+                            </select>
+                            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Employee.Location" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Location
+                            </label>
+                            <select asp-for="Employee.Location" asp-items="Model.LocationOptions"
+                                    class="form-control form-control-select">
+                                <option value="">Select Location</option>
+                            </select>
+                            <span asp-validation-for="Employee.Location" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-address-book"></i>Contact Information
+                </h3>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.Email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email Address
+                    </label>
+                    <input asp-for="Employee.Email" class="form-control" required
+                           type="email" placeholder="employee@company.com" />
+                    <span asp-validation-for="Employee.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.PhoneNumber" class="form-label">
+                        <i class="fas fa-phone me-2"></i>Phone Number
+                    </label>
+                    <input asp-for="Employee.PhoneNumber" class="form-control" required
+                           placeholder="+1234567890" />
+                    <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group-enhanced">
+                        <label asp-for="Employee.Password" class="form-label">
+                            <i class="fas fa-key me-2"></i> Password
+                        </label>
+                        <input asp-for="Employee.Password" type="password" class="form-control" required placeholder="Enter password" />
+                        <span asp-validation-for="Employee.Password" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Details Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-briefcase"></i>Employment Details
+                </h3>
+
+                <div class="form-group-enhanced">
+                    <label asp-for="Employee.UserRole" class="form-label">
+                        <i class="fas fa-user-tag me-2"></i>Role
+                    </label>
+                    <select asp-for="Employee.UserRole" asp-items="Model.UserRoleOptions"
+                            class="form-control form-control-select">
+                        <option value="">Select Role</option>
+                    </select>
+                    <span asp-validation-for="Employee.UserRole" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-enhanced">
+                    <div class="form-check">
+                        <input asp-for="Employee.IsActive" class="form-check-input" />
+                        <label asp-for="Employee.IsActive" class="form-check-label">
+                            <i class="fas fa-check-circle me-2"></i>Active Employee
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">
+                        Active employees can log in and receive ticket assignments.
+                    </small>
+                    <span asp-validation-for="Employee.IsActive" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="btn-group-form">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Create Employee
+                    </button>
+                    <a href="/Employees/Index" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<h1>Create a Ticket</h1>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">@ViewBag.ErrorMessage</div>
+}
+
+<form action="TicketController/Create" method="POST">
+    <input type="hidden" name="CreatedBy" value="@Model?.CreatedBy.EmployeeId"/>
+    <input type="hidden" name="CreatedAt" value="@DateTime.Now"/>
+    <input type="hidden" name="Status" value="@NoSQL_Project.Enums.TicketStatus.open"/>
+
+    <div class="form-group py-2">
+        <label for="Title">Subject:</label>
+        <input type="text" id="Title" name="Title" class="form-control" required value="@Model?.Title" />
+    </div>
+
+    <div class="form-group py-2">
+        <label for="Description">Description:</label>
+        <input type="text" id="Description" name="Description" class="form-control" required value="@Model?.Description" />
+    </div>
+    <button type="submit" class="btn btn-primary" formaction="AddTicket">Add</button>
+</form>
+

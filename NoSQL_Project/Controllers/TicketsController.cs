@@ -55,5 +55,34 @@ namespace NoSQL_Project.Controllers
                 return View(ticketViewModel);
             }
         }
+
+        [HttpGet("AddTicket")]
+        public IActionResult AddTicket()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddTicket(Ticket ticket)
+        {
+            try
+            {
+                // add user via repository
+                _ticketService.CreateTicketAsync(ticket);
+
+                // confirm
+                TempData["ConfirmMessage"] = "User has been created correctly";
+
+                // go back to user list (via Index)
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                // something's wrong, go back to view with user
+                ViewBag.ErrorMessage = $"{ex}";
+                return View(ticket);
+            }
+        }
     }
 }
