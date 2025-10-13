@@ -36,7 +36,7 @@ namespace NoSQL_Project
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<ITicketService, TicketService>();
-
+            builder.Services.AddControllersWithViews();
             // 2) Register IMongoDatabase as SCOPED (new per HTTP request)
             // WHY: Fits the ASP.NET request lifecycle and keeps each request cleanly separated.
             builder.Services.AddScoped(sp =>

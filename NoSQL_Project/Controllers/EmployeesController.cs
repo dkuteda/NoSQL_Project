@@ -55,20 +55,13 @@ namespace NoSQL_Project.Controllers
 			// ✅ Store in session
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
+			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
 
-            switch (employee.UserRole.ToString().ToLower())
-            {
-                case "manager":
-                    return RedirectToAction("Dashboard", "Manager");
-                case "servicedesk":
-                    return RedirectToAction("Index", "Tickets");
-                default:
-                    return RedirectToAction("Create", "Tickets");
-            }
+            return RedirectToAction("Index", "Employees");
 
 
-           
-		}
+
+        }
 
 		public IActionResult Logout()
 		{
@@ -221,5 +214,13 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-	}
+        public IActionResult CheckSession()
+        {
+            var id = HttpContext.Session.GetString("EmployeeId");
+            var name = HttpContext.Session.GetString("EmployeeName");
+            var role = HttpContext.Session.GetString("EmployeeRole");
+
+            return Content($"ID: {id ?? "none"} | Name: {name ?? "none"} | Role: {role ?? "none"}");
+        }
+    }
 }
