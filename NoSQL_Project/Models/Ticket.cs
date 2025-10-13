@@ -23,11 +23,10 @@ namespace NoSQL_Project.Models
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime Deadline { get; set; }
 
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string CreatedBy { get; set; }
-
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string HandledBy { get; set; }
+        [BsonElement("CreatedBy")]
+        public EmployeeDetails CreatedBy { get; set; }
+        [BsonElement("HandledBy")]
+        public EmployeeDetails HandledBy { get; set; }
 
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime CreatedAt { get; set; }
@@ -37,5 +36,11 @@ namespace NoSQL_Project.Models
 
         [BsonElement("ResolutionSteps")]
         public List<ResolutionStep> ResolutionSteps { get; set; }
+
+        [BsonIgnore]
+        public Employee? Creator { get; set; }
+
+        [BsonIgnore]
+        public Employee? Handler { get; set; }
 	}
 }
