@@ -58,9 +58,6 @@ namespace NoSQL_Project.Controllers
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
 
             return RedirectToAction("Index", "Employees");
-
-
-
         }
 
 		public IActionResult Logout()
