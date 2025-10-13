@@ -58,16 +58,6 @@ namespace NoSQL_Project.Repositories
             };
         }
 
-<<<<<<< HEAD
-        public async Task<bool> CloseAsync(Ticket ticket)
-        {
-            var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
-            var update = Builders<Ticket>.Update.Set(e => e.Status, TicketStatus.closed);
-
-            var result = await _tickets.UpdateOneAsync(filter, update);
-            return result.IsAcknowledged && result.ModifiedCount > 0;
-        }
-=======
         public async Task CreateTicketAsync(Ticket ticket)
         {
             await _tickets.InsertOneAsync(ticket);
@@ -77,6 +67,14 @@ namespace NoSQL_Project.Repositories
         //{
 
         //}
->>>>>>> 5e5bbe753a397afaf48e656389efeea2971bd478
+
+        public async Task<bool> CloseAsync(Ticket ticket)
+        {
+            var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update.Set(e => e.Status, TicketStatus.closed);
+
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
     }
 }
