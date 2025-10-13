@@ -46,7 +46,7 @@ namespace NoSQL_Project.Controllers
             Ticket ticket = _ticketService.ViewModelToTicket(ticketViewModel);
             try
             {
-                if (ticket == null)
+                if (ticket == null) // you can remove these 3 lines to see the real error message
                 {
                     throw new Exception("TicketId not found");
                 }
