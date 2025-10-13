@@ -8,7 +8,7 @@ namespace NoSQL_Project.ViewModels
 	{
 		public Employee Employee { get; set; } 
 
-		// Used for Adding (so far) 
+		// Used for Adding...
 		public IEnumerable<SelectListItem> UserRoleOptions { get; set; }
 		public IEnumerable<SelectListItem> GenderOptions { get; set; }
 		public IEnumerable<SelectListItem> LocationOptions { get; set; }
