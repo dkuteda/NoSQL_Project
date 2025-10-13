@@ -17,13 +17,13 @@ namespace NoSQL_Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<TicketViewModel> tickets = await _ticketService.GetAllTicketsAsync();
-            TicketDashboardViewModel ticketDashboardViewModel = new TicketDashboardViewModel
+            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+            TicketViewModel ticketViewModel = new TicketViewModel()
             {
                 TicketList = tickets
             };
 
-            return View("TicketDashboard", ticketDashboardViewModel);
+            return View("TicketDashboard", ticketViewModel);
         }
 
         [HttpGet ("UpdateTicket")]
