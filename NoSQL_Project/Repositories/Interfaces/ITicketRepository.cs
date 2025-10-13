@@ -11,6 +11,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         TicketViewModel FillTicketInfo(Ticket ticket);
         Task<List<Ticket>> GetAllTicketsAsync();
+        Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee);
         Task CreateTicketAsync(Ticket ticket);
     }
 }

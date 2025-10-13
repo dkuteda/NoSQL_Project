@@ -1,87 +1,23 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
-@{
-    ViewData["Title"] = "TicketDashboard";
-}
+﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="p-4 m-2 bg-light rounded-3">
+    <div class="container-fluid">
+        <h1 class="display-5 fw-bold align-content-sm-around">My Tickets</h1
+            <button class="btn btn-dark">Filter</button>
     </div>
-}
-
-<!-- Error Alert -->
-@if (ViewBag != null && ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
-    </div>
-}
-
-<div class="text-center mb-4">
-    <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
-    <p class="lead text-muted">Manage your team members with ease</p>
 </div>
-
-<a href="/Employees/AddEmployee" class="menu-create-button">
-    <i class="fas fa-plus-circle me-2"></i>Create New Employee
-</a>
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Role</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in Model.TicketList)
-            {
-                var rowClass = (ticket.Status == NoSQL_Project.Enums.TicketStatus.open) ? "tr-active" : "tr-inactive";
-                <tr class="@rowClass">
-                    <td>@ticket.Title</td>
-                    <td>@ticket.Description</td>
-                    <td>@ticket.Status</td>
-                    <td>@ticket.Priority</td>
-                    <td>@ticket.Deadline</td>
-                    <td>@ticket.CreatedAt</td>
-                    <td>
-                        @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
-                        {
-                            <span class="badge bg-success">Open</span>
-                        }
-                        else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
-                        {
-                            <span class="badge bg-secondary">Resolved</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Closed</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
-                               class="btn btn-outline-primary">
-                                <i class="fas fa-edit me-1"></i>Edit
-                            </a>
-                            <a href="@Url.Action("SoftDeleteTicket", "Tickets", new { id = ticket.TicketId })"
-                               class="btn btn-outline-danger">
-                                <i class="fas fa-user-slash me-1"></i>Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div>
+    @foreach(var ticket in Model.TicketList)
+    {
+        <card class="stretched-link" asp-action="">
+            <div>
+                <h2 class="card-title">@ticket.Title</h2>
+                <p class="card-body">@ticket.CreatedAt.Date</p>
+            </div>
+            <p class="badge">@ticket.Status</p>
+        </card>
+    }
+    <div class="d-grid gap-2 col-6 mx-auto">
+       <button class="btn btn-primary" type="button" asp-action="AddTicket">Create a New Ticket</button>
+    </div>
 </div>

@@ -17,7 +17,14 @@ namespace NoSQL_Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
+            var employeeName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty;
+            var employee = new EmployeeDetails()
+            {
+                EmployeeId = employeeId,
+                FirstName = employeeName
+            };
+            List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             TicketViewModel ticketViewModel = new TicketViewModel()
             {
                 TicketList = tickets
@@ -59,10 +66,12 @@ namespace NoSQL_Project.Controllers
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
-            ViewData["EmployeeDetails"] = new EmployeeDetails() 
-            { 
-                EmployeeId = HttpContext.Session.GetString("EmployeeId"), 
-                FirstName = HttpContext.Session.GetString("EmployeeName")
+            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
+            var employeeName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty;
+            ViewData["EmployeeDetails"] = new EmployeeDetails()
+            {
+                EmployeeId = employeeId,
+                FirstName = employeeName
             };
             var viewModel = new TicketViewModel
             {

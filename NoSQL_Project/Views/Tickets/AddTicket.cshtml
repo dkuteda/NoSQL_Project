@@ -24,7 +24,11 @@
 
         <form action="/TicketDashboard/AddTicket" method="post">
 
-            <input type="hidden" name="CreatedBy" value="@details" />
+            <input type="hidden" asp-for="Ticket.CreatedBy.EmployeeId" value="@details?.EmployeeId" />
+            <input type="hidden" asp-for="Ticket.CreatedBy.FirstName" value="@details?.FirstName" />
+            <input type="hidden" asp-for="Ticket.CreatedBy.LastName" value="@details?.LastName" />
+            <input type="hidden" asp-for="Ticket.CreatedBy.Email" value="@details?.Email" />
+            <input type="hidden" asp-for="Ticket.CreatedBy.PhoneNr" value="@details?.PhoneNr" />
             <input type="hidden" name="CreatedAt" value="@DateTime.Now" />
             <input type="hidden" name="Status" value="@NoSQL_Project.Enums.TicketStatus.open" />
 

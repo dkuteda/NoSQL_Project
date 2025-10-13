@@ -28,6 +28,15 @@ namespace NoSQL_Project.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
+        {
+            return await _tickets
+                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId)
+                .SortByDescending(e => e.Status)
+                .ThenBy(e => e.Priority)
+                .ToListAsync();
+        }
+
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             await _tickets.ReplaceOneAsync(s => s.TicketId == ticket.TicketId, ticket);
