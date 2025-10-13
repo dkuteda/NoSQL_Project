@@ -12,7 +12,11 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         TicketViewModel FillTicketInfo(Ticket ticket);
         Task<List<Ticket>> GetAllTicketsAsync();
+<<<<<<< HEAD
 
         Task<bool> CloseAsync(Ticket ticket);
+=======
+        Task CreateTicketAsync(Ticket ticket);
+>>>>>>> 5e5bbe753a397afaf48e656389efeea2971bd478
     }
 }

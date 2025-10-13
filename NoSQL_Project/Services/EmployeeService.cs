@@ -29,7 +29,10 @@ namespace NoSQL_Project.Services
 
 		public async Task AddEmployeeAsync(Employee employees)
         {
-            employees.Password = HashPassword(employees.Password);
+			if (EmailAddressExistsAsync(employees.Email).Result)
+				throw new Exception("Email address already in use.");
+
+			employees.Password = HashPassword(employees.Password);
             await _employeeRepo.AddEmployeeAsync(employees);
 		}
 
@@ -41,11 +44,11 @@ namespace NoSQL_Project.Services
 		{
 			return await _employeeRepo.SoftDeleteAsync(id);
 		}
-		public async Task<Employee?> GetByLoginCredentialAsync(string firstName, string password)
+		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{
 			// hash user-entered password before checking
 			var hashed = HashPassword(password);
-			return await _employeeRepo.GetByLoginCredentialAsync(firstName, hashed);
+			return await _employeeRepo.GetByLoginCredentialAsync(email, hashed);
 		}
 		private static string HashPassword(string password)
 		{
@@ -53,6 +56,10 @@ namespace NoSQL_Project.Services
 			var bytes = Encoding.UTF8.GetBytes(password);
 			var hash = sha256.ComputeHash(bytes);
 			return Convert.ToBase64String(hash);
+		}
+		public async Task<bool> EmailAddressExistsAsync(string email)
+		{
+			return await _employeeRepo.EmailAddressExistsAsync(email);
 		}
 	}
 }

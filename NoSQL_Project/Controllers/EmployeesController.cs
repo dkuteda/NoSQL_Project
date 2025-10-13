@@ -43,13 +43,15 @@ namespace NoSQL_Project.Controllers
 				return View(loginModel);
 
 			// Check credentials (service handles hashing)
-			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.FirstName, loginModel.Password);
+			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.Email, loginModel.Password);
 
 			if (employee == null)
 			{
 				ModelState.AddModelError(string.Empty, "Invalid email or password.");
 				return View(loginModel);
 			}
+			
+
 
 
 			// ✅ Store in session
@@ -57,7 +59,19 @@ namespace NoSQL_Project.Controllers
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
 
-            return RedirectToAction("Index", "Employees");
+			switch (employee.UserRole.ToString().ToLower())
+			{
+				case "employee":
+					return RedirectToAction("Index", "Tickets"); 
+				case "service_desk_employee ":
+					return RedirectToAction("Index", "Employees"); 
+				case "manager":
+					return RedirectToAction("Index", "Employees"); 
+				default:
+					return RedirectToAction("Index", "Home"); 
+
+			}
+                 
 
 
 
@@ -66,7 +80,7 @@ namespace NoSQL_Project.Controllers
 		public IActionResult Logout()
 		{
 			HttpContext.Session.Clear();
-			return RedirectToAction("Login");
+			return RedirectToAction("Login", "Employees");
 		}
 
 		[HttpGet]

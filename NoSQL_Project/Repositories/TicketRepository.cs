@@ -13,12 +13,10 @@ namespace NoSQL_Project.Repositories
     public class TicketRepository : ITicketRepository
     {
         private readonly IMongoCollection<Ticket> _tickets;
-        private readonly IMongoCollection<Employee> _employees;
 
         public TicketRepository(IMongoDatabase db)
         {
             _tickets = db.GetCollection<Ticket>("tickets");
-            _employees = db.GetCollection<Employee>("Employees");
         }
 
         public async Task<List<Ticket>> GetAllTicketsAsync()
@@ -60,6 +58,7 @@ namespace NoSQL_Project.Repositories
             };
         }
 
+<<<<<<< HEAD
         public async Task<bool> CloseAsync(Ticket ticket)
         {
             var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
@@ -68,5 +67,16 @@ namespace NoSQL_Project.Repositories
             var result = await _tickets.UpdateOneAsync(filter, update);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
+=======
+        public async Task CreateTicketAsync(Ticket ticket)
+        {
+            await _tickets.InsertOneAsync(ticket);
+        }
+
+        //public async Task UpdateTicket(Ticket Ticket)
+        //{
+
+        //}
+>>>>>>> 5e5bbe753a397afaf48e656389efeea2971bd478
     }
 }

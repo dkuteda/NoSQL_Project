@@ -56,6 +56,7 @@ namespace NoSQL_Project.Controllers
             }
         }
 
+<<<<<<< HEAD
         [HttpGet ("CloseTicket")]
         public IActionResult CloseTicket(string id)
         {
@@ -94,6 +95,44 @@ namespace NoSQL_Project.Controllers
                     Ticket = ticket,
                 };
                 return View(viewModel);
+=======
+        [HttpGet("AddTicket")]
+        public IActionResult AddTicket()
+        {
+            //  Employee? loggedInEmployee = HttpContext.Session.GetObject<Employee>("LoggedInEmployee");
+            var viewModel = new TicketViewModel
+            {
+                Ticket = new Ticket
+                {
+                    TicketId = Guid.NewGuid().ToString() // Set required TicketId
+                },
+                TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
+                    .Cast<TypeOfIncident>()
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.ToString(),
+                        Text = e.ToString()
+                    })
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddTicket(Ticket ticket)
+        {
+            try
+            {
+                await _ticketService.CreateTicketAsync(ticket);
+
+                TempData["ConfirmMessage"] = "User has been created correctly";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                ViewBag.ErrorMessage = $"{ex}";
+                return View(ticket);
+>>>>>>> 5e5bbe753a397afaf48e656389efeea2971bd478
             }
         }
     }
