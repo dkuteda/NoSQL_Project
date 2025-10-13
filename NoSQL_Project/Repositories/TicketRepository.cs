@@ -44,22 +44,7 @@ namespace NoSQL_Project.Repositories
         {
             return new TicketViewModel
             {
-                TicketId = ticket.TicketId,
-                Title = ticket.Title,
-                Description = ticket.Description,
-                Status = ticket.Status,
-                Priority = ticket.Priority,
-                Deadline = ticket.Deadline,
-                CreatedAt = ticket.CreatedAt,
-                HandledBy = ticket.HandledBy,
-                TypeOfIncident = ticket.TypeOfIncident,
-                ResolutionSteps = ticket.ResolutionSteps.Select(resolutionStep => new ResolutionStepViewModel
-                {
-                    ResolutionStepNr = resolutionStep.ResolutionStepNr,
-                    Action = resolutionStep.Action,
-                    PresentHandlerName = resolutionStep.PresentHandler // You can populate this if you have access to the Employee collection
-                }).ToList(),
-
+                Ticket = ticket,
                 // Enums converted to select options
                 StatusOptions = Enum.GetValues(typeof(TicketStatus))
             .Cast<TicketStatus>()
@@ -73,34 +58,6 @@ namespace NoSQL_Project.Repositories
             .Cast<Priority>()
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
             };
-        }
-
-        public Ticket ViewModelToTicket(TicketViewModel ticketViewModel)
-        {
-            foreach (Ticket ticket in ticketViewModel.TicketList)
-            {
-                if (ticket.TicketId == ticketViewModel.TicketId)
-                {
-                    ticket.Title = ticketViewModel.Title;
-                    ticket.Description = ticketViewModel.Description;
-                    ticket.Status = ticketViewModel.Status;
-                    ticket.Priority = ticketViewModel.Priority;
-                    ticket.Deadline = ticketViewModel.Deadline;
-                    ticket.CreatedBy = ticketViewModel.CreatedBy.FirstName + ticketViewModel.CreatedBy.LastName;
-                    ticket.HandledBy = ticketViewModel.HandledBy;
-                    ticket.CreatedAt = ticketViewModel.CreatedAt;
-                    ticket.TypeOfIncident = ticketViewModel.TypeOfIncident;
-                    ticket.ResolutionSteps = ticketViewModel.ResolutionSteps.Select(viewModel => new ResolutionStep
-                    {
-                        ResolutionStepNr = viewModel.ResolutionStepNr,
-                        Action = viewModel.Action,
-                        PresentHandler = viewModel.PresentHandlerName
-                    }).ToList();
-                    return ticket;
-                }
-            }
-
-            return null;
         }
     }
 }
