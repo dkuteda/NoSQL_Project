@@ -56,46 +56,6 @@ namespace NoSQL_Project.Controllers
             }
         }
 
-<<<<<<< HEAD
-        [HttpGet ("CloseTicket")]
-        public IActionResult CloseTicket(string id)
-        {
-            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
-
-            return View(ViewModel);
-        }
-
-        [HttpPost ("CloseTicket")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CloseTicket(Ticket ticket)
-        {
-            try
-            {
-                bool isClosed = await _ticketService.CloseAsync(ticket);
-                if (isClosed)
-                {
-                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Ticket not found or already closed";
-                }
-                return Redirect("/TicketDashboard");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                };
-                return View(viewModel);
-=======
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
@@ -132,7 +92,47 @@ namespace NoSQL_Project.Controllers
                 Console.WriteLine(ex);
                 ViewBag.ErrorMessage = $"{ex}";
                 return View(ticket);
->>>>>>> 5e5bbe753a397afaf48e656389efeea2971bd478
+            }
+        }
+
+        [HttpGet("CloseTicket")]
+        public IActionResult CloseTicket(string id)
+        {
+            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var ViewModel = _ticketService.FillTicketInfo(ticket);
+
+            return View(ViewModel);
+        }
+
+        [HttpPost("CloseTicket")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseTicket(Ticket ticket)
+        {
+            try
+            {
+                bool isClosed = await _ticketService.CloseAsync(ticket);
+                if (isClosed)
+                {
+                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Ticket not found or already closed";
+                }
+                return Redirect("/TicketDashboard");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+                var viewModel = new TicketViewModel
+                {
+                    Ticket = ticket,
+                };
+                return View(viewModel);
             }
         }
     }
