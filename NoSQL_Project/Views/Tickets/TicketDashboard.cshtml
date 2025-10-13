@@ -11,6 +11,14 @@
     </div>
 }
 
+<!-- Error Alert -->
+@if (ViewBag != null && ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+    </div>
+}
+
 <div class="text-center mb-4">
     <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
     <p class="lead text-muted">Manage your team members with ease</p>
@@ -62,11 +70,11 @@
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a href="@Url.Action("UpdateTicket", "Ticket", new { id = ticket.TicketId })"
+                            <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
                                class="btn btn-outline-primary">
                                 <i class="fas fa-edit me-1"></i>Edit
                             </a>
-                            <a href="@Url.Action("SoftDeleteTicket", "Ticket", new { id = ticket.TicketId })"
+                            <a href="@Url.Action("SoftDeleteTicket", "Tickets", new { id = ticket.TicketId })"
                                class="btn btn-outline-danger">
                                 <i class="fas fa-user-slash me-1"></i>Delete
                             </a>

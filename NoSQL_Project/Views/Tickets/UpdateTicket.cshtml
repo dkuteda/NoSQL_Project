@@ -1,1 +1,153 @@
-﻿@model NoSQL_Project.Models.Ticket
+﻿@model NoSQL_Project.ViewModels.TicketViewModel
+
+
+@{
+    ViewData["Title"] = "Update Ticket";
+}
+
+<div class="form-page-header">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-user-edit me-3"></i>Update Ticket
+        </h1>
+        <p class="lead mb-0">Edit team member information</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-container">
+        <!-- Error Alert -->
+        @if (ViewBag != null && ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+            </div>
+        }
+
+        <form asp-action="UpdateTicket" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="TicketId" />
+            <input type="hidden" asp-for="ResolutionSteps" />
+            <input type="hidden" asp-for="TicketList" />
+
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-user-circle"></i>Personal Information
+                </h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Title" class="form-label">
+                                <i class="fas fa-signature me-2"></i>Title
+                            </label>
+                            <input asp-for="Title" class="form-control" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Description" class="form-label">
+                                <i class="fas fa-signature me-2"></i>Description
+                            </label>
+                            <input asp-for="Description" class="form-control" required />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Priority" class="form-label">
+                                <i class="fas fa-venus-mars me-2"></i>Priority
+                            </label>
+                            <select asp-for="Priority" asp-items="Model.PriorityOptions"
+                                    class="form-control form-control-select"></select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="TypeOfIncident" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Type Of Incident
+                            </label>
+                            <select asp-for="TypeOfIncident" asp-items="Model.TypeOfIncidentOptions"
+                                    class="form-control form-control-select"></select>
+                            <span asp-validation-for="TypeOfIncident" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="Deadline" class="form-label">
+                                <i class="fas fa-signature me-2"></i>Descripion
+                            </label>
+                            <input asp-for="Deadline" class="form-control" required />
+                            <span asp-validation-for="Deadline" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="CreatedAt" class="form-label">
+                                <i class="fas fa-signature me-2"></i>CreatedAt
+                            </label>
+                            <input asp-for="CreatedAt" class="form-control" required />
+                            <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="CreatedBy" class="form-label">
+                                <i class="fas fa-signature me-2"></i>CreatedBy
+                            </label>
+                            <input asp-for="CreatedBy" class="form-control" required />
+                            <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="HandledBy" class="form-label">
+                                <i class="fas fa-signature me-2"></i>HandledBy
+                            </label>
+                            <input asp-for="HandledBy" class="form-control" required />
+                            <span asp-validation-for="HandledBy" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-address-book"></i>Contact Information
+                </h3>
+
+                <div class="col-md-6">
+                    <div class="form-group-enhanced">
+                        <label asp-for="Status" class="form-label">
+                            <i class="fas fa-map-marker-alt me-2"></i>Status
+                        </label>
+                        <select asp-for="Status" asp-items="Model.StatusOptions"
+                                class="form-control form-control-select"></select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="btn-group-form">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Update Ticket
+                        </button>
+                        <a href="/TicketDashboard" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to List
+                        </a>
+                    </div>
+                </div>
+        </form>
+    </div>
+</div>
