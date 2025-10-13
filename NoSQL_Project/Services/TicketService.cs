@@ -14,7 +14,7 @@ namespace NoSQL_Project.Services
             _ticketRepo = ticketRepository;
         }
 
-        public async Task<List<TicketViewModel>> GetAllTicketsAsync()
+        public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _ticketRepo.GetAllTicketsAsync();
         }
