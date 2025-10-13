@@ -33,5 +33,10 @@ namespace NoSQL_Project.Services
         {
             return _ticketRepo.FillTicketInfo(ticket);
         }
+
+        public Task<bool> CloseAsync(Ticket ticket)
+        {
+            return _ticketRepo.CloseAsync(ticket);
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Globalization;
 namespace NoSQL_Project.Models
 {
 	public class Ticket
-	{
+	{ 
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
 		public required string TicketId { get; set; }
