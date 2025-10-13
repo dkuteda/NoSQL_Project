@@ -50,6 +50,8 @@ namespace NoSQL_Project.Controllers
 				ModelState.AddModelError(string.Empty, "Invalid email or password.");
 				return View(loginModel);
 			}
+			
+
 
 
 			// ✅ Store in session
@@ -57,13 +59,28 @@ namespace NoSQL_Project.Controllers
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
 
-            return RedirectToAction("Index", "Employees");
+			switch (employee.UserRole.ToString().ToLower())
+			{
+				case "employee":
+					return RedirectToAction("Index", "Tickets"); 
+				case "service_desk_employee ":
+					return RedirectToAction("Index", "Employees"); 
+				case "manager":
+					return RedirectToAction("Index", "Employees"); 
+				default:
+					return RedirectToAction("Index", "Home"); 
+
+			}
+                 
+
+
+
         }
 
 		public IActionResult Logout()
 		{
 			HttpContext.Session.Clear();
-			return RedirectToAction("Login");
+			return RedirectToAction("Login", "Employees");
 		}
 
 		[HttpGet]

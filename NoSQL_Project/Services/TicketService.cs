@@ -14,7 +14,7 @@ namespace NoSQL_Project.Services
             _ticketRepo = ticketRepository;
         }
 
-        public async Task<List<TicketViewModel>> GetAllTicketsAsync()
+        public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _ticketRepo.GetAllTicketsAsync();
         }
@@ -32,11 +32,6 @@ namespace NoSQL_Project.Services
         public TicketViewModel FillTicketInfo(Ticket ticket)
         {
             return _ticketRepo.FillTicketInfo(ticket);
-        }
-
-        public Ticket ViewModelToTicket(TicketViewModel ticketViewModel)
-        {
-            return _ticketRepo.ViewModelToTicket(ticketViewModel);
         }
     }
 }

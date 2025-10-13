@@ -6,12 +6,12 @@ using NoSQL_Project.Services.Interfaces;
 
 namespace NoSQL_Project
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            // Load .env before building configuration so env vars are available
-            DotNetEnv.Env.TraversePath().Load();
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			// Load .env before building configuration so env vars are available
+			DotNetEnv.Env.TraversePath().Load();
 
             var builder = WebApplication.CreateBuilder(args);
 

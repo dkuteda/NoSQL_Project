@@ -17,13 +17,13 @@ namespace NoSQL_Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<TicketViewModel> tickets = await _ticketService.GetAllTicketsAsync();
-            TicketDashboardViewModel ticketDashboardViewModel = new TicketDashboardViewModel
+            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+            TicketViewModel ticketViewModel = new TicketViewModel()
             {
                 TicketList = tickets
             };
 
-            return View("TicketDashboard", ticketDashboardViewModel);
+            return View("TicketDashboard", ticketViewModel);
         }
 
         [HttpGet ("UpdateTicket")]
@@ -43,16 +43,11 @@ namespace NoSQL_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTicket(TicketViewModel ticketViewModel)
         {
-            Ticket ticket = _ticketService.ViewModelToTicket(ticketViewModel);
             try
             {
-                if (ticket == null)
-                {
-                    throw new Exception("TicketId not found");
-                }
-                await _ticketService.UpdateTicketAsync(ticket);
+                await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return RedirectToAction("TicketDashboard");
+                return Redirect("/TicketDashboard");
             }
             catch (Exception ex)
             {

@@ -1,51 +1,186 @@
-﻿<!DOCTYPE html>
+﻿@using NoSQL_Project.Models
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NoSQL_Project</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NoSQL_Project.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nature-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(to right, #6b4eff, #9a77ff);
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 230px;
+            height: calc(100% - 56px);
+            background-color: #2b2b40;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+            .sidebar a {
+                color: #ddd;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 10px;
+                padding: 8px 10px;
+                border-radius: 6px;
+            }
+
+                .sidebar a:hover {
+                    background-color: #4f46e5;
+                    color: white;
+                }
+
+        .content-area {
+            margin-left: 250px;
+            margin-top: 70px;
+            padding: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #ddd;
+        }
+    </style>
 </head>
+
 <body>
+    @{
+        var employeeId = Context.Session.GetString("EmployeeId");
+
+        var userRole = Context.Session.GetString("EmployeeRole")?.ToLower();
+
+        var userName = Context.Session.GetString("EmployeeName");
+    }
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NoSQL_Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Users</a>
-                        </li>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">NoSQL_Project</a>
+
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        @if (string.IsNullOrEmpty(employeeId))
+
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Employee" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                        }
+
+                        else
+
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-white">
+                                    <i class="fas fa-user-circle"></i> @userRole: @userName
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-controller="Employees" asp-action="Logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+
+    @if (!string.IsNullOrEmpty(employeeId))
+
+    {
+        <div class="sidebar">
+            <h5 class="mb-3 text-uppercase text-secondary">Menu</h5>
+
+            <!-- 🧠 DEBUG LINE: shows what’s actually in session -->
+            <p style="color:#ccc; font-size:0.9rem;">
+                DEBUG → Role: @userRole | Name: @userName | ID: @employeeId
+            </p>
+
+            @if (userRole == "employee")
+
+            {
+                <a asp-controller="Tickets" asp-action="Create"><i class="fas fa-plus-circle me-2"></i> Create Ticket</a>
+                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
+            }
+
+
+
+            else if (userRole == "service_desk_employee")
+
+
+
+            {
+                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-list me-2"></i> All Tickets</a>
+                <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
+            }
+
+            else if (userRole == "manager")
+
+            {
+                <a asp-controller="Manager" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> Tickets</a>
+                <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
+             
+            }
+        </div>
+    }
+
+    <!-- Page Content -->
+    <div class="content-area">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Footer -->
+    <footer class="border-top text-muted">
         <div class="container">
-            &copy; 2025 - NoSQL_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - NoSQL_Project - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -5,14 +5,11 @@ namespace NoSQL_Project.Repositories.Interfaces
 {
     public interface ITicketRepository
     {
-        Task<List<TicketViewModel>> GetAllTicketsAsync();
-
         Task UpdateTicketAsync(Ticket ticket);
 
         Task<Ticket> GetByIdAsync(string id);
 
         TicketViewModel FillTicketInfo(Ticket ticket);
-
-        Ticket ViewModelToTicket(TicketViewModel ticketViewModel);
+        Task<List<Ticket>> GetAllTicketsAsync();
     }
 }
