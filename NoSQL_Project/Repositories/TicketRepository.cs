@@ -120,5 +120,10 @@ namespace NoSQL_Project.Repositories
 
             return ticketViewModels;
         }
+
+        public async Task UpdateTicketAsync(Ticket ticket)
+        {
+            await _tickets.ReplaceOneAsync(s => s.TicketId == ticket.TicketId, ticket);
+        }
     }
-    }
+}

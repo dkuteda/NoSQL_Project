@@ -19,6 +19,9 @@ namespace NoSQL_Project.Services
             return await _ticketRepo.GetAllTicketsAsync();
         }
 
-
+        public async Task UpdateTicketAsync(Ticket ticket)
+        {
+            await _ticketRepo.UpdateTicketAsync(ticket);
+        }
     }
 }

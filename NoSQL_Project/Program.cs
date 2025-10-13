@@ -6,7 +6,7 @@ using NoSQL_Project.Services.Interfaces;
 
 namespace NoSQL_Project
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{

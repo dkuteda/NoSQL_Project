@@ -6,5 +6,7 @@ namespace NoSQL_Project.Repositories.Interfaces
     public interface ITicketRepository
     {
         Task<List<TicketViewModel>> GetAllTicketsAsync();
+
+        Task UpdateTicketAsync(Ticket ticket);
     }
 }

@@ -2,6 +2,6 @@
 {
     public class TicketDashboardViewModel
     {
-        public List<TicketViewModel>  TicketList { get; set; }
+        public List<TicketViewModel> TicketList { get; set; }
     }
 }
