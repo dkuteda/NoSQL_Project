@@ -44,7 +44,7 @@ namespace NoSQL_Project.Controllers
 			if (!ModelState.IsValid)
 				return View(loginModel);
 
-			// Check credentials (service handles hashing)
+			// checking credentials 
 			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.Email, loginModel.Password);
 
 			if (employee == null)
@@ -55,7 +55,7 @@ namespace NoSQL_Project.Controllers
 
 
 
-			// ✅ Store in session object id class is available but just implemented later
+			//  session object id class is available but just implemented later
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
