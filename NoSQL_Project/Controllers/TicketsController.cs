@@ -16,20 +16,14 @@ namespace NoSQL_Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
-            var employeeName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty;
-            var employee = new EmployeeDetails()
-            {
-                EmployeeId = employeeId,
-                FirstName = employeeName
-            };
-            List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
-            TicketViewModel ticketViewModel = new TicketViewModel()
+
+            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+            var model = new TicketViewModel()
             {
                 TicketList = tickets
             };
 
-            return View("MyTickets", ticketViewModel);
+            return View("MyTickets", model);
         }
 
         [HttpGet("TicketDetails")]
@@ -42,7 +36,17 @@ namespace NoSQL_Project.Controllers
             bool isAssignee = ticket.HandledBy != null && ticket.HandledBy.EmployeeId == employeeId;
             ViewData["isAssignee"] = isAssignee;
             return View(ticket);
-            
+        }
+
+        [HttpGet("TicketDashboard")]
+        public async Task<IActionResult> TicketDashboard()
+        {
+            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+            var model = new TicketViewModel()
+            {
+                TicketList = tickets
+            };
+            return View();
         }
 
         [HttpGet ("UpdateTicket")]
