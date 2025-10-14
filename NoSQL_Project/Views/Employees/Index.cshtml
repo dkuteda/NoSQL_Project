@@ -13,11 +13,45 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
+@if (userRole == "manager" || userRole == "service_desk_employee")
+{
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
+        <p class="lead text-muted">Manage your team members with ease</p>
+    </div>
 
-<div class="text-center mb-4">
-    <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
-    <p class="lead text-muted">Manage your team members with ease</p>
-</div>
+    <form asp-controller="Employees" asp-action="Index" method="get">
+
+        <label for="UserRole">Role:</label>
+        <select id="UserRole" name="UserRole">
+            <option value="">-- Select Role--</option>
+            @foreach (var userRole in Model.UserRoles)
+            {
+                <option value="@userRole" selected="@(userRole == Model.SelectedUserRole ? "selected" : null)">@userRole</option>
+            }
+        </select>
+
+        <label for="Location">Location:</label>
+        <select id="Location" name="Location">
+            <option value="">-- Select Location--</option>
+            @foreach (var location in Model.Locations)
+            {
+                <option value="@location" selected="@(location == Model.SelectedLocation ? "selected" : null)">@location</option>
+            }
+        </select>
+
+        <label for="Gender">Gender:</label>
+        <select id="Gender" name="Gender">
+            <option value="">-- Select Gender--</option>
+            @foreach (var gender in Model.Genders)
+            {
+                <option value="@gender" selected="@(gender == Model.SelectedGender ? "selected" : null)">@gender</option>
+            }
+        </select>
+
+        <button type="submit">View Employees</button>
+    </form>
+}
 
 <!-- ✅ Only MANAGER can create new employees -->
 @if (userRole == "manager")

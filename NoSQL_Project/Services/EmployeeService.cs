@@ -17,9 +17,9 @@ namespace NoSQL_Project.Services
 			_employeeRepo = employeeRepository;
 		}
 
-		public async Task<List<Employee>> GellAsync()
+		public async Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole) 
 		{
-			return await _employeeRepo.GellAsync();
+			return await _employeeRepo.GetAllAsync(gender, location, userRole);
 		}
 
 		public async Task<Employee> GetByIdAsync(string id)
@@ -38,6 +38,9 @@ namespace NoSQL_Project.Services
 
 		public async Task UpdateEmployeeAsync(Employee employees) 
 		{
+			if (EmailAddressExistsAsync(employees.Email).Result)
+				throw new Exception("Email address already in use");
+
 			await _employeeRepo.UpdateEmployeeAsync(employees);
 		}
 		public async Task<bool> SoftDeleteAsync(string id)

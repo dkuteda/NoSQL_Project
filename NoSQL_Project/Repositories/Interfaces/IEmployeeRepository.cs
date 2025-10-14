@@ -1,10 +1,11 @@
-﻿using NoSQL_Project.Models;
+﻿using NoSQL_Project.Enums;
+using NoSQL_Project.Models;
 
 namespace NoSQL_Project.Repositories.Interfaces
 {
 	public interface IEmployeeRepository
 	{
-		Task<List<Employee>> GellAsync();
+		Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole);
 		Task<Employee> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employee employees);
 		Task UpdateEmployeeAsync(Employee employees);
