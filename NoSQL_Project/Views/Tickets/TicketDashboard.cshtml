@@ -19,20 +19,48 @@
             @foreach (var ticket in Model.TicketList)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 position-relative">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title text-primary mb-2">@ticket.Title</h5>
-                                <span class="badge bg-secondary">@ticket.Status</span>
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <!-- Clickable area -->
+                            <div class="position-relative mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title text-primary mb-2">@ticket.Title</h5>
+                                    @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
+                                    {
+                                        <span class="badge bg-success">Open</span>
+                                    }
+                                    else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
+                                    {
+                                        <span class="badge bg-secondary">Resolved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Closed</span>
+                                    }
+                                </div>
+
+                                <p class="text-muted mb-1">
+                                    Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
+                                </p>
+
+                                <a href="@Url.Action("Details", "Tickets", new { id = ticket.TicketId })"
+                                   class="stretched-link"></a>
                             </div>
-                            <p class="text-muted mb-1">
-                                Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
-                            </p>
-                            <a href="@Url.Action("Details", "Tickets", new { id = ticket.TicketId })"
-                               class="stretched-link"></a>
+
+                            <div class="btn-group btn-group-sm d-flex justify-content-around">
+                                <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId })"
+                                   class="btn btn-outline-danger">
+                                    <i class="fas fa-user-slash me-1"></i>Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             }
         </div>
     }
