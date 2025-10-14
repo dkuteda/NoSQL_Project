@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
-using NoSQL_Project.Services;
 using NoSQL_Project.Services.Interfaces;
 using NoSQL_Project.ViewModels;
 
 namespace NoSQL_Project.Controllers
 {
-    [Route("TicketDashboard")]
+    [Route("MyTickets")]
     public class TicketsController : Controller
     {
         private readonly ITicketService _ticketService;
@@ -30,7 +29,20 @@ namespace NoSQL_Project.Controllers
                 TicketList = tickets
             };
 
-            return View("TicketDashboard", ticketViewModel);
+            return View("MyTickets", ticketViewModel);
+        }
+
+        [HttpGet("TicketDetails")]
+        public IActionResult TicketDetails(string id)
+        {
+            
+            var ticket = _ticketService.GetByIdAsync(id).Result;
+            if (ticket == null) return NotFound();
+            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
+            bool isAssignee = ticket.HandledBy != null && ticket.HandledBy.EmployeeId == employeeId;
+            ViewData["isAssignee"] = isAssignee;
+            return View(ticket);
+            
         }
 
         [HttpGet ("UpdateTicket")]
@@ -54,7 +66,7 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return Redirect("/TicketDashboard");
+                return Redirect("/MyTickets");
             }
             catch (Exception ex)
             {
@@ -136,7 +148,7 @@ namespace NoSQL_Project.Controllers
                 {
                     TempData["ErrorMessage"] = "Ticket not found or already closed";
                 }
-                return Redirect("/TicketDashboard");
+                return Redirect("/MyTickets");
             }
             catch (Exception ex)
             {

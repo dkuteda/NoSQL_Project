@@ -25,8 +25,9 @@ namespace NoSQL_Project.Models
 
         [BsonElement("CreatedBy")]
         public EmployeeDetails CreatedBy { get; set; }
+
         [BsonElement("HandledBy")]
-        public EmployeeDetails HandledBy { get; set; }
+        public EmployeeDetails HandledBy { get; set; } = new EmployeeDetails();
 
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime CreatedAt { get; set; }
