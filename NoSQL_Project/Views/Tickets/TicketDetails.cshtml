@@ -41,6 +41,7 @@
             @if (isAssignee)
             {
                 <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
+                    <input type="hidden" asp-for="TicketId" value="@Model.TicketId" name="ticketId" />
                     <div class="mb-3">
                         <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
                     </div>

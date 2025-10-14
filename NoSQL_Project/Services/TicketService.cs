@@ -2,6 +2,7 @@
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.Services.Interfaces;
 using NoSQL_Project.ViewModels;
+using System;
 
 namespace NoSQL_Project.Services
 {
@@ -47,6 +48,16 @@ namespace NoSQL_Project.Services
         public Task<bool> CloseAsync(Ticket ticket)
         {
             return _ticketRepo.CloseAsync(ticket);
+        }
+
+        public async Task<Ticket> AddResolutionStepToTicket(string ticketId, EmployeeDetails employee, string action)
+        {
+            Ticket ticket = await GetByIdAsync(ticketId);
+            ResolutionStep step = new ResolutionStep(new Guid().ToString(), employee, action);
+            step.ResolutionStepNr++;
+            ticket.ResolutionSteps.Add(step);
+
+            return ticket;
         }
     }
 }

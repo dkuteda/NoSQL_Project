@@ -5,6 +5,14 @@ namespace NoSQL_Project.Models
 {
     public class ResolutionStep
     {
+        public ResolutionStep(string? id, EmployeeDetails presentHandler, string action)
+        {
+            Id = id;
+            PresentHandler = presentHandler;
+            Action = action;
+        }
+        public ResolutionStep() { }
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
@@ -13,6 +21,7 @@ namespace NoSQL_Project.Models
         [BsonElement("PresentHandler")]
         public EmployeeDetails PresentHandler { get; set; }
         public string Action { get; set; }
+
 
     }
 }

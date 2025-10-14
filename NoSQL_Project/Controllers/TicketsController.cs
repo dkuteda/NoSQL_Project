@@ -4,6 +4,7 @@ using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Services.Interfaces;
 using NoSQL_Project.ViewModels;
+using System.Threading.Tasks;
 
 namespace NoSQL_Project.Controllers
 {
@@ -29,13 +30,38 @@ namespace NoSQL_Project.Controllers
         [HttpGet("TicketDetails")]
         public IActionResult TicketDetails(string id)
         {
-            
+
             var ticket = _ticketService.GetByIdAsync(id).Result;
             if (ticket == null) return NotFound();
             var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
             bool isAssignee = ticket.HandledBy != null && ticket.HandledBy.EmployeeId == employeeId;
             ViewData["isAssignee"] = isAssignee;
             return View(ticket);
+        }
+
+        [HttpPost("TicketDetails")]
+        public async Task<IActionResult> TicketDetails(string action, string ticketId)
+        {
+            try
+            {
+                var employee = new EmployeeDetails()
+                {
+                    EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty,
+                    FirstName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty
+                };
+                Ticket ticket = await _ticketService.AddResolutionStepToTicket(ticketId, employee, action);
+
+                await _ticketService.UpdateTicketAsync(ticket);
+
+                TempData["ConfirmMessage"] = "Ticket has been created correctly";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                ViewBag.ErrorMessage = $"{ex}";
+                return View("TicketDetails");
+            }
         }
 
         [HttpGet("TicketDashboard")]
@@ -49,7 +75,7 @@ namespace NoSQL_Project.Controllers
             return View();
         }
 
-        [HttpGet ("UpdateTicket")]
+        [HttpGet("UpdateTicket")]
         public IActionResult UpdateTicket(string id)
         {
             var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
@@ -62,7 +88,7 @@ namespace NoSQL_Project.Controllers
             return View(ViewModel);
         }
 
-        [HttpPost ("UpdateTicket")]
+        [HttpPost("UpdateTicket")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTicket(TicketViewModel ticketViewModel)
         {
@@ -93,7 +119,7 @@ namespace NoSQL_Project.Controllers
             {
                 Ticket = new Ticket
                 {
-                    TicketId = Guid.NewGuid().ToString() 
+                    TicketId = Guid.NewGuid().ToString()
                 },
                 TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
                     .Cast<TypeOfIncident>()
