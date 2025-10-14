@@ -96,7 +96,8 @@
                     <label asp-for="Employee.Email" class="form-label">
                         <i class="fas fa-envelope me-2"></i>Email Address
                     </label>
-                    <input asp-for="Employee.Email" class="form-control" required type="email" />
+                    <input asp-for="Employee.Email" class="form-control" required type="email" value="" />
+                    <small class="form-text text-muted">Leave blank to keep current email.</small>
                     <span asp-validation-for="Employee.Email" class="text-danger"></span>
                 </div>
 
