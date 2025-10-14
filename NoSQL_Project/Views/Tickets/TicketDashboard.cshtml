@@ -1,23 +1,45 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel;
+﻿@model NoSQL_Project.ViewModels.TicketViewModel
 
-<div class="p-4 m-2 bg-light rounded-3">
-    <div class="container-fluid">
-        <h1 class="display-5 fw-bold align-content-sm-around">My Tickets</h1
-            <button class="btn btn-dark">Filter</button>
+<div class="container py-4">
+    @*Header*@
+    <div class="bg-light p-4 rounded-3 mb-4 d-flex justify-content-between align-items-center shadow-sm">
+        <h1 class="display-6 fw-bold mb-0">My Tickets</h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-dark">Filter</button>
+            <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
+                Create a New Ticket
+            </a>
+        </div>
     </div>
-</div>
-<div>
-    @foreach(var ticket in Model.TicketList)
+
+    @*TicketList*@
+    @if (Model.TicketList != null && Model.TicketList.Any())
     {
-        <card class="stretched-link" asp-action="">
-            <div>
-                <h2 class="card-title">@ticket.Title</h2>
-                <p class="card-body">@ticket.CreatedAt.Date</p>
-            </div>
-            <p class="badge">@ticket.Status</p>
-        </card>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var ticket in Model.TicketList)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 position-relative">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-primary mb-2">@ticket.Title</h5>
+                                <span class="badge bg-secondary">@ticket.Status</span>
+                            </div>
+                            <p class="text-muted mb-1">
+                                Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
+                            </p>
+                            <a href="@Url.Action("Details", "Tickets", new { id = ticket.TicketId })"
+                               class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
-    <div class="d-grid gap-2 col-6 mx-auto">
-       <button class="btn btn-primary" type="button" asp-action="AddTicket">Create a New Ticket</button>
-    </div>
+    else
+    {
+        <div class="text-center text-muted py-5">
+            <p>No tickets found. Click <strong>Create a New Ticket</strong> to add one.</p>
+        </div>
+    }
 </div>
