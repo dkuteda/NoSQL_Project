@@ -228,6 +228,7 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
+        //Hamzas code for checking the session values will be removed later when we put the url checking restriction
         public IActionResult CheckSession()
         {
             var id = HttpContext.Session.GetString("EmployeeId");
