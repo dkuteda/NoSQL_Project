@@ -19,7 +19,7 @@
     <p class="lead text-muted">Manage your team members with ease</p>
 </div>
 
-<!-- ✅ Only MANAGER can create new employees -->
+<!--  manager can create new employees -->
 @if (userRole == "manager")
 
 {
@@ -42,7 +42,7 @@
                 <th>Role</th>
                 <th>Location</th>
                 <th>Status</th>
-                <!-- ✅ Only manager gets Actions column -->
+                <!--  manager can get action based on his role -->
                 @if (userRole == "manager")
 
                 {
@@ -99,7 +99,7 @@
     </table>
 </div>
 
-<!-- 🔹 Optional: info if no employees exist -->
+<!--info if no employees exist -->
 @if (Model.EmployeesList == null || !Model.EmployeesList.Any())
 
 {
