@@ -1,25 +1,17 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
-@{
-    ViewData["Title"] = "TicketDashboard";
-}
+@model NoSQL_Project.ViewModels.TicketViewModel
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container py-4">
+    @*Header*@
+    <div class="bg-light p-4 rounded-3 mb-4 d-flex justify-content-between align-items-center shadow-sm">
+        <h1 class="display-6 fw-bold mb-0">My Tickets</h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-dark">Filter</button>
+            <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
+                Create a New Ticket
+            </a>
+        </div>
     </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>@TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
-<!-- Error Alert -->
+  
 @if (ViewBag != null && ViewBag.ErrorMessage != null)
 {
     <div class="alert alert-danger">
@@ -27,69 +19,62 @@
     </div>
 }
 
-<div class="text-center mb-4">
-    <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
-    <p class="lead text-muted">Manage your team members with ease</p>
-</div>
-
-<a href="/Employees/AddEmployee" class="menu-create-button">
-    <i class="fas fa-plus-circle me-2"></i>Create New Employee
-</a>
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Role</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    @*TicketList*@
+    @if (Model.TicketList != null && Model.TicketList.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var ticket in Model.TicketList)
             {
-                var rowClass = (ticket.Status == NoSQL_Project.Enums.TicketStatus.open) ? "tr-active" : "tr-inactive";
-                <tr class="@rowClass">
-                    <td>@ticket.Title</td>
-                    <td>@ticket.Description</td>
-                    <td>@ticket.Status</td>
-                    <td>@ticket.Priority</td>
-                    <td>@ticket.Deadline</td>
-                    <td>@ticket.CreatedAt</td>
-                    <td>
-                        @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
-                        {
-                            <span class="badge bg-success">Open</span>
-                        }
-                        else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
-                        {
-                            <span class="badge bg-secondary">Resolved</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Closed</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
-                               class="btn btn-outline-primary">
-                                <i class="fas fa-edit me-1"></i>Edit
-                            </a>
-                            <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId })"
-                               class="btn btn-outline-danger">
-                                <i class="fas fa-user-slash me-1"></i>Delete
-                            </a>
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <!-- Clickable area -->
+                            <div class="position-relative mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title text-primary mb-2">@ticket.Title</h5>
+                                    @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
+                                    {
+                                        <span class="badge bg-success">Open</span>
+                                    }
+                                    else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
+                                    {
+                                        <span class="badge bg-secondary">Resolved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Closed</span>
+                                    }
+                                </div>
+
+                                <p class="text-muted mb-1">
+                                    Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
+                                </p>
+
+                                <a href="@Url.Action("Details", "Tickets", new { id = ticket.TicketId })"
+                                   class="stretched-link"></a>
+                            </div>
+
+                            <div class="btn-group btn-group-sm d-flex justify-content-around">
+                                <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId })"
+                                   class="btn btn-outline-danger">
+                                    <i class="fas fa-user-slash me-1"></i>Delete
+                                </a>
+                            </div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                </div>
+
             }
-        </tbody>
-    </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center text-muted py-5">
+            <p>No tickets found. Click <strong>Create a New Ticket</strong> to add one.</p>
+        </div>
+    }
 </div>
