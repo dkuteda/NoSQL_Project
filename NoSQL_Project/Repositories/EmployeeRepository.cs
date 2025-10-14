@@ -62,6 +62,7 @@ namespace NoSQL_Project.Repositories
 			var result = await _employees.UpdateOneAsync(filter, update);
 			return result.IsAcknowledged && result.ModifiedCount > 0;
 		}
+		//Hamzas code for getting the login info 
 		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{
 			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email) &

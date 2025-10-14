@@ -1,6 +1,5 @@
 ﻿@model NoSQL_Project.ViewModels.TicketViewModel
 
-
 @{
     ViewData["Title"] = "Update Ticket";
 }
@@ -127,12 +126,12 @@
 
                 <div class="col-md-6">
                     <div class="form-group-enhanced">
-                        <label asp-for="Ticket.Status" class="form-label">
+                        <label asp-for="@Model.Ticket.Status" class="form-label">
                             <i class="fas fa-map-marker-alt me-2"></i>Status
                         </label>
-                        <select asp-for="Ticket.Status" asp-items="Model.StatusOptions"
+                        <select asp-for="@Model.Ticket.Status" asp-items="Model.StatusOptions"
                                 class="form-control form-control-select"></select>
-                        <span asp-validation-for="Ticket.Status" class="text-danger"></span>
+                        <span asp-validation-for="@Model.Ticket.Status" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -142,7 +141,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-save me-2"></i>Update Ticket
                         </button>
-                        <a href="/TicketDashboard" class="btn btn-secondary btn-lg">
+                        <a href="/MyTickets" class="btn btn-secondary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
                     </div>

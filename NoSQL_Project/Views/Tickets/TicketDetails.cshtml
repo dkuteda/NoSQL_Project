@@ -1,0 +1,52 @@
+﻿@model NoSQL_Project.Models.Ticket;
+@{
+    ViewData["Title"] = "Ticket Details";
+    bool isAssignee = (bool)ViewData["isAssignee"];
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 d-flex align-items-center">
+            <a href="javascript:history.back()" class="text-decoration-none me-2">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h5 class="mb-0">Ticket Details</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <div><strong>Requester:</strong> @Model.CreatedBy.FirstName @Model.CreatedBy.LastName</div>
+                <div><strong>Subject:</strong> @Model.Title</div>
+                <div><strong>Submitted:</strong> @Model.CreatedAt.ToString("MMM d, yyyy")</div>
+                <div><strong>Ticket ID:</strong> @Model.TicketId</div>
+                <div><strong>Ticket Status:</strong> <span class="badge bg-success">@Model.Status</span></div>
+            </div>
+
+            <hr />
+
+            <div>
+                @if(Model.ResolutionSteps != null)
+                {
+                    @foreach (var step in Model.ResolutionSteps)
+                    {
+                        <div class="p-3 my-2 rounded bg-light border">
+                            <div class="fw-bold text-primary">@Model.HandledBy.FirstName @Model.HandledBy.LastName</div>
+                            <div>@step.Action</div>
+                            @*      <div class="text-muted small mt-1">@msg.Time.ToString("HH:mm")</div> *@
+                        </div>
+                    }
+                }
+            </div>
+
+            @if (isAssignee)
+            {
+                <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
+                    <div class="mb-3">
+                        <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Response</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

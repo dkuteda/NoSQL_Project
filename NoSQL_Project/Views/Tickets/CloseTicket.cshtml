@@ -1,0 +1,146 @@
+﻿@model NoSQL_Project.ViewModels.TicketViewModel
+
+@{
+    ViewData["Title"] = "Deactivate Ticket";
+}
+
+<div class="form-page-header" style="background: linear-gradient(135deg, #c44536 0%, #d63031 100%);">
+    <div class="container">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-user-slash me-3"></i>Close Ticket
+        </h1>
+        <p class="lead mb-0">Temporarily close a ticket access</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-container">
+        <!-- Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            </div>
+        }
+
+        <!-- Error Message -->
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Confirmation Warning -->
+        <div class="delete-confirmation text-center">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-danger mb-3">Deactivation Warning</h3>
+            <p class="mb-4">
+                You are about to deactivate this employee. They will no longer be able to access the system
+                or receive new ticket assignments. This action can be reversed later.
+            </p>
+        </div>
+
+        <!-- Employee Information -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-user-circle"></i>Ticket Details
+            </h3>
+
+            <div class="ticket-details">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl>
+                            <dt><i class="fas fa-user me-2"></i>Title:</dt>
+                            <dd>@Model.Ticket.Title</dd>
+
+                            <dt><i class="fas fa-user-tag me-2"></i>Description:</dt>
+                            <dd>@Model.Ticket.Description</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl>
+
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Priority:</dt>
+                            <dd>@Model.Ticket.Priority</dd>
+
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Deadline:</dt>
+                            <dd>@Model.Ticket.Deadline</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        //title, description, status, priority, deadline, createdby, handledby, createdat, typeofincident, resolutionsteps
+        <!-- Delete Form -->
+        <form asp-action="CloseTicket" method="post" id="CloseForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Ticket.TicketId" />
+            <input type="hidden" asp-for="Ticket.Description" />
+            <input type="hidden" asp-for="Ticket.Status" />
+            <input type="hidden" asp-for="Ticket.Priority" />
+            <input type="hidden" asp-for="Ticket.Deadline" />
+            <input type="hidden" asp-for="Ticket.CreatedBy" />
+            <input type="hidden" asp-for="Ticket.HandledBy" />
+            <input type="hidden" asp-for="Ticket.CreatedAt" />
+            <input type="hidden" asp-for="Ticket.TypeOfIncident" />
+            <input type="hidden" asp-for="Ticket.ResolutionSteps" />
+
+            <div class="form-group-enhanced text-center">
+                <label for="confirmationText" class="form-label h5">
+                    <i class="fas fa-shield-alt me-2"></i>Security Confirmation
+                </label>
+                <p class="text-muted mb-3">
+                    To confirm deactivation, please type <strong class="text-danger">CLOSE</strong> in the box below:
+                </p>
+                <input type="text" id="confirmationText" class="form-control confirmation-input"
+                       placeholder="TYPE: CLOSE" oninput="toggleDeleteButton()"
+                       style="max-width: 300px; margin: 0 auto;" />
+            </div>
+
+            <div class="form-actions">
+                <div class="btn-group-form">
+                    <button type="submit" id="deleteButton" class="btn btn-danger btn-lg" disabled>
+                        <i class="fas fa-user-slash me-2"></i>Confirm Closing
+                    </button>
+                    <a href="@Url.Action("MyTickets", "Tickets")" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDeleteButton() {
+            const confirmationText = document.getElementById('confirmationText');
+            const closeButton = document.getElementById('closeButton');
+            const requiredText = 'CLOSE';
+
+            if (confirmationText.value.toUpperCase() === requiredText) {
+                deleteButton.disabled = false;
+                deleteButton.classList.remove('btn-secondary');
+                deleteButton.classList.add('btn-danger');
+            } else {
+                deleteButton.disabled = true;
+                deleteButton.classList.remove('btn-danger');
+                deleteButton.classList.add('btn-secondary');
+            }
+        }
+
+        document.getElementById('closeForm').addEventListener('submit', function(e) {
+            const confirmationText = document.getElementById('confirmationText');
+            if (confirmationText.value.toUpperCase() !== 'CLOSE') {
+                e.preventDefault();
+                alert('Please type "CLOSE" to confirm the closing.');
+                return false;
+            }
+
+            return confirm('Final confirmation: Are you sure you want to close this ticket?');
+        });
+    </script>
+}

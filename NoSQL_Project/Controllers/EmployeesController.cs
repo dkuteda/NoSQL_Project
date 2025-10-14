@@ -55,7 +55,7 @@ namespace NoSQL_Project.Controllers
 
 
 
-			// ✅ Store in session
+			// ✅ Store in session object id class is available but just implemented later
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());

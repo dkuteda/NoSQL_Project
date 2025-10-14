@@ -28,6 +28,15 @@ namespace NoSQL_Project.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
+        {
+            return await _tickets
+                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId)
+                .SortByDescending(e => e.Status)
+                .ThenBy(e => e.Priority)
+                .ToListAsync();
+        }
+
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             await _tickets.ReplaceOneAsync(s => s.TicketId == ticket.TicketId, ticket);
@@ -63,9 +72,13 @@ namespace NoSQL_Project.Repositories
             await _tickets.InsertOneAsync(ticket);
         }
 
-        //public async Task UpdateTicket(Ticket Ticket)
-        //{
+        public async Task<bool> CloseAsync(Ticket ticket)
+        {
+            var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update.Set(e => e.Status, TicketStatus.closed);
 
-        //}
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
     }
 }
