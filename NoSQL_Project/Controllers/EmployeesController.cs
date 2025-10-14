@@ -165,15 +165,60 @@ namespace NoSQL_Project.Controllers
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
 				GenderOptions = Enum.GetValues(typeof(Gender))
-				.Cast<Gender>()
-				.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
+					.Cast<Gender>()
+					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
 			};
+
 			try
 			{
-				await _employeeService.UpdateEmployeeAsync(employee); // Added await
+				// Get the existing employee from database
+				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId);
+				if (existingEmployee == null)
+				{
+					ViewBag.ErrorMessage = "Employee not found.";
+					return View(viewModel);
+				}
+
+				// Update only fields that have values (not null/empty)
+				if (!string.IsNullOrWhiteSpace(employee.FirstName))
+					existingEmployee.FirstName = employee.FirstName;
+
+				if (!string.IsNullOrWhiteSpace(employee.LastName))
+					existingEmployee.LastName = employee.LastName;
+
+				// Only update email if a new value is provided
+				if (!string.IsNullOrWhiteSpace(employee.Email))
+					existingEmployee.Email = employee.Email.Trim();
+
+				if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
+					existingEmployee.PhoneNumber = employee.PhoneNumber;
+
+				if (employee.Gender.HasValue && employee.Gender.Value != default(Gender))
+					existingEmployee.Gender = employee.Gender.Value;
+
+				if (employee.Location.HasValue && employee.Location.Value != default(Location))
+					existingEmployee.Location = employee.Location.Value;
+
+				if (employee.UserRole.HasValue && employee.UserRole.Value != default(UserRole))
+					existingEmployee.UserRole = employee.UserRole.Value;
+
+
+				// Only update password if a new value is provided
+				if (!string.IsNullOrWhiteSpace(employee.Password))
+				{
+					// Hash the password before saving (implement your hashing logic)
+					existingEmployee.Password = HashPassword(employee.Password);
+				}
+
+				// Boolean fields are always updated since they have clear states
+				existingEmployee.IsActive = employee.IsActive;
+
+				// Update the employee in database
+				await _employeeService.UpdateEmployeeAsync(existingEmployee);
+
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
 				return RedirectToAction("Index");
 			}
@@ -182,6 +227,18 @@ namespace NoSQL_Project.Controllers
 				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
 				return View(viewModel);
 			}
+		}
+
+		// Add this method for password hashing (if you don't have one already)
+		private string HashPassword(string password)
+		{
+			// Implement your password hashing logic here
+			// Example using BCrypt (you need to install BCrypt.Net-Next)
+			// return BCrypt.Net.BCrypt.HashPassword(password);
+
+			// For now, return plain text (NOT recommended for production)
+			// Replace this with proper hashing in production
+			return password;
 		}
 
 		[HttpGet]
