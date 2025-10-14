@@ -165,15 +165,51 @@ namespace NoSQL_Project.Controllers
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
 				GenderOptions = Enum.GetValues(typeof(Gender))
-				.Cast<Gender>()
-				.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
+					.Cast<Gender>()
+					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
 			};
+
 			try
 			{
-				await _employeeService.UpdateEmployeeAsync(employee); // Added await
+				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId);
+				if (existingEmployee == null)
+				{
+					ViewBag.ErrorMessage = "Employee not found.";
+					return View(viewModel);
+				}
+
+				if (!string.IsNullOrWhiteSpace(employee.FirstName))
+					existingEmployee.FirstName = employee.FirstName;
+
+				if (!string.IsNullOrWhiteSpace(employee.LastName))
+					existingEmployee.LastName = employee.LastName;
+
+				if (!string.IsNullOrWhiteSpace(employee.Email))
+					existingEmployee.Email = employee.Email.Trim();
+
+				if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
+					existingEmployee.PhoneNumber = employee.PhoneNumber;
+
+				if (employee.Gender.HasValue && employee.Gender.Value != default(Gender))
+					existingEmployee.Gender = employee.Gender.Value;
+
+				if (employee.Location.HasValue && employee.Location.Value != default(Location))
+					existingEmployee.Location = employee.Location.Value;
+
+				if (employee.UserRole.HasValue && employee.UserRole.Value != default(UserRole))
+					existingEmployee.UserRole = employee.UserRole.Value;
+
+				if (!string.IsNullOrWhiteSpace(employee.Password))
+				{
+					existingEmployee.Password = employee.Password; // HashPassword(employee.Password);
+				}
+				existingEmployee.IsActive = employee.IsActive;
+
+				await _employeeService.UpdateEmployeeAsync(existingEmployee);
+
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
 				return RedirectToAction("Index");
 			}
@@ -183,6 +219,10 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
+		/*private string HashPassword(string password)
+		{
+			return password;
+		}*/
 
 		[HttpGet]
 		public IActionResult SoftDeleteEmployee(string id) 

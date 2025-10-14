@@ -9,21 +9,21 @@ namespace NoSQL_Project.Models
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
 		public string? EmployeeId { get; set; }
-		public string FirstName { get; set; } = "";
-		public string LastName { get; set; } = "";
+		public string? FirstName { get; set; }
+		public string? LastName { get; set; }
 
-		public string Password { get; set; } = "";
-
-		[BsonRepresentation(BsonType.String)]
-		public Gender Gender { get; set; } = Gender.other;
+		public string? Password { get; set; }
 
 		[BsonRepresentation(BsonType.String)]
-		public UserRole UserRole { get; set; } = UserRole.employee;
+		public Gender? Gender { get; set; }
+
+		[BsonRepresentation(BsonType.String)]
+		public UserRole? UserRole { get; set; }
 		public bool IsActive { get; set; } = true;
-		public string Email { get; set; } = "";
-		public  string PhoneNumber { get; set; } = "";
+		public string? Email { get; set; }
+		public  string? PhoneNumber { get; set; }
 
 		[BsonRepresentation(BsonType.String)]
-		public Location Location { get; set; } = Location.Haarlem;
+		public Location? Location { get; set; }
 	}
 }
