@@ -8,6 +8,8 @@ namespace NoSQL_Project.ViewModels
         //used for CUD of a single ticket
         public Ticket Ticket { get; set; }
 
+        public int TotalTickets { get; set; }= 0;
+
         // Emuns
         public IEnumerable<SelectListItem> StatusOptions { get; set; }
         public IEnumerable<SelectListItem> TypeOfIncidentOptions { get; set; }
