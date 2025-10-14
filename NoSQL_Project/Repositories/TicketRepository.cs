@@ -72,11 +72,6 @@ namespace NoSQL_Project.Repositories
             await _tickets.InsertOneAsync(ticket);
         }
 
-        //public async Task UpdateTicket(Ticket Ticket)
-        //{
-
-        //}
-
         public async Task<bool> CloseAsync(Ticket ticket)
         {
             var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
