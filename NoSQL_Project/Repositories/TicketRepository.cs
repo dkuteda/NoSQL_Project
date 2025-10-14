@@ -76,5 +76,14 @@ namespace NoSQL_Project.Repositories
         //{
 
         //}
+
+        public async Task<bool> CloseAsync(Ticket ticket)
+        {
+            var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update.Set(e => e.Status, TicketStatus.closed);
+
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
     }
 }

@@ -5,8 +5,8 @@ using MongoDB.Bson;
 	public class LoginModel
 	{
 		
-        [Required(ErrorMessage = "First name is required.")]  
-          public string FirstName{ get; set; } = string.Empty;
+        [Required(ErrorMessage = "Email is required.")]  
+          public string Email{ get; set; } = string.Empty;
 
 		[Required]
 		[DataType(DataType.Password)]
