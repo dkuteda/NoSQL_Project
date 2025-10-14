@@ -18,14 +18,16 @@ namespace NoSQL_Project.Controllers
 
 		public EmployeesController(IEmployeeService employeeService) => _employeeService = employeeService;
 
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(Gender? gender, Location? location, UserRole? userRole)
 		{
-			List<Employee> employees = await _employeeService.GellAsync();
+			List<Employee> employees = await _employeeService.GetAllAsync(gender, location, userRole);
 			EmployeeViewModel employeeViewModel = new EmployeeViewModel
 			{
-				EmployeesList = employees
+				EmployeesList = employees,
+				SelectedGender = gender,
+				SelectedLocation = location,
+				SelectedUserRole = userRole,
 			};
-
 			return View(employeeViewModel);
 		}
 
@@ -49,8 +51,7 @@ namespace NoSQL_Project.Controllers
 			{
 				ModelState.AddModelError(string.Empty, "Invalid email or password.");
 				return View(loginModel);
-			}
-			
+			}	
 
 
 
@@ -70,10 +71,7 @@ namespace NoSQL_Project.Controllers
 				default:
 					return RedirectToAction("Index", "Home"); 
 
-			}
-                 
-
-
+			}         
 
         }
 

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 
@@ -15,14 +16,28 @@ namespace NoSQL_Project.Repositories
 			_employees = db.GetCollection<Employee>("Employees");
 		}
 
-		public async Task<List<Employee>> GellAsync()
+		public async Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole)
 		{
-			return await _employees
-				.Find(s => true)
+			var filterBuilder = Builders<Employee>.Filter;
+			var filter = filterBuilder.Empty;
+
+			if (gender.HasValue)
+				filter &= filterBuilder.Eq(e => e.Gender, gender.Value);
+
+			if (location.HasValue)
+				filter &= filterBuilder.Eq(e => e.Location, location.Value);
+
+			if (userRole.HasValue)
+				filter &= filterBuilder.Eq(e => e.UserRole, userRole.Value);
+
+			return await _employees.Find(filter).ToListAsync();
+				/*.Find(s => true)
 				.SortByDescending(e => e.IsActive)  // Active first (true comes before false)
 				.ThenBy(e => e.FirstName)           // Then alphabetically by FirstName
-				.ToListAsync();	
+				.ToListAsync();*/
 		}
+
+
 		public async Task<Employee> GetByIdAsync(string id)
 		{
 			return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
