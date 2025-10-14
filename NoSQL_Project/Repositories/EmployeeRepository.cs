@@ -31,10 +31,6 @@ namespace NoSQL_Project.Repositories
 				filter &= filterBuilder.Eq(e => e.UserRole, userRole.Value);
 
 			return await _employees.Find(filter).ToListAsync();
-				/*.Find(s => true)
-				.SortByDescending(e => e.IsActive)  // Active first (true comes before false)
-				.ThenBy(e => e.FirstName)           // Then alphabetically by FirstName
-				.ToListAsync();*/
 		}
 
 
@@ -62,6 +58,8 @@ namespace NoSQL_Project.Repositories
 			var result = await _employees.UpdateOneAsync(filter, update);
 			return result.IsAcknowledged && result.ModifiedCount > 0;
 		}
+
+
 		//Hamzas code for getting the login info 
 		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{

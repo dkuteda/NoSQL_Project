@@ -174,7 +174,6 @@ namespace NoSQL_Project.Controllers
 
 			try
 			{
-				// Get the existing employee from database
 				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId);
 				if (existingEmployee == null)
 				{
@@ -182,14 +181,12 @@ namespace NoSQL_Project.Controllers
 					return View(viewModel);
 				}
 
-				// Update only fields that have values (not null/empty)
 				if (!string.IsNullOrWhiteSpace(employee.FirstName))
 					existingEmployee.FirstName = employee.FirstName;
 
 				if (!string.IsNullOrWhiteSpace(employee.LastName))
 					existingEmployee.LastName = employee.LastName;
 
-				// Only update email if a new value is provided
 				if (!string.IsNullOrWhiteSpace(employee.Email))
 					existingEmployee.Email = employee.Email.Trim();
 
@@ -205,18 +202,12 @@ namespace NoSQL_Project.Controllers
 				if (employee.UserRole.HasValue && employee.UserRole.Value != default(UserRole))
 					existingEmployee.UserRole = employee.UserRole.Value;
 
-
-				// Only update password if a new value is provided
 				if (!string.IsNullOrWhiteSpace(employee.Password))
 				{
-					// Hash the password before saving (implement your hashing logic)
-					existingEmployee.Password = HashPassword(employee.Password);
+					existingEmployee.Password = employee.Password; // HashPassword(employee.Password);
 				}
-
-				// Boolean fields are always updated since they have clear states
 				existingEmployee.IsActive = employee.IsActive;
 
-				// Update the employee in database
 				await _employeeService.UpdateEmployeeAsync(existingEmployee);
 
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
@@ -228,18 +219,10 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-
-		// Add this method for password hashing (if you don't have one already)
-		private string HashPassword(string password)
+		/*private string HashPassword(string password)
 		{
-			// Implement your password hashing logic here
-			// Example using BCrypt (you need to install BCrypt.Net-Next)
-			// return BCrypt.Net.BCrypt.HashPassword(password);
-
-			// For now, return plain text (NOT recommended for production)
-			// Replace this with proper hashing in production
 			return password;
-		}
+		}*/
 
 		[HttpGet]
 		public IActionResult SoftDeleteEmployee(string id) 
