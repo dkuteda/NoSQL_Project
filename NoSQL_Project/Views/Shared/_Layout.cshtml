@@ -79,7 +79,7 @@
         }
     </style>
 </head>
-
+<!--  Hamzas code to get the role from session  -->
 <body>
     @{
         var employeeId = Context.Session.GetString("EmployeeId");
@@ -133,15 +133,17 @@
         <div class="sidebar">
             <h5 class="mb-3 text-uppercase text-secondary">Menu</h5>
 
-            <!-- 🧠 DEBUG LINE: shows what’s actually in session -->
+            <!--  shows what actually in session -->
+            <!--  displays stuuf ccording to the role of user for side bar-->
             <p style="color:#ccc; font-size:0.9rem;">
+                <!--  just a check to know if the session is being read correctly  -->
                 DEBUG → Role: @userRole | Name: @userName | ID: @employeeId
             </p>
 
             @if (userRole == "employee")
 
             {
-                <a asp-controller="Tickets" asp-action="Create"><i class="fas fa-plus-circle me-2"></i> Create Ticket</a>
+                
                 <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
             }
 
@@ -167,14 +169,14 @@
         </div>
     }
 
-    <!-- Page Content -->
+   
     <div class="content-area">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <!-- Footer -->
+    
     <footer class="border-top text-muted">
         <div class="container">
             &copy; 2025 - NoSQL_Project - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
