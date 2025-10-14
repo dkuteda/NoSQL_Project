@@ -1,4 +1,5 @@
-﻿using NoSQL_Project.Models;
+using System.Net.Sockets;
+using NoSQL_Project.Models;
 using NoSQL_Project.ViewModels;
 
 namespace NoSQL_Project.Repositories.Interfaces
@@ -10,8 +11,12 @@ namespace NoSQL_Project.Repositories.Interfaces
         Task<Ticket> GetByIdAsync(string id);
 
         TicketViewModel FillTicketInfo(Ticket ticket);
+
         Task<List<Ticket>> GetAllTicketsAsync();
         Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee);
+
         Task CreateTicketAsync(Ticket ticket);
+
+        Task<bool> CloseAsync(Ticket ticket);
     }
 }

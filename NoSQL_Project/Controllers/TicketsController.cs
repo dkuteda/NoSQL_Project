@@ -107,5 +107,46 @@ namespace NoSQL_Project.Controllers
                 return View("AddTicket");
             }
         }
+
+        [HttpGet("CloseTicket")]
+        public IActionResult CloseTicket(string id)
+        {
+            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var ViewModel = _ticketService.FillTicketInfo(ticket);
+
+            return View(ViewModel);
+        }
+
+        [HttpPost("CloseTicket")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseTicket(Ticket ticket)
+        {
+            try
+            {
+                bool isClosed = await _ticketService.CloseAsync(ticket);
+                if (isClosed)
+                {
+                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Ticket not found or already closed";
+                }
+                return Redirect("/TicketDashboard");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+                var viewModel = new TicketViewModel
+                {
+                    Ticket = ticket,
+                };
+                return View(viewModel);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
+@model NoSQL_Project.ViewModels.TicketViewModel
 
 <div class="container py-4">
     @*Header*@
@@ -11,6 +11,13 @@
             </a>
         </div>
     </div>
+  
+@if (ViewBag != null && ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+    </div>
+}
 
     @*TicketList*@
     @if (Model.TicketList != null && Model.TicketList.Any())
