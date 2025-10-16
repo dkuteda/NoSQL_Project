@@ -1,7 +1,6 @@
 ﻿@model NoSQL_Project.Models.Ticket;
 @{
     ViewData["Title"] = "Ticket Details";
-    bool isAssignee = (bool)ViewData["isAssignee"];
 }
 
 <div class="container py-4">
@@ -38,15 +37,12 @@
                 }
             </div>
 
-            @if (isAssignee)
-            {
                 <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
                     <div class="mb-3">
                         <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-success w-100">Add Response</button>
                 </form>
-            }
         </div>
     </div>
 </div>
