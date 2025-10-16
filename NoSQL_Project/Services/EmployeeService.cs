@@ -17,9 +17,9 @@ namespace NoSQL_Project.Services
 			_employeeRepo = employeeRepository;
 		}
 
-		public async Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole) 
+		public async Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole) 
 		{
-			return await _employeeRepo.GetAllAsync(gender, location, userRole);
+			return await _employeeRepo.GetAllAsync(location, userRole);
 		}
 
 		public async Task<Employee> GetByIdAsync(string id)

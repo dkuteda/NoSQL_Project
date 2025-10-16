@@ -5,7 +5,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 {
 	public interface IEmployeeRepository
 	{
-		Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole);
+		Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole);
 		Task<Employee> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employee employees);
 		Task UpdateEmployeeAsync(Employee employees);

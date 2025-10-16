@@ -54,20 +54,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Employee.Gender" class="form-label">
-                                <i class="fas fa-venus-mars me-2"></i>Gender
-                            </label>
-                            <select asp-for="Employee.Gender" asp-items="Model.GenderOptions"
-                                    class="form-control form-control-select">
-                                <option value="">Select Gender</option>
-                            </select>
-                            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
-                        </div>
-                    </div>
                     <div class="col-md-6">
                         <div class="form-group-enhanced">
                             <label asp-for="Employee.Location" class="form-label">

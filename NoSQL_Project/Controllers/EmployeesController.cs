@@ -18,13 +18,12 @@ namespace NoSQL_Project.Controllers
 
 		public EmployeesController(IEmployeeService employeeService) => _employeeService = employeeService;
 
-		public async Task<IActionResult> Index(Gender? gender, Location? location, UserRole? userRole)
+		public async Task<IActionResult> Index(Location? location, UserRole? userRole)
 		{
-			List<Employee> employees = await _employeeService.GetAllAsync(gender, location, userRole);
+			List<Employee> employees = await _employeeService.GetAllAsync(location, userRole);
 			EmployeeViewModel employeeViewModel = new EmployeeViewModel
 			{
 				EmployeesList = employees,
-				SelectedGender = gender,
 				SelectedLocation = location,
 				SelectedUserRole = userRole,
 			};
@@ -90,9 +89,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -110,9 +106,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -145,9 +138,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -164,9 +154,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })

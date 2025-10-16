@@ -16,13 +16,10 @@ namespace NoSQL_Project.Repositories
 			_employees = db.GetCollection<Employee>("Employees");
 		}
 
-		public async Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole)
+		public async Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole)
 		{
 			var filterBuilder = Builders<Employee>.Filter;
 			var filter = filterBuilder.Empty;
-
-			if (gender.HasValue)
-				filter &= filterBuilder.Eq(e => e.Gender, gender.Value);
 
 			if (location.HasValue)
 				filter &= filterBuilder.Eq(e => e.Location, location.Value);
