@@ -15,9 +15,6 @@ namespace NoSQL_Project.Models
 		public string? Password { get; set; }
 
 		[BsonRepresentation(BsonType.String)]
-		public Gender? Gender { get; set; }
-
-		[BsonRepresentation(BsonType.String)]
 		public UserRole? UserRole { get; set; }
 		public bool IsActive { get; set; } = true;
 		public string? Email { get; set; }

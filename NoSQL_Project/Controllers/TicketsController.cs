@@ -113,14 +113,14 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.CreateTicketAsync(model.Ticket);
 
-                TempData["ConfirmMessage"] = "Ticket has been created incorrectly";
+                TempData["ConfirmMessage"] = "Ticket has been created successfully";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 ViewBag.ErrorMessage = $"{ex}";
-                return View("AddTicket");
+                return View("AddTicket", model);
             }
         }
 
