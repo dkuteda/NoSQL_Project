@@ -7,7 +7,7 @@ using NoSQL_Project.ViewModels;
 
 namespace NoSQL_Project.Controllers
 {
-    [Route("MyTickets")]
+    [Route("[controller]/[action]")]
     public class TicketsController : Controller
     {
         private readonly ITicketService _ticketService;
@@ -152,7 +152,7 @@ namespace NoSQL_Project.Controllers
                 {
                     TempData["ErrorMessage"] = "Ticket not found or already closed";
                 }
-                return Redirect("/MyTickets");
+                return Redirect("Index");
             }
             catch (Exception ex)
             {
@@ -164,5 +164,42 @@ namespace NoSQL_Project.Controllers
                 return View(viewModel);
             }
         }
+
+      [HttpGet("Dashboard")]
+public async Task<IActionResult> Dashboard()
+{
+    var employeeId = HttpContext.Session.GetString("EmployeeId");
+    var userRole = HttpContext.Session.GetString("EmployeeRole");
+
+    // get all tickets or only user's tickets depending on role
+    List<Ticket> tickets;
+    if (userRole == "employee")
+    {
+        var employee = new EmployeeDetails { EmployeeId = employeeId };
+        tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
+    }
+    else
+    {
+        tickets = await _ticketService.GetAllTicketsAsync();
+    }
+
+    int total = tickets.Count;
+    int open = tickets.Count(t => t.Status == Enums.TicketStatus.open);
+    int resolved = tickets.Count(t => t.Status == Enums.TicketStatus.resolved);
+    int closed = tickets.Count(t => t.Status == Enums.TicketStatus.closed);
+
+    var model = new DashboardViewModel
+    {
+        TotalTickets = total,
+        OpenPercent = total > 0 ? (open * 100) / total : 0,
+        ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
+        ClosedPercent = total > 0 ? (closed * 100) / total : 0,
+        TicketList = tickets.Take(5).ToList() // first 5 tickets only
+    };
+
+    return View(model);
+}
+
+
     }
 }

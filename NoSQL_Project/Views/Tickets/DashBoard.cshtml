@@ -1,0 +1,83 @@
+﻿@model NoSQL_Project.ViewModels.DashboardViewModel
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4 text-primary">Dashboard</h2>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 text-center">
+                <h6 class="text-muted mb-1">Open Tickets</h6>
+                <h3 class="fw-bold text-warning">@Model.OpenPercent%</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 text-center">
+                <h6 class="text-muted mb-1">Resolved Tickets</h6>
+                <h3 class="fw-bold text-success">@Model.ResolvedPercent%</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 text-center">
+                <h6 class="text-muted mb-1">Closed Tickets</h6>
+                <h3 class="fw-bold text-danger">@Model.ClosedPercent%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Table -->
+    <div class="card border-0 shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Recent Tickets</h5>
+            <a href="@Url.Action("Index", "Tickets")" class="btn btn-outline-primary btn-sm">View All</a>
+        </div>
+
+        @if (Model.TicketList != null && Model.TicketList.Any())
+
+        {
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.TicketList)
+                    {
+                        <tr>
+                            <td>@ticket.Title</td>
+                            <td>
+                                <span class="badge bg-@(
+                                    ticket.Status == NoSQL_Project.Enums.TicketStatus.open ? "warning" :
+                                    ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved ? "success" : "secondary"
+                                )">@ticket.Status</span>
+                            </td>
+                            <td>@ticket.Priority</td>
+                            <td>@ticket.CreatedBy?.FirstName</td>
+                            <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"
+                                   class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-outline-secondary btn-sm">Load More</button>
+            </div>
+        }
+
+        else
+
+        {
+            <p class="text-center text-muted mb-0 py-3">No tickets found.</p>
+        }
+    </div>
+</div>

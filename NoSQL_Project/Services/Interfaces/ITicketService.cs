@@ -17,5 +17,7 @@ namespace NoSQL_Project.Services.Interfaces
         Task CreateTicketAsync(Ticket ticket);
 
         Task<bool> CloseAsync(Ticket ticket);
+
+        
     }
 }

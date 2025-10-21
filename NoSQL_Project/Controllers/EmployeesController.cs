@@ -180,8 +180,7 @@ namespace NoSQL_Project.Controllers
 				if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
 					existingEmployee.PhoneNumber = employee.PhoneNumber;
 
-				if (employee.Gender.HasValue && employee.Gender.Value != default(Gender))
-					existingEmployee.Gender = employee.Gender.Value;
+				
 
 				if (employee.Location.HasValue && employee.Location.Value != default(Location))
 					existingEmployee.Location = employee.Location.Value;

@@ -75,7 +75,7 @@
         </div>
         //title, description, status, priority, deadline, createdby, handledby, createdat, typeofincident, resolutionsteps
         <!-- Delete Form -->
-        <form asp-action="CloseTicket" method="post" id="CloseForm">
+        <form asp-controller="Tickets" asp-action="CloseTicket" method="post" id="CloseForm">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Ticket.TicketId" />
             <input type="hidden" asp-for="Ticket.Description" />
