@@ -43,7 +43,7 @@ namespace NoSQL_Project.Controllers
 			if (!ModelState.IsValid)
 				return View(loginModel);
 
-			// checking credentials 
+			// Check credentials (service handles hashing)
 			var employee = await _employeeService.GetByLoginCredentialAsync(loginModel.Email, loginModel.Password);
 
 			if (employee == null)
@@ -54,7 +54,7 @@ namespace NoSQL_Project.Controllers
 
 
 
-			//  session object id class is available but just implemented later
+			// ✅ Store in session object id class is available but just implemented later
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
 			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
@@ -168,32 +168,6 @@ namespace NoSQL_Project.Controllers
 					return View(viewModel);
 				}
 
-				if (!string.IsNullOrWhiteSpace(employee.FirstName))
-					existingEmployee.FirstName = employee.FirstName;
-
-				if (!string.IsNullOrWhiteSpace(employee.LastName))
-					existingEmployee.LastName = employee.LastName;
-
-				if (!string.IsNullOrWhiteSpace(employee.Email))
-					existingEmployee.Email = employee.Email.Trim();
-
-				if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
-					existingEmployee.PhoneNumber = employee.PhoneNumber;
-
-				
-
-				if (employee.Location.HasValue && employee.Location.Value != default(Location))
-					existingEmployee.Location = employee.Location.Value;
-
-				if (employee.UserRole.HasValue && employee.UserRole.Value != default(UserRole))
-					existingEmployee.UserRole = employee.UserRole.Value;
-
-				if (!string.IsNullOrWhiteSpace(employee.Password))
-				{
-					existingEmployee.Password = employee.Password; // HashPassword(employee.Password);
-				}
-				existingEmployee.IsActive = employee.IsActive;
-
 				await _employeeService.UpdateEmployeeAsync(existingEmployee);
 
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
@@ -205,10 +179,6 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-		/*private string HashPassword(string password)
-		{
-			return password;
-		}*/
 
 		[HttpGet]
 		public IActionResult SoftDeleteEmployee(string id) 
@@ -252,7 +222,6 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-        //Hamzas code for checking the session values will be removed later when we put the url checking restriction
         public IActionResult CheckSession()
         {
             var id = HttpContext.Session.GetString("EmployeeId");
