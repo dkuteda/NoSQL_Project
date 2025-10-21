@@ -54,7 +54,7 @@
                             <span asp-validation-for="Employee.LastName" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
+                </div> <!-- ✅ Close the row -->
 
                 <div class="form-group py-2">
                     <label asp-for="Employee.Password" class="form-label"></label>
@@ -63,6 +63,8 @@
                     <small class="form-text text-muted">Leave blank to keep current password.</small>
                     <span asp-validation-for="Employee.Password" class="text-danger"></span>
                 </div>
+
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group-enhanced">
                             <label asp-for="Employee.Location" class="form-label">

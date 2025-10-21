@@ -53,7 +53,6 @@
                             <span asp-validation-for="Employee.LastName" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
                     <div class="col-md-6">
                         <div class="form-group-enhanced">
                             <label asp-for="Employee.Location" class="form-label">
@@ -66,9 +65,8 @@
                             <span asp-validation-for="Employee.Location" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-            </div>
-
+                </div> <!-- ✅ Properly closes the row -->
+            </div> <!-- ✅ Properly closes the form-section -->
             <!-- Contact Information Section -->
             <div class="form-section">
                 <h3 class="form-section-title">
