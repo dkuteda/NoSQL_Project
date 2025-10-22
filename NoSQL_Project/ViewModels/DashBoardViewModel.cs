@@ -11,5 +11,12 @@ namespace NoSQL_Project.ViewModels
         public int ClosedPercent { get; set; }
 
         public List<Ticket> TicketList { get; set; } = new List<Ticket>();
+
+        public string? SearchFirstName { get; set; }
+        public string? SearchLastName { get; set; }
+        
+        public int ResolvedTickets { get; set; }
+        public int TransferredTickets { get; set; }
+        public bool ShowReport { get; set; } = false;
     }
 }

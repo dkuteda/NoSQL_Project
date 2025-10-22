@@ -25,11 +25,20 @@
         </div>
     </div>
 
-    <!-- Ticket Table -->
+    <!-- Ticket List -->
     <div class="card border-0 shadow-sm p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0">Recent Tickets</h5>
-            <a href="@Url.Action("Index", "Tickets")" class="btn btn-outline-primary btn-sm">View All</a>
+            <div class="btn-group">
+                <a href="@Url.Action("Dashboard", new { sortOrder = "priority_asc" })"
+                   class="btn btn-outline-primary btn-sm @(ViewBag.SortOrder == "priority_asc" ? "active" : "")">
+                    ↑ Priority (Low→High)
+                </a>
+                <a href="@Url.Action("Dashboard", new { sortOrder = "priority_desc" })"
+                   class="btn btn-outline-primary btn-sm @(ViewBag.SortOrder == "priority_desc" ? "active" : "")">
+                    ↓ Priority (High→Low)
+                </a>
+            </div>
         </div>
 
         @if (Model.TicketList != null && Model.TicketList.Any())
@@ -42,7 +51,7 @@
                         <th>Status</th>
                         <th>Priority</th>
                         <th>Created By</th>
-                        <th>Created At</th>
+                        <th>Created Date</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -55,9 +64,22 @@
                                 <span class="badge bg-@(
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.open ? "warning" :
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved ? "success" : "secondary"
-                                )">@ticket.Status</span>
+                                )">
+                                    @ticket.Status
+                                </span>
                             </td>
-                            <td>@ticket.Priority</td>
+
+                            <!-- 🔴🟡🟢 Priority color badges -->
+                            <td>
+                                <span class="badge bg-@(
+                                    ticket.Priority.ToString().ToLower() == "high" ? "danger" :
+                                    ticket.Priority.ToString().ToLower() == "medium" ? "warning" :
+                                    "success"
+                                )">
+                                    @ticket.Priority
+                                </span>
+                            </td>
+
                             <td>@ticket.CreatedBy?.FirstName</td>
                             <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
                             <td>
@@ -68,16 +90,12 @@
                     }
                 </tbody>
             </table>
-
-            <div class="text-center mt-3">
-                <button class="btn btn-outline-secondary btn-sm">Load More</button>
-            </div>
         }
 
         else
 
         {
-            <p class="text-center text-muted mb-0 py-3">No tickets found.</p>
+            <p class="text-center text-muted py-3 mb-0">No tickets found.</p>
         }
     </div>
 </div>
