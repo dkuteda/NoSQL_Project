@@ -3,6 +3,39 @@
 <div class="container py-4">
     <h2 class="fw-bold mb-4 text-primary">Dashboard</h2>
 
+    <!-- 🔍 Employee Performance Search -->
+    <form asp-action="Dashboard" method="get" class="d-flex gap-2 mb-4">
+        <input type="text" name="firstName" value="@Model.SearchFirstName"
+               class="form-control w-25" placeholder="First Name" />
+        <input type="text" name="lastName" value="@Model.SearchLastName"
+               class="form-control w-25" placeholder="Last Name" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    @if (Model.ShowReport)
+
+    {
+        <div class="card shadow-sm border-0 p-3 mb-4" style="max-width: 500px;">
+            <h5 class="fw-bold text-secondary mb-3">
+                Employee: @Model.SearchFirstName @Model.SearchLastName
+            </h5>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h6 class="text-muted">Total</h6>
+                    <h4 class="fw-bold text-primary">@Model.TotalTickets</h4>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted">Resolved</h6>
+                    <h4 class="fw-bold text-success">@Model.ResolvedTickets</h4>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted">Transferred</h6>
+                    <h4 class="fw-bold text-warning">@Model.TransferredTickets</h4>
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
@@ -25,20 +58,11 @@
         </div>
     </div>
 
-    <!-- Ticket List -->
+    <!-- Ticket Table -->
     <div class="card border-0 shadow-sm p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0">Recent Tickets</h5>
-            <div class="btn-group">
-                <a href="@Url.Action("Dashboard", new { sortOrder = "priority_asc" })"
-                   class="btn btn-outline-primary btn-sm @(ViewBag.SortOrder == "priority_asc" ? "active" : "")">
-                    ↑ Priority (Low→High)
-                </a>
-                <a href="@Url.Action("Dashboard", new { sortOrder = "priority_desc" })"
-                   class="btn btn-outline-primary btn-sm @(ViewBag.SortOrder == "priority_desc" ? "active" : "")">
-                    ↓ Priority (High→Low)
-                </a>
-            </div>
+            <a href="@Url.Action("Index", "Tickets")" class="btn btn-outline-primary btn-sm">View All</a>
         </div>
 
         @if (Model.TicketList != null && Model.TicketList.Any())
@@ -51,7 +75,7 @@
                         <th>Status</th>
                         <th>Priority</th>
                         <th>Created By</th>
-                        <th>Created Date</th>
+                        <th>Created At</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -64,22 +88,9 @@
                                 <span class="badge bg-@(
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.open ? "warning" :
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved ? "success" : "secondary"
-                                )">
-                                    @ticket.Status
-                                </span>
+                                )">@ticket.Status</span>
                             </td>
-
-                            <!-- 🔴🟡🟢 Priority color badges -->
-                            <td>
-                                <span class="badge bg-@(
-                                    ticket.Priority.ToString().ToLower() == "high" ? "danger" :
-                                    ticket.Priority.ToString().ToLower() == "medium" ? "warning" :
-                                    "success"
-                                )">
-                                    @ticket.Priority
-                                </span>
-                            </td>
-
+                            <td>@ticket.Priority</td>
                             <td>@ticket.CreatedBy?.FirstName</td>
                             <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
                             <td>
@@ -90,12 +101,16 @@
                     }
                 </tbody>
             </table>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-outline-secondary btn-sm">Load More</button>
+            </div>
         }
 
         else
 
         {
-            <p class="text-center text-muted py-3 mb-0">No tickets found.</p>
+            <p class="text-center text-muted mb-0 py-3">No tickets found.</p>
         }
     </div>
 </div>
