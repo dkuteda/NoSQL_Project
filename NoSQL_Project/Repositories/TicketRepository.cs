@@ -31,7 +31,7 @@ namespace NoSQL_Project.Repositories
         public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
         {
             return await _tickets
-                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId)
+                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId && t.Status == TicketStatus.open)
                 .SortByDescending(e => e.Status)
                 .ThenBy(e => e.Priority)
                 .ToListAsync();

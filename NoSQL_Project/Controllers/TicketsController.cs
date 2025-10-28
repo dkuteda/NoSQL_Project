@@ -15,9 +15,12 @@ namespace NoSQL_Project.Controllers
         public TicketsController(ITicketService ticketService) => _ticketService = ticketService;
 
         public async Task<IActionResult> Index()
-        {
-
-            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
+        {   
+            var employee = new EmployeeDetails
+            {
+                EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty
+            };
+            List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             var model = new TicketViewModel()
             {
                 TicketList = tickets
