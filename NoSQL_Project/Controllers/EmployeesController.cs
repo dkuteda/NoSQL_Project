@@ -218,14 +218,14 @@ namespace NoSQL_Project.Controllers
 
 			try
 			{
-				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId); // Use Id (string)
+				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId);
 				if (existingEmployee == null)
 				{
 					ViewBag.ErrorMessage = "Employee not found.";
 					return View(viewModel);
 				}
 
-				await _employeeService.UpdateEmployeeAsync(employee.EmployeeId, employee); // Pass in string id and employee
+				await _employeeService.UpdateEmployeeAsync(employee.EmployeeId, employee);
 
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
 				return RedirectToAction("Index");
