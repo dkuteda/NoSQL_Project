@@ -30,7 +30,6 @@ namespace NoSQL_Project.Repositories
 			return await _employees.Find(filter).ToListAsync();
 		}
 
-
 		public async Task<Employee> GetByIdAsync(string id)
 		{
 			return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
@@ -39,10 +38,29 @@ namespace NoSQL_Project.Repositories
 		{
 			await _employees.InsertOneAsync(employees);
 		}
-		public async Task UpdateEmployeeAsync(Employee employees)
+		/*public async Task UpdateEmployeeAsync(Employee employees)
 		{
 			await _employees.ReplaceOneAsync(s => s.EmployeeId == employees.EmployeeId, employees);
+		}*/
+
+		public async Task UpdateEmployeeAsync(string id, Employee employee)
+		{
+			var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id); ;
+
+			var update = Builders<Employee>.Update
+				.Set(s => s.FirstName, employee.LastName)
+				.Set(s => s.LastName, employee.LastName)
+				.Set(s => s.Password, employee.Password)
+				.Set(s => s.Email, employee.Email)
+				.Set(s => s.PhoneNumber, employee.PhoneNumber)
+				.Set(s => s.Location, employee.Location)
+				.Set(s => s.UserRole, employee.UserRole);
+
+			// Add more Set() for other fields as needed
+
+			await _employees.UpdateOneAsync(filter, update);
 		}
+
 		public async Task<bool> SoftDeleteAsync(string id)
 		{
 			var employee = await GetByIdAsync(id);
@@ -56,6 +74,13 @@ namespace NoSQL_Project.Repositories
 			return result.IsAcknowledged && result.ModifiedCount > 0;
 		}
 
+		public async Task<bool> EmailAddressExistsAsync(string email)
+		{
+			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email);
+			var count = await _employees.CountDocumentsAsync(filter);
+			return count > 0;
+		}
+
 
 		//Hamzas code for getting the login info 
 		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
@@ -64,13 +89,7 @@ namespace NoSQL_Project.Repositories
 						 Builders<Employee>.Filter.Eq(e => e.Password, password);
 
 			return await _employees.Find(filter).FirstOrDefaultAsync();
-		}
-		public async Task<bool> EmailAddressExistsAsync(string email)
-		{
-			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email);
-			var count = await _employees.CountDocumentsAsync(filter);
-			return count > 0;
-		}
+		}		
 	}
 }
 

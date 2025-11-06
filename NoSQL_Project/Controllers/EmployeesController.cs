@@ -124,7 +124,7 @@ namespace NoSQL_Project.Controllers
 			}
 		}
 
-		[HttpGet]
+		/*[HttpGet]
 		public IActionResult UpdateEmployee(string id)
 		{
 			var employee = _employeeService.GetByIdAsync(id).Result; // Synchronously wait for the result
@@ -169,6 +169,63 @@ namespace NoSQL_Project.Controllers
 				}
 
 				await _employeeService.UpdateEmployeeAsync(existingEmployee);
+
+				TempData["SuccessMessage"] = "Employee has been updated successfully";
+				return RedirectToAction("Index");
+			}
+			catch (Exception ex)
+			{
+				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+				return View(viewModel);
+			}
+		}*/
+
+		[HttpGet]
+		public IActionResult UpdateEmployee(string id)
+		{
+			var employee = _employeeService.GetByIdAsync(id).Result; // Synchronously wait for the result
+			if (employee == null)
+			{
+				return NotFound();
+			}
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = employee,
+				UserRoleOptions = Enum.GetValues(typeof(UserRole))
+					.Cast<UserRole>()
+					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
+				LocationOptions = Enum.GetValues(typeof(Location))
+					.Cast<Location>()
+					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
+			};
+			return View(viewModel);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateEmployee(Employee employee)
+		{
+			var viewModel = new EmployeeViewModel
+			{
+				Employee = employee,
+				UserRoleOptions = Enum.GetValues(typeof(UserRole))
+					.Cast<UserRole>()
+					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
+				LocationOptions = Enum.GetValues(typeof(Location))
+					.Cast<Location>()
+					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
+			};
+
+			try
+			{
+				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId); // Use Id (string)
+				if (existingEmployee == null)
+				{
+					ViewBag.ErrorMessage = "Employee not found.";
+					return View(viewModel);
+				}
+
+				await _employeeService.UpdateEmployeeAsync(employee.EmployeeId, employee); // Pass in string id and employee
 
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
 				return RedirectToAction("Index");

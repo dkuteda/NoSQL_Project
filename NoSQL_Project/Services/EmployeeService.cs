@@ -36,17 +36,24 @@ namespace NoSQL_Project.Services
             await _employeeRepo.AddEmployeeAsync(employees);
 		}
 
-		public async Task UpdateEmployeeAsync(Employee employees) 
+		public async Task UpdateEmployeeAsync(string id, Employee employees) 
 		{
-			if (EmailAddressExistsAsync(employees.Email).Result)
-				throw new Exception("Email address already in use");
+			/*if (EmailAddressExistsAsync(employees.Email).Result)
+				throw new Exception("Email address already in use");*/
 
-			await _employeeRepo.UpdateEmployeeAsync(employees);
+			await _employeeRepo.UpdateEmployeeAsync(id, employees);
 		}
 		public async Task<bool> SoftDeleteAsync(string id)
 		{
 			return await _employeeRepo.SoftDeleteAsync(id);
 		}
+
+		public async Task<bool> EmailAddressExistsAsync(string email)
+		{
+			return await _employeeRepo.EmailAddressExistsAsync(email);
+		}
+
+
 		//Hamza' Code
 		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{
@@ -60,11 +67,7 @@ namespace NoSQL_Project.Services
 			var bytes = Encoding.UTF8.GetBytes(password);
 			var hash = sha256.ComputeHash(bytes);
 			return Convert.ToBase64String(hash);
-		}
-		public async Task<bool> EmailAddressExistsAsync(string email)
-		{
-			return await _employeeRepo.EmailAddressExistsAsync(email);
-		}
+		}		
 	}
 }
 

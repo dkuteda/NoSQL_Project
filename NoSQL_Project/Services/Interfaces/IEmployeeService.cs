@@ -8,7 +8,7 @@ namespace NoSQL_Project.Services
 		Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole);
 		Task<Employee> GetByIdAsync(string id);
 		Task AddEmployeeAsync(Employee employees);
-		Task UpdateEmployeeAsync(Employee employees);
+		Task UpdateEmployeeAsync(string id, Employee employees);
 		Task<bool> SoftDeleteAsync(string id);
 		Task<Employee?> GetByLoginCredentialAsync(string email, string password);
 		Task<bool> EmailAddressExistsAsync(string email);
