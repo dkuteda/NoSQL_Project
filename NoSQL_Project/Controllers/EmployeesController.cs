@@ -30,6 +30,8 @@ namespace NoSQL_Project.Controllers
 			return View(employeeViewModel);
 		}
 
+		// Hamza's Code
+
 		[HttpGet]
 		public IActionResult Login()
 		{
@@ -52,8 +54,6 @@ namespace NoSQL_Project.Controllers
 				return View(loginModel);
 			}	
 
-
-
 			// ✅ Store in session object id class is available but just implemented later
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
@@ -70,8 +70,7 @@ namespace NoSQL_Project.Controllers
 				default:
 					return RedirectToAction("Index", "Home"); 
 
-			}         
-
+			}       
         }
 
 		public IActionResult Logout()
@@ -79,6 +78,17 @@ namespace NoSQL_Project.Controllers
 			HttpContext.Session.Clear();
 			return RedirectToAction("Login", "Employees");
 		}
+
+		public IActionResult CheckSession()
+		{
+			var id = HttpContext.Session.GetString("EmployeeId");
+			var name = HttpContext.Session.GetString("EmployeeName");
+			var role = HttpContext.Session.GetString("EmployeeRole");
+
+			return Content($"ID: {id ?? "none"} | Name: {name ?? "none"} | Role: {role ?? "none"}");
+		}
+
+		// David's Code
 
 		[HttpGet]
 		public IActionResult AddEmployee()
@@ -123,62 +133,6 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-
-		/*[HttpGet]
-		public IActionResult UpdateEmployee(string id)
-		{
-			var employee = _employeeService.GetByIdAsync(id).Result; // Synchronously wait for the result
-			if (employee == null)
-			{
-				return NotFound();
-			}
-			var viewModel = new EmployeeViewModel
-			{
-				Employee = employee,
-				UserRoleOptions = Enum.GetValues(typeof(UserRole))
-					.Cast<UserRole>()
-					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				LocationOptions = Enum.GetValues(typeof(Location))
-					.Cast<Location>()
-					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
-			};
-			return View(viewModel);
-		}
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateEmployee(Employee employee)
-		{
-			var viewModel = new EmployeeViewModel
-			{
-				Employee = employee,
-				UserRoleOptions = Enum.GetValues(typeof(UserRole))
-					.Cast<UserRole>()
-					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				LocationOptions = Enum.GetValues(typeof(Location))
-					.Cast<Location>()
-					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
-			};
-
-			try
-			{
-				var existingEmployee = await _employeeService.GetByIdAsync(employee.EmployeeId);
-				if (existingEmployee == null)
-				{
-					ViewBag.ErrorMessage = "Employee not found.";
-					return View(viewModel);
-				}
-
-				await _employeeService.UpdateEmployeeAsync(existingEmployee);
-
-				TempData["SuccessMessage"] = "Employee has been updated successfully";
-				return RedirectToAction("Index");
-			}
-			catch (Exception ex)
-			{
-				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-				return View(viewModel);
-			}
-		}*/
 
 		[HttpGet]
 		public IActionResult UpdateEmployee(string id)
@@ -279,13 +233,5 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-        public IActionResult CheckSession()
-        {
-            var id = HttpContext.Session.GetString("EmployeeId");
-            var name = HttpContext.Session.GetString("EmployeeName");
-            var role = HttpContext.Session.GetString("EmployeeRole");
-
-            return Content($"ID: {id ?? "none"} | Name: {name ?? "none"} | Role: {role ?? "none"}");
-        }
     }
 }

@@ -33,15 +33,7 @@ namespace NoSQL_Project.Repositories
 		public async Task<Employee> GetByIdAsync(string id)
 		{
 			return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
-		}
-		public async Task AddEmployeeAsync(Employee employees)
-		{
-			await _employees.InsertOneAsync(employees);
-		}
-		/*public async Task UpdateEmployeeAsync(Employee employees)
-		{
-			await _employees.ReplaceOneAsync(s => s.EmployeeId == employees.EmployeeId, employees);
-		}*/
+		}		
 
 		public async Task UpdateEmployeeAsync(string id, Employee employee)
 		{
@@ -56,9 +48,12 @@ namespace NoSQL_Project.Repositories
 				.Set(s => s.Location, employee.Location)
 				.Set(s => s.UserRole, employee.UserRole);
 
-			// Add more Set() for other fields as needed
-
 			await _employees.UpdateOneAsync(filter, update);
+		}
+
+		public async Task AddEmployeeAsync(Employee employees)
+		{
+			await _employees.InsertOneAsync(employees);
 		}
 
 		public async Task<bool> SoftDeleteAsync(string id)

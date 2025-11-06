@@ -1,4 +1,5 @@
-﻿using NoSQL_Project.Enums;
+﻿using MongoDB.Driver;
+using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories;
 using NoSQL_Project.Repositories.Interfaces;
@@ -36,12 +37,30 @@ namespace NoSQL_Project.Services
             await _employeeRepo.AddEmployeeAsync(employees);
 		}
 
-		public async Task UpdateEmployeeAsync(string id, Employee employees) 
+		/*public async Task UpdateEmployeeAsync(string id, Employee employees) 
 		{
-			/*if (EmailAddressExistsAsync(employees.Email).Result)
-				throw new Exception("Email address already in use");*/
+			*//*if (EmailAddressExistsAsync(employees.Email).Result)
+				throw new Exception("Email address already in use");*//*
 
 			await _employeeRepo.UpdateEmployeeAsync(id, employees);
+		}*/
+
+		public async Task UpdateEmployeeAsync(string id, Employee employee)
+		{
+			if (!string.IsNullOrWhiteSpace(employee.Password)) 
+			{
+				employee.Password = HashPassword(employee.Password);
+				await _employeeRepo.UpdateEmployeeAsync(id, employee);
+			}
+			else 
+			{
+				var existingEmployee = await _employeeRepo.GetByIdAsync(id);
+				if (existingEmployee != null)
+				{
+					employee.Password = existingEmployee.Password;
+					await _employeeRepo.UpdateEmployeeAsync(id, employee);
+				}
+			}
 		}
 		public async Task<bool> SoftDeleteAsync(string id)
 		{
