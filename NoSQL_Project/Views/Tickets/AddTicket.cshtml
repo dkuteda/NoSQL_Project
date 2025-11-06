@@ -22,7 +22,7 @@
             </div>
         }
 
-        <form action="/MyTickets/AddTicket" method="post">
+        <form asp-controller="Tickets" asp-action="AddTicket" method="post">
 
             <input type="hidden" asp-for="Ticket.CreatedBy.EmployeeId" value="@details?.EmployeeId" />
             <input type="hidden" asp-for="Ticket.CreatedBy.FirstName" value="@details?.FirstName" />

@@ -47,9 +47,10 @@ namespace NoSQL_Project.Services
 		{
 			return await _employeeRepo.SoftDeleteAsync(id);
 		}
+		//Hamza' Code
 		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
 		{
-			// hash user-entered password before checking
+			// hash entered password before checking
 			var hashed = HashPassword(password);
 			return await _employeeRepo.GetByLoginCredentialAsync(email, hashed);
 		}

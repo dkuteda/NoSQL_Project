@@ -31,7 +31,7 @@ namespace NoSQL_Project.Repositories
         public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
         {
             return await _tickets
-                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId)
+                .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId && t.Status == TicketStatus.open)
                 .SortByDescending(e => e.Status)
                 .ThenBy(e => e.Priority)
                 .ToListAsync();
@@ -80,5 +80,34 @@ namespace NoSQL_Project.Repositories
             var result = await _tickets.UpdateOneAsync(filter, update);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
+
+        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName)
+        {
+
+            var tickets = await _tickets.Find(_ => true).ToListAsync();
+
+
+            var handledTickets = tickets
+                .Where(t => t.HandledBy != null &&
+                    (t.HandledBy.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
+                     t.HandledBy.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+
+            int total = handledTickets.Count;
+            int resolved = handledTickets.Count(t => t.Status == TicketStatus.resolved || t.Status == TicketStatus.closed);
+
+
+            int transferred = tickets
+                .SelectMany(t => t.ResolutionSteps ?? new())
+                .Count(s => s.PresentHandler != null &&
+                    (s.PresentHandler.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
+                     s.PresentHandler.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)) &&
+                    s.Action.Equals("Transferred", StringComparison.OrdinalIgnoreCase));
+
+
+            return (total, resolved, transferred);
+        }
+
     }
 }

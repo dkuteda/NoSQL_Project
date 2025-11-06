@@ -7,6 +7,7 @@
 
     @if (userRole == "employee")
     {
+        <a asp-controller="Tickets" asp-action="DashBoard" class="d-block mb-2 text-white">Dashboard</a>
         <a asp-controller="Tickets" asp-action="Create" class="d-block mb-2 text-white">+ Create Ticket</a>
         <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">My Tickets</a>
     }
@@ -17,7 +18,7 @@
     }
     else if (userRole == "manager")
     {
-        <a asp-controller="Manager" asp-action="Dashboard" class="d-block mb-2 text-white">Dashboard</a>
+        <a asp-controller="Tickets" asp-action="DashBoard" class="d-block mb-2 text-white">Dashboard</a>
         <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">All Tickets</a>
         <a asp-controller="Employees" asp-action="Index" class="d-block mb-2 text-white">Employees</a>
        

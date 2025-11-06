@@ -18,5 +18,9 @@ namespace NoSQL_Project.Repositories.Interfaces
         Task CreateTicketAsync(Ticket ticket);
 
         Task<bool> CloseAsync(Ticket ticket);
+
+        Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName);
+
+
     }
 }
