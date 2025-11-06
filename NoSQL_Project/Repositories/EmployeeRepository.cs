@@ -48,7 +48,7 @@ namespace NoSQL_Project.Repositories
 			var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id); ;
 
 			var update = Builders<Employee>.Update
-				.Set(s => s.FirstName, employee.LastName)
+				.Set(s => s.FirstName, employee.FirstName)
 				.Set(s => s.LastName, employee.LastName)
 				.Set(s => s.Password, employee.Password)
 				.Set(s => s.Email, employee.Email)
