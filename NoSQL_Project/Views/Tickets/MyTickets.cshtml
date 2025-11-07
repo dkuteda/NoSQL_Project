@@ -18,6 +18,10 @@
             <button class="btn btn-dark">Search</button>
             <a href="/Tickets/Index" class="btn btn-outline-secondary">Reset</a>
         </form>
+
+        <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
+            Create a New Ticket
+        </a>
     </div>
 
     @if (ViewBag.ErrorMessage != null)
@@ -60,16 +64,16 @@
 
                             <p class="text-truncate">@ticket.Description</p>
 
-                            <a href="/Tickets/TicketDetails/@ticket.TicketId" class="stretched-link"></a>
+                            <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })" class="stretched-link"></a>
                         </div>
 
                         <div class="card-footer bg-white border-0 d-flex justify-content-between">
-                            <a href="/Tickets/UpdateTicket/@ticket.TicketId" class="btn btn-outline-primary btn-sm">
-                                ? Edit
+                            <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })" class="btn btn-outline-primary btn-sm">
+                                Edit
                             </a>
 
-                            <a href="/Tickets/CloseTicket/@ticket.TicketId" class="btn btn-outline-danger btn-sm">
-                                ?? Close
+                            <a href="@Url.Action("CloseTicket","Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
+                                Close
                             </a>
                         </div>
                     </div>
