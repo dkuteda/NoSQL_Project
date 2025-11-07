@@ -1,25 +1,33 @@
 @model NoSQL_Project.ViewModels.TicketViewModel
 
 <div class="container py-4">
-    @*Header*@
-    <div class="bg-light p-4 rounded-3 mb-4 d-flex justify-content-between align-items-center shadow-sm">
-        <h1 class="display-6 fw-bold mb-0">My Tickets</h1>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-dark">Filter</button>
-            <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
-                Create a New Ticket
-            </a>
-        </div>
-    </div>
-  
-@if (ViewBag != null && ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
-    </div>
-}
 
-    @*TicketList*@
+    <!-- Header -->
+    <div class="bg-light p-4 rounded-3 mb-4 shadow-sm">
+        <h1 class="display-6 fw-bold mb-3">My Tickets</h1>
+
+        <!-- Search Bar -->
+        <form class="d-flex gap-2 mb-2" method="get" action="/Tickets/Search">
+            <input name="text" class="form-control" placeholder="Search by title or description..." />
+
+            <select name="and" class="form-select w-auto">
+                <option value="false">OR (Any word)</option>
+                <option value="true">AND (All words)</option>
+            </select>
+
+            <button class="btn btn-dark">Search</button>
+            <a href="/Tickets/Index" class="btn btn-outline-secondary">Reset</a>
+        </form>
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+        </div>
+    }
+
+    <!-- Ticket Cards -->
     @if (Model.TicketList != null && Model.TicketList.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -27,54 +35,53 @@
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <!-- Clickable area -->
-                            <div class="position-relative mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title text-primary mb-2">@ticket.Title</h5>
-                                    @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
-                                    {
-                                        <span class="badge bg-success">Open</span>
-                                    }
-                                    else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
-                                    {
-                                        <span class="badge bg-secondary">Resolved</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Closed</span>
-                                    }
-                                </div>
+                        <div class="card-body">
 
-                                <p class="text-muted mb-1">
-                                    Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
-                                </p>
+                            <div class="d-flex justify-content-between">
+                                <h5 class="text-primary">@ticket.Title</h5>
 
-                                <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"
-                                   class="stretched-link"></a>
+                                @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
+                                {
+                                    <span class="badge bg-success">Open</span>
+                                }
+                                else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
+                                {
+                                    <span class="badge bg-warning">Resolved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Closed</span>
+                                }
                             </div>
 
-                            <div class="btn-group btn-group-sm d-flex justify-content-around">
-                                <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
-                                   class="btn btn-outline-primary">
-                                    <i class="fas fa-edit me-1"></i>Edit
-                                </a>
-                                <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId })"
-                                   class="btn btn-outline-danger">
-                                    <i class="fas fa-user-slash me-1"></i>Delete
-                                </a>
-                            </div>
+                            <p class="small text-muted mb-1">
+                                Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
+                            </p>
+
+                            <p class="text-truncate">@ticket.Description</p>
+
+                            <a href="/Tickets/TicketDetails/@ticket.TicketId" class="stretched-link"></a>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                            <a href="/Tickets/UpdateTicket/@ticket.TicketId" class="btn btn-outline-primary btn-sm">
+                                ? Edit
+                            </a>
+
+                            <a href="/Tickets/CloseTicket/@ticket.TicketId" class="btn btn-outline-danger btn-sm">
+                                ?? Close
+                            </a>
                         </div>
                     </div>
                 </div>
-
             }
         </div>
     }
     else
     {
         <div class="text-center text-muted py-5">
-            <p>No tickets found. Click <strong>Create a New Ticket</strong> to add one.</p>
+            <h5>No tickets found</h5>
+            <p>Try another search or create a new ticket.</p>
         </div>
     }
 </div>

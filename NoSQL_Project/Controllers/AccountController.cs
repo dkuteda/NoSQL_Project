@@ -17,5 +17,8 @@ namespace NoSQL_Project.Controllers
 		}
 
 		public async Task<ActionResult> ForgotPasswordConfirmation()
-	}
+        {
+            return View();
+        }
+    }
 }

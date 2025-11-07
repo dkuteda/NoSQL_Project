@@ -53,5 +53,11 @@ namespace NoSQL_Project.Services
         {
             return  _ticketRepo.GetEmployeeStatsAsync(firstName, lastName);
         }
+
+        public Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        {
+            return _ticketRepo.SearchTicketsAsync(searchText, useAnd);
+        }
+
     }
 }

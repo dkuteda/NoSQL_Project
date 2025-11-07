@@ -109,5 +109,31 @@ namespace NoSQL_Project.Repositories
             return (total, resolved, transferred);
         }
 
+        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return await _tickets.Find(_ => true)
+                                     .SortByDescending(t => t.CreatedAt)
+                                     .ToListAsync();
+
+            var words = searchText.Split(" ");
+
+            var filters = words.Select(word =>
+                Builders<Ticket>.Filter.Or(
+                    Builders<Ticket>.Filter.Regex(t => t.Title, word),
+                    Builders<Ticket>.Filter.Regex(t => t.Description, word)
+                )
+            );
+
+            var finalFilter = useAnd
+                ? Builders<Ticket>.Filter.And(filters)  // ALL words must match
+                : Builders<Ticket>.Filter.Or(filters);  // ANY word can match
+
+            return await _tickets.Find(finalFilter)
+                                 .SortByDescending(t => t.CreatedAt) // newest first
+                                 .ToListAsync();
+        }
+
+
     }
 }
