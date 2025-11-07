@@ -21,6 +21,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName);
 
+        Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
 
     }
 }

@@ -15,7 +15,7 @@ namespace NoSQL_Project.Controllers
         public TicketsController(ITicketService ticketService) => _ticketService = ticketService;
 
         public async Task<IActionResult> Index()
-        {   
+        {
             var employee = new EmployeeDetails
             {
                 EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty
@@ -32,7 +32,7 @@ namespace NoSQL_Project.Controllers
         [HttpGet("TicketDetails")]
         public IActionResult TicketDetails(string id)
         {
-            
+
             var ticket = _ticketService.GetByIdAsync(id).Result;
             if (ticket == null) return NotFound();
             var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
@@ -52,7 +52,7 @@ namespace NoSQL_Project.Controllers
             return View();
         }
 
-        [HttpGet ("UpdateTicket")]
+        [HttpGet("UpdateTicket")]
         public IActionResult UpdateTicket(string id)
         {
             var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
@@ -65,7 +65,7 @@ namespace NoSQL_Project.Controllers
             return View(ViewModel);
         }
 
-        [HttpPost ("UpdateTicket")]
+        [HttpPost("UpdateTicket")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTicket(TicketViewModel ticketViewModel)
         {
@@ -73,7 +73,7 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return RedirectToAction("Tickets", "Index");
+                return Redirect("/MyTickets");
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace NoSQL_Project.Controllers
             {
                 Ticket = new Ticket
                 {
-                    TicketId = Guid.NewGuid().ToString() 
+                    TicketId = Guid.NewGuid().ToString()
                 },
                 TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
                     .Cast<TypeOfIncident>()
@@ -130,7 +130,7 @@ namespace NoSQL_Project.Controllers
         [HttpGet("CloseTicket")]
         public IActionResult CloseTicket(string id)
         {
-            var ticket = _ticketService.GetByIdAsync(id).Result;
+            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
             if (ticket == null)
             {
                 return NotFound();
@@ -168,82 +168,54 @@ namespace NoSQL_Project.Controllers
             }
         }
 
-        [HttpGet("EscalateTicket")]
-        public IActionResult EscalateTicket(string id)
-        {
-            var ticket = _ticketService.GetByIdAsync(id).Result;
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
-
-            return View(ViewModel);
-        }
-
-        [HttpPost("EscalateTicket")]
-        public async Task<IActionResult> EscalateTicket(Ticket ticket)
-        {
-            try
-            {
-                bool isClosed = await _ticketService.CloseAsync(ticket);
-                if (isClosed)
-                {
-                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Ticket not found or already closed";
-                }
-                return Redirect("Index");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                };
-                return View(viewModel);
-            }
-        }
-
-
-
         [HttpGet("Dashboard")]
-public async Task<IActionResult> Dashboard()
-{
-    var employeeId = HttpContext.Session.GetString("EmployeeId");
-    var userRole = HttpContext.Session.GetString("EmployeeRole");
+        public async Task<IActionResult> Dashboard()
+        {
+            var employeeId = HttpContext.Session.GetString("EmployeeId");
+            var userRole = HttpContext.Session.GetString("EmployeeRole");
 
-    // get all tickets or only user's tickets depending on role
-    List<Ticket> tickets;
-    if (userRole == "employee")
-    {
-        var employee = new EmployeeDetails { EmployeeId = employeeId };
-        tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
-    }
-    else
-    {
-        tickets = await _ticketService.GetAllTicketsAsync();
-    }
+            // get all tickets or only user's tickets depending on role
+            List<Ticket> tickets;
+            if (userRole == "employee")
+            {
+                var employee = new EmployeeDetails { EmployeeId = employeeId };
+                tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
+            }
+            else
+            {
+                tickets = await _ticketService.GetAllTicketsAsync();
+            }
 
-    int total = tickets.Count;
-    int open = tickets.Count(t => t.Status == Enums.TicketStatus.open);
-    int resolved = tickets.Count(t => t.Status == Enums.TicketStatus.resolved);
-    int closed = tickets.Count(t => t.Status == Enums.TicketStatus.closed);
+            int total = tickets.Count;
+            int open = tickets.Count(t => t.Status == Enums.TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == Enums.TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == Enums.TicketStatus.closed);
 
-    var model = new DashboardViewModel
-    {
-        TotalTickets = total,
-        OpenPercent = total > 0 ? (open * 100) / total : 0,
-        ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
-        ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-        TicketList = tickets.Take(5).ToList() // first 5 tickets only
-    };
+            var model = new DashboardViewModel
+            {
+                TotalTickets = total,
+                OpenPercent = total > 0 ? (open * 100) / total : 0,
+                ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
+                ClosedPercent = total > 0 ? (closed * 100) / total : 0,
+                TicketList = tickets.Take(5).ToList() // first 5 tickets only
+            };
 
-    return View(model);
-}
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string text, bool and = false)
+        {
+            var results = await _ticketService.SearchTicketsAsync(text, and);
+
+            var model = new TicketViewModel
+            {
+                TicketList = results
+            };
+
+            return View("MyTickets", model);
+        }
+
 
 
     }
