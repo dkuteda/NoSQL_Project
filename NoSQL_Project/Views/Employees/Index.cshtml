@@ -39,16 +39,6 @@
                 <option value="@location" selected="@(location == Model.SelectedLocation ? "selected" : null)">@location</option>
             }
         </select>
-
-        <label for="Gender">Gender:</label>
-        <select id="Gender" name="Gender">
-            <option value="">-- Select Gender--</option>
-            @foreach (var gender in Model.Genders)
-            {
-                <option value="@gender" selected="@(gender == Model.SelectedGender ? "selected" : null)">@gender</option>
-            }
-        </select>
-
         <button type="submit">View Employees</button>
     </form>
 }
@@ -70,7 +60,6 @@
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Gender</th>
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Role</th>
@@ -92,7 +81,6 @@
                 <tr class="@rowClass">
                     <td>@employee.FirstName</td>
                     <td>@employee.LastName</td>
-                    <td>@employee.Gender</td>
                     <td>@employee.Email</td>
                     <td>@employee.PhoneNumber</td>
                     <td>@employee.UserRole</td>

@@ -18,18 +18,19 @@ namespace NoSQL_Project.Controllers
 
 		public EmployeesController(IEmployeeService employeeService) => _employeeService = employeeService;
 
-		public async Task<IActionResult> Index(Gender? gender, Location? location, UserRole? userRole)
+		public async Task<IActionResult> Index(Location? location, UserRole? userRole)
 		{
-			List<Employee> employees = await _employeeService.GetAllAsync(gender, location, userRole);
+			List<Employee> employees = await _employeeService.GetAllAsync(location, userRole);
 			EmployeeViewModel employeeViewModel = new EmployeeViewModel
 			{
 				EmployeesList = employees,
-				SelectedGender = gender,
 				SelectedLocation = location,
 				SelectedUserRole = userRole,
 			};
 			return View(employeeViewModel);
 		}
+
+		// Hamza's Code
 
 		[HttpGet]
 		public IActionResult Login()
@@ -53,8 +54,6 @@ namespace NoSQL_Project.Controllers
 				return View(loginModel);
 			}	
 
-
-
 			// ✅ Store in session object id class is available but just implemented later
 			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
 			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
@@ -71,8 +70,7 @@ namespace NoSQL_Project.Controllers
 				default:
 					return RedirectToAction("Index", "Home"); 
 
-			}         
-
+			}       
         }
 
 		public IActionResult Logout()
@@ -80,6 +78,17 @@ namespace NoSQL_Project.Controllers
 			HttpContext.Session.Clear();
 			return RedirectToAction("Login", "Employees");
 		}
+
+		public IActionResult CheckSession()
+		{
+			var id = HttpContext.Session.GetString("EmployeeId");
+			var name = HttpContext.Session.GetString("EmployeeName");
+			var role = HttpContext.Session.GetString("EmployeeRole");
+
+			return Content($"ID: {id ?? "none"} | Name: {name ?? "none"} | Role: {role ?? "none"}");
+		}
+
+		// David's Code
 
 		[HttpGet]
 		public IActionResult AddEmployee()
@@ -90,9 +99,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -110,9 +116,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -145,15 +148,13 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
 			};
 			return View(viewModel);
 		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> UpdateEmployee(Employee employee)
@@ -164,9 +165,6 @@ namespace NoSQL_Project.Controllers
 				UserRoleOptions = Enum.GetValues(typeof(UserRole))
 					.Cast<UserRole>()
 					.Select(r => new SelectListItem { Text = r.ToString(), Value = r.ToString() }),
-				GenderOptions = Enum.GetValues(typeof(Gender))
-					.Cast<Gender>()
-					.Select(g => new SelectListItem { Text = g.ToString(), Value = g.ToString() }),
 				LocationOptions = Enum.GetValues(typeof(Location))
 					.Cast<Location>()
 					.Select(l => new SelectListItem { Text = l.ToString(), Value = l.ToString() })
@@ -181,34 +179,7 @@ namespace NoSQL_Project.Controllers
 					return View(viewModel);
 				}
 
-				if (!string.IsNullOrWhiteSpace(employee.FirstName))
-					existingEmployee.FirstName = employee.FirstName;
-
-				if (!string.IsNullOrWhiteSpace(employee.LastName))
-					existingEmployee.LastName = employee.LastName;
-
-				if (!string.IsNullOrWhiteSpace(employee.Email))
-					existingEmployee.Email = employee.Email.Trim();
-
-				if (!string.IsNullOrWhiteSpace(employee.PhoneNumber))
-					existingEmployee.PhoneNumber = employee.PhoneNumber;
-
-				if (employee.Gender.HasValue && employee.Gender.Value != default(Gender))
-					existingEmployee.Gender = employee.Gender.Value;
-
-				if (employee.Location.HasValue && employee.Location.Value != default(Location))
-					existingEmployee.Location = employee.Location.Value;
-
-				if (employee.UserRole.HasValue && employee.UserRole.Value != default(UserRole))
-					existingEmployee.UserRole = employee.UserRole.Value;
-
-				if (!string.IsNullOrWhiteSpace(employee.Password))
-				{
-					existingEmployee.Password = employee.Password; // HashPassword(employee.Password);
-				}
-				existingEmployee.IsActive = employee.IsActive;
-
-				await _employeeService.UpdateEmployeeAsync(existingEmployee);
+				await _employeeService.UpdateEmployeeAsync(employee.EmployeeId, employee);
 
 				TempData["SuccessMessage"] = "Employee has been updated successfully";
 				return RedirectToAction("Index");
@@ -219,10 +190,6 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-		/*private string HashPassword(string password)
-		{
-			return password;
-		}*/
 
 		[HttpGet]
 		public IActionResult SoftDeleteEmployee(string id) 
@@ -266,13 +233,5 @@ namespace NoSQL_Project.Controllers
 				return View(viewModel);
 			}
 		}
-        public IActionResult CheckSession()
-        {
-            var id = HttpContext.Session.GetString("EmployeeId");
-            var name = HttpContext.Session.GetString("EmployeeName");
-            var role = HttpContext.Session.GetString("EmployeeRole");
-
-            return Content($"ID: {id ?? "none"} | Name: {name ?? "none"} | Role: {role ?? "none"}");
-        }
     }
 }

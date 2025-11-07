@@ -15,7 +15,6 @@ namespace NoSQL_Project.ViewModels
         public IEnumerable<SelectListItem> TypeOfIncidentOptions { get; set; }
         public IEnumerable<SelectListItem> PriorityOptions { get; set; }
 
-        // Used for index
-        public List<Ticket> TicketList { get; set; }
+        public List<Ticket> TicketList { get; set; } = new List<Ticket>();
     }
 }

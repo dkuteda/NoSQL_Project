@@ -48,5 +48,10 @@ namespace NoSQL_Project.Services
         {
             return _ticketRepo.CloseAsync(ticket);
         }
+
+        public Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName)
+        {
+            return  _ticketRepo.GetEmployeeStatsAsync(firstName, lastName);
+        }
     }
 }

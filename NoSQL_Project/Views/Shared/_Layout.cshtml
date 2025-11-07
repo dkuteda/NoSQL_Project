@@ -133,17 +133,16 @@
         <div class="sidebar">
             <h5 class="mb-3 text-uppercase text-secondary">Menu</h5>
 
-            <!--  shows what actually in session -->
-            <!--  displays stuuf ccording to the role of user for side bar-->
+            <!--  displays stuuff ccording to the role of user for side bar-->
             <p style="color:#ccc; font-size:0.9rem;">
-                <!--  just a check to know if the session is being read correctly  -->
+                <!--  for me: just a check to know if the session is being read correctly  -->
                 DEBUG → Role: @userRole | Name: @userName | ID: @employeeId
             </p>
 
             @if (userRole == "employee")
 
             {
-                
+                <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
                 <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
             }
 
@@ -161,7 +160,7 @@
             else if (userRole == "manager")
 
             {
-                <a asp-controller="Manager" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+                <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
                 <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> Tickets</a>
                 <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
              
@@ -177,11 +176,7 @@
     </div>
 
     
-    <footer class="border-top text-muted">
-        <div class="container">
-            &copy; 2025 - NoSQL_Project - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
