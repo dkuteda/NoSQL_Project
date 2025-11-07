@@ -55,6 +55,7 @@ namespace NoSQL_Project.Services
 		}
 		private static string HashPassword(string password)
 		{
+			// use B authentication
 			using var sha256 = SHA256.Create();
 			var bytes = Encoding.UTF8.GetBytes(password);
 			var hash = sha256.ComputeHash(bytes);

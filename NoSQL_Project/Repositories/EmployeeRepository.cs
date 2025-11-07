@@ -18,6 +18,7 @@ namespace NoSQL_Project.Repositories
 
 		public async Task<List<Employee>> GetAllAsync(Gender? gender, Location? location, UserRole? userRole)
 		{
+			// remove gender
 			var filterBuilder = Builders<Employee>.Filter;
 			var filter = filterBuilder.Empty;
 
@@ -48,6 +49,7 @@ namespace NoSQL_Project.Repositories
 		}
 		public async Task<bool> SoftDeleteAsync(string id)
 		{
+			// use update and change in service layer
 			var employee = await GetByIdAsync(id);
 			if (employee == null || !employee.IsActive)
 				return false; // Not found or already inactive
@@ -61,10 +63,10 @@ namespace NoSQL_Project.Repositories
 
 
 		//Hamzas code for getting the login info 
-		public async Task<Employee?> GetByLoginCredentialAsync(string email, string password)
+		public async Task<Employee?> GetByLoginCredentialAsync(string email, string hashedPassword)
 		{
 			var filter = Builders<Employee>.Filter.Eq(e => e.Email, email) &
-						 Builders<Employee>.Filter.Eq(e => e.Password, password);
+						 Builders<Employee>.Filter.Eq(e => e.Password, hashedPassword);
 
 			return await _employees.Find(filter).FirstOrDefaultAsync();
 		}
