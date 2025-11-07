@@ -27,6 +27,12 @@
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Ticket.TicketId" />
             <input type="hidden" asp-for="Ticket.ResolutionSteps" />
+            <input type="hidden" asp-for="Ticket.Priority" />
+            <input type="hidden" asp-for="Ticket.TypeOfIncident" />
+            <input type="hidden" asp-for="Ticket.Deadline" />
+            <input type="hidden" asp-for="Ticket.CreatedAt" />
+            <input type="hidden" asp-for="Ticket.CreatedBy" />
+            <input type="hidden" asp-for="Ticket.HandledBy" />
 
             <div class="form-section">
                 <h3 class="form-section-title">
@@ -54,70 +60,6 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.Priority" class="form-label">
-                                <i class="fas fa-venus-mars me-2"></i>Priority
-                            </label>
-                            <select asp-for="Ticket.Priority" asp-items="Model.PriorityOptions"
-                                    class="form-control form-control-select"></select>
-                            <span asp-validation-for="Ticket.Priority" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.TypeOfIncident" class="form-label">
-                                <i class="fas fa-map-marker-alt me-2"></i>Type Of Incident
-                            </label>
-                            <select asp-for="Ticket.TypeOfIncident" asp-items="Model.TypeOfIncidentOptions"
-                                    class="form-control form-control-select"></select>
-                            <span asp-validation-for="Ticket.TypeOfIncident" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.Deadline" class="form-label">
-                                <i class="fas fa-signature me-2"></i>Descripion
-                            </label>
-                            <input asp-for="Ticket.Deadline" class="form-control" required />
-                            <span asp-validation-for="Ticket.Deadline" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.CreatedAt" class="form-label">
-                                <i class="fas fa-signature me-2"></i>CreatedAt
-                            </label>
-                            <input asp-for="Ticket.CreatedAt" class="form-control" required />
-                            <span asp-validation-for="Ticket.CreatedAt" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.CreatedBy" class="form-label">
-                                <i class="fas fa-signature me-2"></i>CreatedBy
-                            </label>
-                            <input asp-for="Ticket.CreatedBy" class="form-control" required />
-                            <span asp-validation-for="Ticket.CreatedBy" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group-enhanced">
-                            <label asp-for="Ticket.HandledBy" class="form-label">
-                                <i class="fas fa-signature me-2"></i>HandledBy
-                            </label>
-                            <input asp-for="Ticket.HandledBy" class="form-control" required />
-                            <span asp-validation-for="Ticket.HandledBy" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Contact Information Section -->
             <div class="form-section">
                 <h3 class="form-section-title">
@@ -141,7 +83,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-save me-2"></i>Update Ticket
                         </button>
-                        <a href="/MyTickets" class="btn btn-secondary btn-lg">
+                        <a href="/Tickets/Index" class="btn btn-secondary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
                     </div>

@@ -39,7 +39,12 @@ namespace NoSQL_Project.Repositories
 
         public async Task UpdateTicketAsync(Ticket ticket)
         {
-            await _tickets.ReplaceOneAsync(s => s.TicketId == ticket.TicketId, ticket);
+            var update = Builders<Ticket>.Update
+    .Set(t => t.Status, ticket.Status)
+    .Set(t => t.Title, ticket.Title)
+    .Set(t => t.Description, ticket.Description);
+
+            await _tickets.UpdateOneAsync(t => t.TicketId == ticket.TicketId, update);
         }
 
         public async Task<Ticket> GetByIdAsync(string id)

@@ -73,7 +73,7 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return Redirect("/MyTickets");
+                return RedirectToAction("Tickets", "Index");
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace NoSQL_Project.Controllers
         [HttpGet("CloseTicket")]
         public IActionResult CloseTicket(string id)
         {
-            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
+            var ticket = _ticketService.GetByIdAsync(id).Result;
             if (ticket == null)
             {
                 return NotFound();
@@ -168,7 +168,49 @@ namespace NoSQL_Project.Controllers
             }
         }
 
-      [HttpGet("Dashboard")]
+        [HttpGet("EscalateTicket")]
+        public IActionResult EscalateTicket(string id)
+        {
+            var ticket = _ticketService.GetByIdAsync(id).Result;
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var ViewModel = _ticketService.FillTicketInfo(ticket);
+
+            return View(ViewModel);
+        }
+
+        [HttpPost("EscalateTicket")]
+        public async Task<IActionResult> EscalateTicket(Ticket ticket)
+        {
+            try
+            {
+                bool isClosed = await _ticketService.CloseAsync(ticket);
+                if (isClosed)
+                {
+                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Ticket not found or already closed";
+                }
+                return Redirect("Index");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+                var viewModel = new TicketViewModel
+                {
+                    Ticket = ticket,
+                };
+                return View(viewModel);
+            }
+        }
+
+
+
+        [HttpGet("Dashboard")]
 public async Task<IActionResult> Dashboard()
 {
     var employeeId = HttpContext.Session.GetString("EmployeeId");
