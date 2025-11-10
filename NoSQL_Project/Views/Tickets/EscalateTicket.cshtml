@@ -1,7 +1,7 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
+﻿@model NoSQL_Project.ViewModels.EscalateViewModel
 
 @{
-    ViewData["Title"] = "Deactivate Ticket";
+    ViewData["Title"] = "Escalate Ticket";
 }
 
 <div class="form-page-header" style="background: linear-gradient(135deg, #c44536 0%, #d63031 100%);">
@@ -43,7 +43,7 @@
             </p>
         </div>
 
-        <!-- Employee Information -->
+        <!-- Ticket Information -->
         <div class="form-section">
             <h3 class="form-section-title">
                 <i class="fas fa-user-circle"></i>Ticket Details
@@ -62,11 +62,19 @@
                     </div>
                     <div class="col-md-6">
                         <dl>
-
-                            <dt><i class="fas fa-map-marker-alt me-2"></i>Priority:</dt>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Old priority:</dt>
                             <dd>@Model.Ticket.Priority</dd>
 
-                            <dt><i class="fas fa-map-marker-alt me-2"></i>Deadline:</dt>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>New priority:</dt>
+                            <dd>@Model.Ticket.Priority</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Old Deadline:</dt>
+                            <dd>@Model.Ticket.Deadline</dd>
+
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>New deadline:</dt>
                             <dd>@Model.Ticket.Deadline</dd>
                         </dl>
                     </div>

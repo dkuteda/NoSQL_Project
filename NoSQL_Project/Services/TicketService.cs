@@ -59,5 +59,10 @@ namespace NoSQL_Project.Services
             return _ticketRepo.SearchTicketsAsync(searchText, useAnd);
         }
 
+        public EscalateViewModel FillEscalateInfo(Ticket ticket)
+        {
+            return _ticketRepo.FillEscalateInfo(ticket);
+        }
+
     }
 }

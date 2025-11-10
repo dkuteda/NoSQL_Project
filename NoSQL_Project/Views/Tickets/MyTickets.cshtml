@@ -72,7 +72,11 @@
                                 Edit
                             </a>
 
-                            <a href="@Url.Action("CloseTicket","Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
+                            <a href="@Url.Action("EscalateTicket", "Tickets"), new { id = ticket.TicketId })" class="btn btn-outline-dark btn-sm">
+                                Escalate
+                            </a>
+
+                            <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
                                 Close
                             </a>
                         </div>

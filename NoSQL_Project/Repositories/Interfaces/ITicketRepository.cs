@@ -23,5 +23,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
 
+        EscalateViewModel FillEscalateInfo(Ticket ticket);
+
     }
 }
