@@ -93,9 +93,9 @@ namespace NoSQL_Project.Repositories
 
 
             var handledTickets = tickets
-                .Where(t => t.HandledBy != null &&
-                    (t.HandledBy.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     t.HandledBy.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)))
+                .Where(t => t.ResolutionSteps.Last().PresentHandler != null &&
+                    (t.ResolutionSteps.Last().PresentHandler.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
+                     t.ResolutionSteps.Last().PresentHandler.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
 
@@ -139,6 +139,20 @@ namespace NoSQL_Project.Repositories
                                  .ToListAsync();
         }
 
+        public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, string.Empty);
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
+            var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
+
+            var result = await _tickets.UpdateOneAsync(filter, update);
+
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
 
     }
 }

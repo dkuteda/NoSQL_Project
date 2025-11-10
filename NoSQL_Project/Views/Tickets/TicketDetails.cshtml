@@ -23,26 +23,35 @@
 
             <hr />
 
+            
             <div>
                 @if(Model.ResolutionSteps != null)
                 {
+                    <form class="d-flex gap-2 mb-2">
+                        
+                    </form>
                     @foreach (var step in Model.ResolutionSteps)
                     {
                         <div class="p-3 my-2 rounded bg-light border">
-                            <div class="fw-bold text-primary">@Model.HandledBy.FirstName @Model.HandledBy.LastName</div>
+                            <div class="fw-bold text-primary">@Model.ResolutionSteps.Last().PresentHandler.FirstName @Model.ResolutionSteps.Last().PresentHandler.LastName</div>
                             <div>@step.Action</div>
                             @*      <div class="text-muted small mt-1">@msg.Time.ToString("HH:mm")</div> *@
                         </div>
                     }
+                    <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
+                        <div class="mb-3">
+                            <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Add Response</button>
+                    </form>
+                }
+                else
+                {
+                    <div>
+                        <button class="btn btn-primary m-1">Assign myself to this ticket</button>
+                    </div>
                 }
             </div>
-
-                <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
-                    <div class="mb-3">
-                        <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Add Response</button>
-                </form>
         </div>
     </div>
 </div>
