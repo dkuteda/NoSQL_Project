@@ -12,5 +12,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 		Task<bool> SoftDeleteAsync(string id);
 		Task<Employee?> GetByLoginCredentialAsync(string email, string password);
 		Task<bool> EmailAddressExistsAsync(string email);
-	}
+		Task<List<Employee>> AutocompleteSearchEmployees(string name);
+
+    }
 }

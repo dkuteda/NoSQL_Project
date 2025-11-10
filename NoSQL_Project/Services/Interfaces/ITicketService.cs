@@ -22,7 +22,12 @@ namespace NoSQL_Project.Services.Interfaces
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
 
+<<<<<<< HEAD
         EscalateViewModel FillEscalateInfo(Ticket ticket);
+=======
+        Task AddResolutionStep(string ticketId, EmployeeDetails details);
+        Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details);
+>>>>>>> 97600f9e0183fb39a435bd6339b12c09ca18e65a
 
     }
 }

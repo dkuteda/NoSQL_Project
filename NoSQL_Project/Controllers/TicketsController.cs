@@ -36,7 +36,7 @@ namespace NoSQL_Project.Controllers
             var ticket = _ticketService.GetByIdAsync(id).Result;
             if (ticket == null) return NotFound();
             var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
-            bool isAssignee = ticket.HandledBy != null && ticket.HandledBy.EmployeeId == employeeId;
+            bool isAssignee = ticket.ResolutionSteps.Last().PresentHandler != null && ticket.ResolutionSteps.Last().PresentHandler.EmployeeId == employeeId;
             ViewData["isAssignee"] = isAssignee;
             return View(ticket);
         }
@@ -62,7 +62,7 @@ namespace NoSQL_Project.Controllers
             }
             var ViewModel = _ticketService.FillTicketInfo(ticket);
 
-            return View(ViewModel);
+            return View( ViewModel);
         }
 
         [HttpPost("UpdateTicket")]
@@ -73,12 +73,12 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return RedirectToAction("Tickets", "Index");
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                return View(ticketViewModel);
+                return View( ticketViewModel);
             }
         }
 
@@ -130,7 +130,7 @@ namespace NoSQL_Project.Controllers
         [HttpGet("CloseTicket")]
         public IActionResult CloseTicket(string id)
         {
-            var ticket = _ticketService.GetByIdAsync(id).Result;
+            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
             if (ticket == null)
             {
                 return NotFound();
@@ -155,7 +155,7 @@ namespace NoSQL_Project.Controllers
                 {
                     TempData["ErrorMessage"] = "Ticket not found or already closed";
                 }
-                return Redirect("Index");
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -164,47 +164,7 @@ namespace NoSQL_Project.Controllers
                 {
                     Ticket = ticket,
                 };
-                return View(viewModel);
-            }
-        }
-
-        [HttpGet("EscalateTicket")]
-        public IActionResult EscalateTicket(string id)
-        {
-            var ticket = _ticketService.GetByIdAsync(id).Result;
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
-
-            return View(ViewModel);
-        }
-
-        [HttpPost("EscalateTicket")]
-        public async Task<IActionResult> EscalateTicket(Ticket ticket)
-        {
-            try
-            {
-                bool isClosed = await _ticketService.CloseAsync(ticket);
-                if (isClosed)
-                {
-                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Ticket not found or already closed";
-                }
-                return Redirect("Index");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                };
-                return View(viewModel);
+                return View("Index",viewModel);
             }
         }
 
