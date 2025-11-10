@@ -139,7 +139,21 @@ namespace NoSQL_Project.Repositories
                                  .ToListAsync();
         }
 
-<<<<<<< HEAD
+        public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, string.Empty);
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
+            var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
+
+            var result = await _tickets.UpdateOneAsync(filter, update);
+
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
+
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             Priority newPriority;
@@ -166,21 +180,6 @@ namespace NoSQL_Project.Repositories
 
 
             return new EscalateViewModel(ticket, newPriority, newDeadline);
-=======
-        public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
-        {
-            ResolutionStep step = new ResolutionStep(details, string.Empty);
-            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
-            var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
-
-            var result = await _tickets.UpdateOneAsync(filter, update);
-
-            if (!result.IsAcknowledged)
-            {
-                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
-            }
-            else { Console.WriteLine("Update successful"); }
->>>>>>> 97600f9e0183fb39a435bd6339b12c09ca18e65a
         }
 
     }
