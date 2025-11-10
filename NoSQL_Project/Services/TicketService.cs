@@ -59,5 +59,19 @@ namespace NoSQL_Project.Services
             return _ticketRepo.SearchTicketsAsync(searchText, useAnd);
         }
 
+        public Task AddResolutionStep(string ticketId, EmployeeDetails details)
+        {
+            return _ticketRepo.AddResolutionStep(ticketId, details);
+        }
+
+        public Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
+        {
+            if (ticket.ResolutionSteps == null || !ticket.ResolutionSteps.Any())
+            {
+                return _ticketRepo.AddResolutionStep(ticket.TicketId, details);
+            }
+            throw new InvalidOperationException("This ticket is assigned to someone else/you're already assigned to it.");
+        }
+
     }
 }

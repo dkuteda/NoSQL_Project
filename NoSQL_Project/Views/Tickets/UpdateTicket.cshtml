@@ -32,7 +32,7 @@
             <input type="hidden" asp-for="Ticket.Deadline" />
             <input type="hidden" asp-for="Ticket.CreatedAt" />
             <input type="hidden" asp-for="Ticket.CreatedBy" />
-            <input type="hidden" asp-for="Ticket.HandledBy" />
+            <input type="hidden" asp-for="Ticket.ResolutionSteps.Last().PresentHandler" />
 
             <div class="form-section">
                 <h3 class="form-section-title">

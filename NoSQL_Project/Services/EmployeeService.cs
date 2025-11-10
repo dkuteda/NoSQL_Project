@@ -87,7 +87,12 @@ namespace NoSQL_Project.Services
 			var bytes = Encoding.UTF8.GetBytes(password);
 			var hash = sha256.ComputeHash(bytes);
 			return Convert.ToBase64String(hash);
-		}		
-	}
+		}	
+		
+		public async Task<List<Employee>> AutocompleteSearchEmployees(string name)
+		{
+			return await _employeeRepo.AutocompleteSearchEmployees(name);
+        }
+    }
 }
 
