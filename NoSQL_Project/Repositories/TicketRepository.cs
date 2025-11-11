@@ -61,11 +61,8 @@ namespace NoSQL_Project.Repositories
                 StatusOptions = Enum.GetValues(typeof(TicketStatus))
             .Cast<TicketStatus>()
             .Select(s => new SelectListItem { Text = s.ToString(), Value = s.ToString() }),
-
-                TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
-            .Cast<TypeOfIncident>()
-            .Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString() }),
-
+                //hi Kyra, there was an error here because i moved my select thingies into the viewmodel
+                //so I removed it... that ok? btw, these can be computed properties in the viewmodel
                 PriorityOptions = Enum.GetValues(typeof(Priority))
             .Cast<Priority>()
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
@@ -86,7 +83,7 @@ namespace NoSQL_Project.Repositories
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
 
-        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName)
+        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string Lastname)
         {
 
             var tickets = await _tickets.Find(_ => true).ToListAsync();
@@ -94,8 +91,8 @@ namespace NoSQL_Project.Repositories
 
             var handledTickets = tickets
                 .Where(t => t.ResolutionSteps.Last().PresentHandler != null &&
-                    (t.ResolutionSteps.Last().PresentHandler.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     t.ResolutionSteps.Last().PresentHandler.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)))
+                    (t.ResolutionSteps.Last().PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
+                     t.ResolutionSteps.Last().PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
 
@@ -106,8 +103,8 @@ namespace NoSQL_Project.Repositories
             int transferred = tickets
                 .SelectMany(t => t.ResolutionSteps ?? new())
                 .Count(s => s.PresentHandler != null &&
-                    (s.PresentHandler.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     s.PresentHandler.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase)) &&
+                    (s.PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
+                     s.PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)) &&
                     s.Action.Equals("Transferred", StringComparison.OrdinalIgnoreCase));
 
 

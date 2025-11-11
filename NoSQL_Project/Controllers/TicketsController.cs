@@ -82,29 +82,49 @@ namespace NoSQL_Project.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
+        {
+            try 
+            {
+                _ticketService.AssignMyselfToTicket(ticket, details);
+                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
+            }
+            catch (Exception ex) 
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult TransferTicket(string ticketId, EmployeeDetails details)
+        {
+            try
+            {
+                _ticketService.AddResolutionStep(ticketId, details);
+                return RedirectToAction("TicketDetails", new { id = ticketId });
+            }
+            catch(Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("TicketDetails", new { id = ticketId });
+            }
+        }
+
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
             var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
             var employeeName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty;
-            ViewData["EmployeeDetails"] = new EmployeeDetails()
+            ViewData["EmployeeDetails"] = new EmployeeDetails
             {
                 EmployeeId = employeeId,
-                FirstName = employeeName
+                Firstname = employeeName
             };
             var viewModel = new TicketViewModel
             {
-                Ticket = new Ticket
-                {
-                    TicketId = Guid.NewGuid().ToString()
-                },
-                TypeOfIncidentOptions = Enum.GetValues(typeof(TypeOfIncident))
-                    .Cast<TypeOfIncident>()
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.ToString(),
-                        Text = e.ToString()
-                    })
+                Ticket = new() { TicketId = Guid.NewGuid().ToString() }
             };
             return View(viewModel);
         }
