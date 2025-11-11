@@ -1,7 +1,7 @@
 ﻿@model NoSQL_Project.Models.Ticket;
 @{
     ViewData["Title"] = "Ticket Details";
-    Employee? loggedInEmployee = ViewData["LoggedInEmployee"] as Employee;
+    EmployeeDetails? loggedInEmployee = ViewData["LoggedInEmployee"] as EmployeeDetails;
 }
 
 <div class="container py-4">
@@ -60,9 +60,9 @@
                         <form asp-action="TransferTicket" asp-controller="" method="post">
                             <input type="hidden" value="@Model.TicketId" name="ticketId" />
                             <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
-                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
-                            <input type="hidden" value="@loggedInEmployee.LastName" name="Lastname" />
-                            <button type="submit" class="btn btn-primary">Transfer Ticket</button>
+                            <input type="hidden" value="@loggedInEmployee.Firstname" name="firstName" />
+                            <input type="hidden" value="@loggedInEmployee.Lastname" name="Lastname" />
+                            <button type="submit" class="btn btn-primary">Transfer this Ticket</button>
                         </form>
                     }
                     else{
@@ -77,8 +77,8 @@
                         <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
                             <input type="hidden" value="@Model.TicketId" name="ticketId" />
                             <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
-                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
-                            <input type="hidden" value="@loggedInEmployee.LastName" name="Lastname" />
+                            <input type="hidden" value="@loggedInEmployee.Firstname" name="firstName" />
+                            <input type="hidden" value="@loggedInEmployee.Lastname" name="lastName" />
                             <button class="btn btn-primary m-1" type="submit">Assign myself to this ticket</button>
                         </form>
                     </div>
