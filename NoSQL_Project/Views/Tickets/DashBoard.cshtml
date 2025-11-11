@@ -91,7 +91,7 @@
                                 )">@ticket.Status</span>
                             </td>
                             <td>@ticket.Priority</td>
-                            <td>@ticket.CreatedBy?.FirstName</td>
+                            <td>@ticket.CreatedBy?.Firstname</td>
                             <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
                             <td>
                                 <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"

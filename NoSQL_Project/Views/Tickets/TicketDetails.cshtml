@@ -1,6 +1,7 @@
 ﻿@model NoSQL_Project.Models.Ticket;
 @{
     ViewData["Title"] = "Ticket Details";
+    Employee? loggedInEmployee = ViewData["LoggedInEmployee"] as Employee;
 }
 
 <div class="container py-4">
@@ -10,45 +11,76 @@
                 <i class="bi bi-arrow-left"></i>
             </a>
             <h5 class="mb-0">Ticket Details</h5>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                </div>
+            }
+
+            <!-- Error Message -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+                </div>
+            }
         </div>
 
         <div class="card-body">
             <div class="mb-3">
-                <div><strong>Requester:</strong> @Model.CreatedBy.FirstName @Model.CreatedBy.LastName</div>
+                <div><strong>Requester:</strong> @Model.CreatedBy.Firstname @Model.CreatedBy.Lastname</div>
                 <div><strong>Subject:</strong> @Model.Title</div>
                 <div><strong>Submitted:</strong> @Model.CreatedAt.ToString("MMM d, yyyy")</div>
                 <div><strong>Ticket ID:</strong> @Model.TicketId</div>
                 <div><strong>Ticket Status:</strong> <span class="badge bg-success">@Model.Status</span></div>
             </div>
-
-            <hr />
-
             
             <div>
                 @if(Model.ResolutionSteps != null)
                 {
-                    <form class="d-flex gap-2 mb-2">
-                        
-                    </form>
                     @foreach (var step in Model.ResolutionSteps)
                     {
                         <div class="p-3 my-2 rounded bg-light border">
-                            <div class="fw-bold text-primary">@Model.ResolutionSteps.Last().PresentHandler.FirstName @Model.ResolutionSteps.Last().PresentHandler.LastName</div>
+                            <div class="fw-bold text-primary">@Model.ResolutionSteps.Last().PresentHandler.Firstname @Model.ResolutionSteps.Last().PresentHandler.Lastname</div>
                             <div>@step.Action</div>
-                            @*      <div class="text-muted small mt-1">@msg.Time.ToString("HH:mm")</div> *@
+                            <div class="text-muted small mt-1">@Model.ResolutionSteps.Last().DateCreated.ToString()</div>
                         </div>
                     }
-                    <form class="mt-4" action="/MyTickets/UpdateTicket" method="post">
-                        <div class="mb-3">
-                            <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
+                    @if(loggedInEmployee.EmployeeId == Model.ResolutionSteps.Last().PresentHandler.EmployeeId)
+                    {
+                        <form class="mt-4" action="" method="post">
+                            <div class="mb-3">
+                                <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Add Response</button>
+                        </form>
+
+                        <form asp-action="TransferTicket" asp-controller="" method="post">
+                            <input type="hidden" value="@Model.TicketId" name="ticketId" />
+                            <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
+                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
+                            <input type="hidden" value="@loggedInEmployee.LastName" name="Lastname" />
+                            <button type="submit" class="btn btn-primary">Transfer Ticket</button>
+                        </form>
+                    }
+                    else{
+                        <div class="alert alert-info mt-4">
+                            You are not assigned to this ticket. You cannot add responses, nor transfer it.
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Add Response</button>
-                    </form>
+                    }
                 }
                 else
                 {
                     <div>
-                        <button class="btn btn-primary m-1">Assign myself to this ticket</button>
+                        <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
+                            <input type="hidden" value="@Model.TicketId" name="ticketId" />
+                            <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
+                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
+                            <input type="hidden" value="@loggedInEmployee.LastName" name="Lastname" />
+                            <button class="btn btn-primary m-1" type="submit">Assign myself to this ticket</button>
+                        </form>
                     </div>
                 }
             </div>
