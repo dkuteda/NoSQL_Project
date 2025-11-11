@@ -186,15 +186,7 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
-                bool isClosed = await _ticketService.CloseAsync(ticket);
-                if (isClosed)
-                {
-                    TempData["SuccessMessage"] = "Ticket has been closed successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Ticket not found or already closed";
-                }
+                //_ticketService.UpdateEscalation(ticket);
                 return Redirect("Index");
             }
             catch (Exception ex)
