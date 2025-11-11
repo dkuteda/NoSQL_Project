@@ -32,10 +32,8 @@ namespace NoSQL_Project.Controllers
         [HttpGet("TicketDetails")]
         public async Task<IActionResult> TicketDetails(string id)
         {
-
-            var ticket = await _ticketService.GetByIdAsync(id);
-            var presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
-            if (ticket == null) return NotFound();
+            EmployeeDetails presentHandler;
+            bool isAssignee = false;
             var employee = new EmployeeDetails
             {
                 EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty,
@@ -45,7 +43,15 @@ namespace NoSQL_Project.Controllers
                 PhoneNr = HttpContext.Session.GetString("EmployeePhoneNr") ?? string.Empty
             };
             ViewData["LoggedInEmployee"] = employee;
-            bool isAssignee = presentHandler != null && presentHandler.EmployeeId == employee.EmployeeId;
+            ViewData["IsAssignee"] = isAssignee;
+            var ticket = await _ticketService.GetByIdAsync(id);
+            if(ticket.ResolutionSteps.Count != 0)
+            {
+                presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
+                isAssignee = presentHandler != null && presentHandler.EmployeeId == employee.EmployeeId;
+            }
+
+            if (ticket == null) return NotFound();
             return View(ticket);
         }
 
@@ -142,9 +148,10 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
+                model.Ticket.ResolutionSteps = model.Ticket.ResolutionSteps ?? new List<ResolutionStep>();
                 await _ticketService.CreateTicketAsync(model.Ticket);
 
-                TempData["ConfirmMessage"] = "Ticket has been created successfully";
+                TempData["SuccessMessage"] = "Ticket has been created successfully";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

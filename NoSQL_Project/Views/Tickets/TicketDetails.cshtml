@@ -39,7 +39,7 @@
             </div>
             
             <div>
-                @if(Model.ResolutionSteps != null)
+                @if(Model.ResolutionSteps.Any() || Model.ResolutionSteps.Count > 0)
                 {
                     @foreach (var step in Model.ResolutionSteps)
                     {

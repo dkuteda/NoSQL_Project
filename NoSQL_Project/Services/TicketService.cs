@@ -68,7 +68,7 @@ namespace NoSQL_Project.Services
         {
             if (ticket.ResolutionSteps == null || !ticket.ResolutionSteps.Any())
             {
-                return _ticketRepo.AddResolutionStep(ticket.TicketId, details);
+                return _ticketRepo.AssignMyselfToTicket(ticket, details);
             }
             throw new InvalidOperationException("This ticket is assigned to someone else/you're already assigned to it.");
         }

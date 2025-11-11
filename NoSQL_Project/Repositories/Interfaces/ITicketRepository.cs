@@ -23,6 +23,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
         Task AddResolutionStep(string ticketId, EmployeeDetails details);
+        Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details);
 
     }
 }

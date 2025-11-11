@@ -151,5 +151,19 @@ namespace NoSQL_Project.Repositories
             else { Console.WriteLine("Update successful"); }
         }
 
+        public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, "Assigned to self");
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update
+                .Set(t => t.ResolutionSteps[0], step);
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
+
     }
 }
