@@ -13,14 +13,17 @@
     }
     else if (userRole == "service_desk_employee ")
     {
-        <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">All Tickets</a>
-        <a asp-controller="Employee" asp-action="Index" class="d-block mb-2 text-white">Employee List</a>
+        <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+       
+        <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
+        <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
     }
     else if (userRole == "manager")
     {
-        <a asp-controller="Tickets" asp-action="DashBoard" class="d-block mb-2 text-white">Dashboard</a>
-        <a asp-controller="Tickets" asp-action="Index" class="d-block mb-2 text-white">All Tickets</a>
-        <a asp-controller="Employees" asp-action="Index" class="d-block mb-2 text-white">Employees</a>
+        <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+       
+        <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
+        <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
        
     }
 

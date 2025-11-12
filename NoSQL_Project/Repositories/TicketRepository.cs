@@ -29,7 +29,7 @@ namespace NoSQL_Project.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
+        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee)
         {
             return await _tickets
                 .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId && t.Status == TicketStatus.open)
@@ -152,6 +152,7 @@ namespace NoSQL_Project.Repositories
             else { Console.WriteLine("Update successful"); }
         }
 
+<<<<<<< HEAD
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             Priority newPriority;
@@ -188,5 +189,21 @@ namespace NoSQL_Project.Repositories
 
             await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
         }
+=======
+        public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, "Assigned to self");
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update
+                .Set(t => t.ResolutionSteps[0], step);
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
+
+>>>>>>> 79eb3eff80630b68ad5b3a51d82a1820c29df4d7
     }
 }

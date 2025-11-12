@@ -1,4 +1,5 @@
 ﻿@using NoSQL_Project.Models
+@using NoSQL_Project.Enums
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +10,6 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NoSQL_Project.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nature-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -26,7 +26,7 @@
             background: linear-gradient(to right, #6b4eff, #9a77ff);
             color: white;
             padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: fixed;
             top: 0;
             z-index: 1000;
@@ -67,51 +67,36 @@
             margin-top: 70px;
             padding: 20px;
         }
-
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #f1f1f1;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-            border-top: 1px solid #ddd;
-        }
     </style>
 </head>
-<!--  Hamzas code to get the role from session  -->
+
 <body>
+
     @{
-        var employeeId = Context.Session.GetString("EmployeeId");
-
-        var userRole = Context.Session.GetString("EmployeeRole")?.ToLower();
-
-        var userName = Context.Session.GetString("EmployeeName");
+        var user = Context.Session.GetObject<Employee>("LoggedInUser");
+        var isLoggedIn = user != null;
     }
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">NoSQL_Project</a>
-
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ms-auto">
-                        @if (string.IsNullOrEmpty(employeeId))
 
+                        @if (!isLoggedIn)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Employee" asp-action="Login">
+                                <a class="nav-link" asp-controller="Employees" asp-action="Login">
                                     <i class="fas fa-sign-in-alt"></i> Login
                                 </a>
                             </li>
                         }
-
                         else
-
                         {
                             <li class="nav-item">
                                 <span class="nav-link text-white">
-                                    <i class="fas fa-user-circle"></i> @userRole: @userName
+                                    <i class="fas fa-user-circle"></i> @user.UserRole : @user.FirstName
                                 </span>
                             </li>
                             <li class="nav-item">
@@ -120,67 +105,55 @@
                                 </a>
                             </li>
                         }
+
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-
-    @if (!string.IsNullOrEmpty(employeeId))
-
+    @if (isLoggedIn)
     {
         <div class="sidebar">
             <h5 class="mb-3 text-uppercase text-secondary">Menu</h5>
 
-            <!--  displays stuuff ccording to the role of user for side bar-->
+            <!-- DEBUG (remove later if you want) -->
             <p style="color:#ccc; font-size:0.9rem;">
-                <!--  for me: just a check to know if the session is being read correctly  -->
-                DEBUG → Role: @userRole | Name: @userName | ID: @employeeId
+                Role: @user.UserRole | Name: @user.FirstName | ID: @user.EmployeeId
             </p>
 
-            @if (userRole == "employee")
-
+            @if (user.UserRole == UserRole.employee)
             {
                 <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
                 <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
             }
 
-
-
-            else if (userRole == "service_desk_employee")
-
-
-
-            {
-                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-list me-2"></i> All Tickets</a>
-                <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
-            }
-
-            else if (userRole == "manager")
-
+            @if (user.UserRole == UserRole.service_desk_employee)
             {
                 <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
-                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> Tickets</a>
                 <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
-             
+                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
+            }
+
+            @if (user.UserRole == UserRole.manager)
+            {
+                <a asp-controller="Tickets" asp-action="Dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+                <a asp-controller="Employees" asp-action="Index"><i class="fas fa-users me-2"></i> Employees</a>
+                <a asp-controller="Tickets" asp-action="Index"><i class="fas fa-ticket-alt me-2"></i> My Tickets</a>
             }
         </div>
     }
 
-   
     <div class="content-area">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    
-    
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

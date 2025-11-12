@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
+using NoSQL_Project.Services;
 using NoSQL_Project.Services.Interfaces;
 using NoSQL_Project.ViewModels;
 
@@ -11,34 +12,44 @@ namespace NoSQL_Project.Controllers
     public class TicketsController : Controller
     {
         private readonly ITicketService _ticketService;
+        private readonly IEmployeeService _employeeService;
 
-        public TicketsController(ITicketService ticketService) => _ticketService = ticketService;
+        public TicketsController(ITicketService ticketService, IEmployeeService employeeService)
+        {
+            _ticketService = ticketService;
+            _employeeService =employeeService;
+        }
 
         public async Task<IActionResult> Index()
         {
-            var employee = new EmployeeDetails
-            {
-                EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty
-            };
+            Employee employee = GetEmployeeFromSession();
             List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
-            var model = new TicketViewModel()
-            {
-                TicketList = tickets
-            };
-
+            TicketViewModel model = await FillViewModel(tickets);
             return View("MyTickets", model);
         }
 
         [HttpGet("TicketDetails")]
-        public IActionResult TicketDetails(string id)
+        public async Task<IActionResult> TicketDetails(string id)
         {
-
-            var ticket = _ticketService.GetByIdAsync(id).Result;
-            if (ticket == null) return NotFound();
-            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
-            bool isAssignee = ticket.ResolutionSteps.Last().PresentHandler != null && ticket.ResolutionSteps.Last().PresentHandler.EmployeeId == employeeId;
-            ViewData["isAssignee"] = isAssignee;
-            return View(ticket);
+            EmployeeDetails presentHandler;
+            bool isAssignee = false;
+            var employee = GetEmployeeFromSession();
+            List<Ticket> ticketList = await _ticketService.GetAllTicketsAsync();
+            TicketViewModel model = new TicketViewModel()
+            {
+                TicketList = ticketList,
+                PotentialTransferees = new List<Employee>()
+            };
+            Ticket ticket = model.Ticket = await _ticketService.GetByIdAsync(id);
+            //TO DO: do something in case ticket is null
+            if (ticket.ResolutionSteps.Count != 0)
+            {
+                presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
+                isAssignee = presentHandler != null && presentHandler.EmployeeId == employee.EmployeeId;
+            }
+            ViewData["LoggedInEmployee"] = employee;
+            ViewData["IsAssignee"] = isAssignee;
+            return View(model);
         }
 
         [HttpGet("TicketDashboard")]
@@ -96,6 +107,18 @@ namespace NoSQL_Project.Controllers
                 return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
             }
         }
+        [HttpGet] //TO DO: Figure out a try catch here
+        public async Task<IActionResult> OnSearch(string nameQuery, string ticketId)
+        {
+            List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
+            TicketViewModel model = new TicketViewModel
+            {
+                Ticket = await _ticketService.GetByIdAsync(ticketId),
+                PotentialTransferees = potentialTransferees
+            };
+            ViewData["LoggedInEmployee"] = GetEmployeeFromSession();
+            return View("TicketDetails", model);
+        }
 
         [HttpPost]
         public IActionResult TransferTicket(string ticketId, EmployeeDetails details)
@@ -115,13 +138,7 @@ namespace NoSQL_Project.Controllers
         [HttpGet("AddTicket")]
         public IActionResult AddTicket()
         {
-            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
-            var employeeName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty;
-            ViewData["EmployeeDetails"] = new EmployeeDetails
-            {
-                EmployeeId = employeeId,
-                Firstname = employeeName
-            };
+            ViewData["EmployeeDetails"] = GetEmployeeFromSession();
             var viewModel = new TicketViewModel
             {
                 Ticket = new() { TicketId = Guid.NewGuid().ToString() }
@@ -134,9 +151,10 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
+                model.Ticket.ResolutionSteps = model.Ticket.ResolutionSteps ?? new List<ResolutionStep>();
                 await _ticketService.CreateTicketAsync(model.Ticket);
 
-                TempData["ConfirmMessage"] = "Ticket has been created successfully";
+                TempData["SuccessMessage"] = "Ticket has been created successfully";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -219,14 +237,17 @@ namespace NoSQL_Project.Controllers
         [HttpGet("Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
-            var employeeId = HttpContext.Session.GetString("EmployeeId");
-            var userRole = HttpContext.Session.GetString("EmployeeRole");
+            // ✅ Get Employee object from session
+            var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
+
+            // If session empty → go login
+            if (employee == null)
+                return RedirectToAction("Login", "Employees");
 
             // get all tickets or only user's tickets depending on role
             List<Ticket> tickets;
-            if (userRole == "employee")
+            if (employee.UserRole == UserRole.employee)
             {
-                var employee = new EmployeeDetails { EmployeeId = employeeId };
                 tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             }
             else
@@ -235,9 +256,9 @@ namespace NoSQL_Project.Controllers
             }
 
             int total = tickets.Count;
-            int open = tickets.Count(t => t.Status == Enums.TicketStatus.open);
-            int resolved = tickets.Count(t => t.Status == Enums.TicketStatus.resolved);
-            int closed = tickets.Count(t => t.Status == Enums.TicketStatus.closed);
+            int open = tickets.Count(t => t.Status == TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
 
             var model = new DashboardViewModel
             {
@@ -245,11 +266,12 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList() // first 5 tickets only
+                TicketList = tickets.Take(5).ToList()
             };
 
             return View(model);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Search(string text, bool and = false)
@@ -264,7 +286,29 @@ namespace NoSQL_Project.Controllers
             return View("MyTickets", model);
         }
 
+        private async Task<TicketViewModel> FillViewModel(List<Ticket>tickets)
+        {
+            ViewData["LoggedInEmployee"] = GetEmployeeFromSession();
+            if (tickets.Count > 0 || tickets != null)
+            {
+                tickets = await _ticketService.GetAllTicketsAsync(); 
+            }
+            else tickets = new List<Ticket>();
 
+            TicketViewModel model = new TicketViewModel()
+            {
+                TicketList = tickets,
+                PotentialTransferees = new List<Employee>()
+            };          
+            return model;
+        }
+
+        private Employee GetEmployeeFromSession()
+        {
+            return HttpContext.Session.GetObject<Employee>("LoggedInUser");
+        }
 
     }
+
 }
+

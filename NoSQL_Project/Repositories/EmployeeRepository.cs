@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
@@ -98,17 +99,32 @@ namespace NoSQL_Project.Repositories
                 new BsonDocument("$search", new BsonDocument
                 {
                     { "index", "employeeSearch" },
-                    { "autocomplete", new BsonDocument
+                    { "compound", new BsonDocument
                         {
-                            { "query", name },
-                            { "path", new BsonArray { "FirstName", "LastName" } }
+                            { "should", new BsonArray
+                                {
+                                    new BsonDocument("autocomplete", new BsonDocument
+                                    {
+                                        { "query", name },
+                                        { "path", "FirstName" }
+                                    }),
+                                    new BsonDocument("autocomplete", new BsonDocument
+                                    {
+                                        { "query", name },
+                                        { "path", "LastName" }
+                                    })
+                                }
+                            }
                         }
                     }
                 }),
-                new BsonDocument("$limit", 5)
+                new BsonDocument("$limit", 10)
             };
 
-            return await _employees.Aggregate<Employee>(pipeline).ToListAsync();
+            var results = await _employees.Aggregate<Employee>(pipeline).ToListAsync();
+
+            return results;
+
         }
 
 

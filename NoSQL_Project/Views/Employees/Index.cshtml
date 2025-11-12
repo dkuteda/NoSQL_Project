@@ -1,19 +1,21 @@
 ﻿@model NoSQL_Project.ViewModels.EmployeeViewModel
-@{
-    // Get logged-in user's role from session
+@using NoSQL_Project.Models
+@using NoSQL_Project.Enums
 
-    var userRole = Context.Session.GetString("EmployeeRole");
+@{
+    // ✅ Get full employee object from session
+    var user = Context.Session.GetObject<Employee>("LoggedInUser");
 }
 
 @if (TempData["SuccessMessage"] != null)
-
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-@if (userRole == "manager" || userRole == "service_desk_employee")
+
+@if (user != null && (user.UserRole == UserRole.manager || user.UserRole == UserRole.service_desk_employee))
 {
     <div class="text-center mb-4">
         <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
@@ -21,31 +23,30 @@
     </div>
 
     <form asp-controller="Employees" asp-action="Index" method="get">
-
         <label for="UserRole">Role:</label>
         <select id="UserRole" name="UserRole">
-            <option value="">-- Select Role--</option>
-            @foreach (var userRole in Model.UserRoles)
+            <option value="">-- Select Role --</option>
+            @foreach (var role in Model.UserRoles)
             {
-                <option value="@userRole" selected="@(userRole == Model.SelectedUserRole ? "selected" : null)">@userRole</option>
+                <option value="@role" selected="@(role == Model.SelectedUserRole ? "selected" : null)">@role</option>
             }
         </select>
 
         <label for="Location">Location:</label>
         <select id="Location" name="Location">
-            <option value="">-- Select Location--</option>
-            @foreach (var location in Model.Locations)
+            <option value="">-- Select Location --</option>
+            @foreach (var loc in Model.Locations)
             {
-                <option value="@location" selected="@(location == Model.SelectedLocation ? "selected" : null)">@location</option>
+                <option value="@loc" selected="@(loc == Model.SelectedLocation ? "selected" : null)">@loc</option>
             }
         </select>
+
         <button type="submit">View Employees</button>
     </form>
 }
 
-<!--  manager can create new employees -->
-@if (userRole == "manager")
-
+<!-- Only manager can create employees -->
+@if (user != null && user.UserRole == UserRole.manager)
 {
     <div class="text-end mb-3">
         <a href="/Employees/AddEmployee" class="btn btn-success">
@@ -65,18 +66,17 @@
                 <th>Role</th>
                 <th>Location</th>
                 <th>Status</th>
-                <!--  manager can get action based on his role -->
-                @if (userRole == "manager")
 
+                @if (user != null && user.UserRole == UserRole.manager)
                 {
                     <th>Actions</th>
                 }
             </tr>
         </thead>
+
         <tbody>
             @foreach (var employee in Model.EmployeesList)
             {
-
                 var rowClass = employee.IsActive ? "table-success" : "table-secondary";
                 <tr class="@rowClass">
                     <td>@employee.FirstName</td>
@@ -87,20 +87,16 @@
                     <td>@employee.Location</td>
                     <td>
                         @if (employee.IsActive)
-
                         {
                             <span class="badge bg-success">Active</span>
                         }
-
                         else
-
                         {
                             <span class="badge bg-secondary">Inactive</span>
                         }
                     </td>
 
-                    
-                    @if (userRole == "manager")
+                    @if (user != null && user.UserRole == UserRole.manager)
                     {
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -108,6 +104,7 @@
                                    class="btn btn-outline-primary">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </a>
+
                                 <a href="@Url.Action("SoftDeleteEmployee", "Employees", new { id = employee.EmployeeId })"
                                    class="btn btn-outline-danger">
                                     <i class="fas fa-user-slash me-1"></i>Delete
@@ -121,9 +118,7 @@
     </table>
 </div>
 
-<!--info if no employees exist -->
 @if (Model.EmployeesList == null || !Model.EmployeesList.Any())
-
 {
     <div class="alert alert-info text-center mt-4">
         <i class="fas fa-info-circle me-2"></i>No employees found.

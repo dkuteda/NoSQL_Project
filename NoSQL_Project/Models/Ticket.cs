@@ -12,7 +12,7 @@ namespace NoSQL_Project.Models
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
 		public required string TicketId { get; set; }
-		public string Title { get; set; }
+        public string Title { get; set; } = "";
 		public string Description { get; set; } = "";
 
         [BsonRepresentation(BsonType.String)]
@@ -28,7 +28,7 @@ namespace NoSQL_Project.Models
         public EmployeeDetails CreatedBy { get; set; }
 
         [BsonRepresentation(BsonType.DateTime)]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [BsonRepresentation(BsonType.String)]
         public TypeOfIncident TypeOfIncident { get; set; } = TypeOfIncident.software;
