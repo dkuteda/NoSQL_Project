@@ -1,4 +1,4 @@
-﻿@model NoSQL_Project.Models.Ticket;
+﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 @{
     ViewData["Title"] = "Ticket Details";
     EmployeeDetails? loggedInEmployee = ViewData["LoggedInEmployee"] as EmployeeDetails;
@@ -30,26 +30,26 @@
 
         <div class="card-body">
             <div class="mb-3">
-                <div><strong>Requester:</strong> @Model.CreatedBy.Firstname @Model.CreatedBy.Lastname</div>
-                <div><strong>Subject:</strong> @Model.Title</div>
-                <div><strong>Submitted:</strong> @Model.CreatedAt.ToString("MMM d, yyyy")</div>
-                <div><strong>Ticket ID:</strong> @Model.TicketId</div>
-                <div><strong>Ticket Status:</strong> <span class="badge bg-success">@Model.Status</span></div>
-                <div><strong>Description:</strong> @Model.Description</div>
+                <div><strong>Requester:</strong> @Model.Ticket.CreatedBy.Firstname @Model.Ticket.CreatedBy.Lastname</div>
+                <div><strong>Subject:</strong> @Model.Ticket.Title</div>
+                <div><strong>Submitted:</strong> @Model.Ticket.CreatedAt.ToString("MMM d, yyyy")</div>
+                <div><strong>Ticket ID:</strong> @Model.Ticket.TicketId</div>
+                <div><strong>Ticket Status:</strong> <span class="badge bg-success">@Model.Ticket.Status</span></div>
+                <div><strong>Description:</strong> @Model.Ticket.Description</div>
             </div>
             
             <div>
-                @if(Model.ResolutionSteps.Any() || Model.ResolutionSteps.Count > 0)
+                @if(Model.Ticket.ResolutionSteps.Any())
                 {
-                    @foreach (var step in Model.ResolutionSteps)
+                    @foreach (var step in Model.Ticket.ResolutionSteps)
                     {
                         <div class="p-3 my-2 rounded bg-light border">
-                            <div class="fw-bold text-primary">@Model.ResolutionSteps.Last().PresentHandler.Firstname @Model.ResolutionSteps.Last().PresentHandler.Lastname</div>
+                            <div class="fw-bold text-primary">@step.PresentHandler.Firstname @step.PresentHandler.Lastname</div>
                             <div>@step.Action</div>
-                            <div class="text-muted small mt-1">@Model.ResolutionSteps.Last().DateCreated.ToString()</div>
+                            <div class="text-muted small mt-1">@step.DateCreated.ToString()</div>
                         </div>
                     }
-                    @if(loggedInEmployee.EmployeeId == Model.ResolutionSteps.Last().PresentHandler.EmployeeId)
+                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
                     {
                         <form class="mt-4" action="" method="post">
                             <div class="mb-3">
@@ -58,13 +58,31 @@
                             <button type="submit" class="btn btn-success w-100">Add Response</button>
                         </form>
 
-                        <form asp-action="TransferTicket" asp-controller="" method="post">
-                            <input type="hidden" value="@Model.TicketId" name="ticketId" />
-                            <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
-                            <input type="hidden" value="@loggedInEmployee.Firstname" name="firstName" />
-                            <input type="hidden" value="@loggedInEmployee.Lastname" name="Lastname" />
-                            <button type="submit" class="btn btn-primary">Transfer this Ticket</button>
+                        <form method="get" action="@Url.Action("OnSearch")">
+                            <div class="input-group">
+                                <input class="m-1" type="hidden" value="@Model.Ticket.TicketId" name="ticketId" id="nameQuery" />
+                                <input type="text" class="form-control m-1" placeholder="Enter search term" name="nameQuery" id="nameQuery" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                </div>
+                            </div>
                         </form>
+                        @if (Model.PotentialTransferees.Count>0)
+                        {
+                            @foreach (var employee in Model.PotentialTransferees)
+                            {
+                                <div class="d-flex">
+                                    <p>Transfer Ticket to @employee.FirstName @employee.LastName</p>
+                                    <form asp-action="TransferTicket" asp-controller="Tickets" method="post">
+                                        <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
+                                        <input type="hidden" value="@employee.EmployeeId" name="employeeId" />
+                                        <input type="hidden" value="@employee.FirstName" name="firstName" />
+                                        <input type="hidden" value="@employee.LastName" name="lastName" />
+                                        <button type="submit" class="btn btn-primary">Transfer Ticket</button>
+                                    </form>
+                                </div>
+                            }
+                        }
                     }
                     else{
                         <div class="alert alert-info mt-4">
@@ -76,7 +94,7 @@
                 {
                     <div>
                         <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
-                            <input type="hidden" value="@Model.TicketId" name="ticketId" />
+                            <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
                             <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
                             <input type="hidden" value="@loggedInEmployee.Firstname" name="firstName" />
                             <input type="hidden" value="@loggedInEmployee.Lastname" name="lastName" />

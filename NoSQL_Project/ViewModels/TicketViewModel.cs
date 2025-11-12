@@ -6,19 +6,21 @@ namespace NoSQL_Project.ViewModels
 {
     public class TicketViewModel
     {
-        //used for CUD of a single ticket
+        //used for CRUD of a single ticket
         public Ticket Ticket { get; set; }
 
         public int TotalTickets { get; set; }= 0;
 
-        // Emuns
-        public IEnumerable<SelectListItem> StatusOptions { get; set; }
+        // Enums
+        public IEnumerable<SelectListItem>? StatusOptions { get; set; }
         public IEnumerable<SelectListItem> TypeOfIncidentOptions =>
-            Enum.GetValues<TypeOfIncident>()
+             Enum.GetValues<TypeOfIncident>()
             .Cast<TypeOfIncident>()
             .Select(e => new SelectListItem { Value = e.ToString(), Text = e.ToString() });
-        public IEnumerable<SelectListItem> PriorityOptions { get; set; }
+        public IEnumerable<SelectListItem>? PriorityOptions { get; set; }
 
         public List<Ticket> TicketList { get; set; } = new List<Ticket>();
+
+        public List<Employee> PotentialTransferees { get; set; } = new List<Employee>();
     }
 }
