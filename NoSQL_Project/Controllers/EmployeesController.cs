@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace NoSQL_Project.Controllers
 {
-	public class EmployeesController : Controller
+	public class EmployeesController : BaseController
 	{
 		private readonly IEmployeeService _employeeService;
 
@@ -52,23 +52,21 @@ namespace NoSQL_Project.Controllers
 			{
 				ModelState.AddModelError(string.Empty, "Invalid email or password.");
 				return View(loginModel);
-			}	
+			}
 
-			// ✅ Store in session object id class is available but just implemented later
-			HttpContext.Session.SetString("EmployeeId", employee.EmployeeId);
-			HttpContext.Session.SetString("EmployeeName", employee.FirstName);
-			HttpContext.Session.SetString("EmployeeRole", employee.UserRole.ToString());
+            // ✅ Store in session object id class is available but just implemented later
+            HttpContext.Session.SetObject("LoggedInUser", employee);
 
-			switch (employee.UserRole.ToString().ToLower())
+            switch (employee.UserRole.ToString().ToLower())
 			{
 				case "employee":
-					return RedirectToAction("Index", "Tickets"); 
-				case "service_desk_employee ":
-					return RedirectToAction("Index", "Employees"); 
+					return RedirectToAction("DashBoard", "Tickets"); 
+				case "service_desk_employee":
+					return RedirectToAction("DashBoard", "Tickets"); 
 				case "manager":
-					return RedirectToAction("Index", "Employees"); 
+					return RedirectToAction("DashBoard", "Tickets"); 
 				default:
-					return RedirectToAction("Index", "Home"); 
+					return RedirectToAction("Login", "Employees"); 
 
 			}       
         }

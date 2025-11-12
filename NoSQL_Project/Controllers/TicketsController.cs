@@ -209,14 +209,17 @@ namespace NoSQL_Project.Controllers
         [HttpGet("Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
-            var employeeId = HttpContext.Session.GetString("EmployeeId");
-            var userRole = HttpContext.Session.GetString("EmployeeRole");
+            // ✅ Get Employee object from session
+            var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
+
+            // If session empty → go login
+            if (employee == null)
+                return RedirectToAction("Login", "Employees");
 
             // get all tickets or only user's tickets depending on role
             List<Ticket> tickets;
-            if (userRole == "employee")
+            if (employee.UserRole == UserRole.employee)
             {
-                var employee = new Employee { EmployeeId = employeeId };
                 tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             }
             else
@@ -225,9 +228,9 @@ namespace NoSQL_Project.Controllers
             }
 
             int total = tickets.Count;
-            int open = tickets.Count(t => t.Status == Enums.TicketStatus.open);
-            int resolved = tickets.Count(t => t.Status == Enums.TicketStatus.resolved);
-            int closed = tickets.Count(t => t.Status == Enums.TicketStatus.closed);
+            int open = tickets.Count(t => t.Status == TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
 
             var model = new DashboardViewModel
             {
@@ -235,11 +238,12 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList() // first 5 tickets only
+                TicketList = tickets.Take(5).ToList()
             };
 
             return View(model);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Search(string text, bool and = false)
@@ -273,23 +277,10 @@ namespace NoSQL_Project.Controllers
 
         private Employee GetEmployeeFromSession()
         {
-            string? roleString = HttpContext.Session.GetString("EmployeeRole");
-            UserRole userRole;
-            if (!Enum.TryParse<UserRole>(roleString, out userRole))
-            {
-                userRole = UserRole.employee;
-            }
-
-            return new Employee
-            {
-                EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty,
-                FirstName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty,
-                LastName = HttpContext.Session.GetString("EmployeeLastName") ?? string.Empty,
-                Email = HttpContext.Session.GetString("EmployeeEmail") ?? string.Empty,
-                PhoneNumber = HttpContext.Session.GetString("EmployeePhoneNr") ?? string.Empty,
-                UserRole = userRole
-            };
+            return HttpContext.Session.GetObject<Employee>("LoggedInUser");
         }
 
     }
+
 }
+
