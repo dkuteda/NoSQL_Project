@@ -13,6 +13,8 @@ namespace NoSQL_Project.Repositories.Interfaces
 		Task<Employee?> GetByLoginCredentialAsync(string email, string password);
 		Task<bool> EmailAddressExistsAsync(string email);
 		Task<List<Employee>> AutocompleteSearchEmployees(string name);
+		Task<Employee?> GetByEmailAsync(string email);
 
-    }
+
+	}
 }

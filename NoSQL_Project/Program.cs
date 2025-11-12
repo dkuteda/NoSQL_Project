@@ -1,4 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using MadEyeMatt.AspNetCore.Identity.MongoDB;
+using Microsoft.AspNetCore.Identity;
+using MongoDB.Driver;
+using NoSQL_Project.Models;
 using NoSQL_Project.Repositories;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.Services;
@@ -13,74 +16,85 @@ namespace NoSQL_Project
 			// Load .env before building configuration so env vars are available
 			DotNetEnv.Env.TraversePath().Load();
 
-            var builder = WebApplication.CreateBuilder(args);
+			var builder = WebApplication.CreateBuilder(args);
 
-            // 1) Register MongoClient as a SINGLETON (one shared instance for the whole app)
-            // WHY: MongoClient is thread-safe and internally manages a connection pool.
-            // Reusing one instance is fast and efficient. Creating many clients would waste resources.
-            builder.Services.AddSingleton<IMongoClient>(sp =>
-            {
-                // Read the connection string from configuration (env var via .env)
-                var conn = builder.Configuration["Mongo:ConnectionString"];
-                if (string.IsNullOrWhiteSpace(conn))
-                    throw new InvalidOperationException("Mongo:ConnectionString is not configured. Did you set it in .env?");
+			// Register MongoClient as a SINGLETON (thread-safe, pooled)
+			builder.Services.AddSingleton<IMongoClient>(sp =>
+			{
+				var conn = builder.Configuration["Mongo:ConnectionString"];
+				if (string.IsNullOrWhiteSpace(conn))
+					throw new InvalidOperationException("Mongo:ConnectionString is not configured. Did you set it in .env?");
 
-                // Optional: tweak settings (timeouts, etc.)
-                var settings = MongoClientSettings.FromConnectionString(conn);
-                // settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
+				var settings = MongoClientSettings.FromConnectionString(conn);
+				return new MongoClient(settings);
+			});
 
-                return new MongoClient(settings);
-            });
+			// Register IMongoDatabase as SCOPED (per request)
+			builder.Services.AddScoped(sp =>
+			{
+				var client = sp.GetRequiredService<IMongoClient>();
+				var dbName = builder.Configuration["Mongo:Database"];
+				if (string.IsNullOrWhiteSpace(dbName))
+					throw new InvalidOperationException("Mongo:Database is not configured in appsettings.json.");
 
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-            builder.Services.AddScoped<ITicketService, TicketService>();
-            builder.Services.AddControllersWithViews();
-            // 2) Register IMongoDatabase as SCOPED (new per HTTP request)
-            // WHY: Fits the ASP.NET request lifecycle and keeps each request cleanly separated.
-            builder.Services.AddScoped(sp =>
-            {
-                var client = sp.GetRequiredService<IMongoClient>();
+				return client.GetDatabase(dbName);
+			});
 
-                var dbName = builder.Configuration["Mongo:Database"]; // from appsettings.json
-                if (string.IsNullOrWhiteSpace(dbName))
-                    throw new InvalidOperationException("Mongo:Database is not configured in appsettings.json.");
+			// Register repositories and services
+			builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+			builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+			builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+			builder.Services.AddScoped<ITicketService, TicketService>();
+			builder.Services.AddScoped<IEmailService, EmailService>();
 
-                return client.GetDatabase(dbName);
-            });
-            // Add services to the container.
+			builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSession(options =>
-                {
-                    options.IdleTimeout = TimeSpan.FromMinutes(30);
-                    options.Cookie.HttpOnly = true;
-                    options.Cookie.IsEssential = true;
-                });
+			// Register ASP.NET Core Identity with MongoDB stores
+			builder.Services.AddIdentity<Employee, MongoIdentityRole>()
+				.AddMongoDbStores<Employee, MongoIdentityRole, Guid>(
+					builder.Configuration["Mongo:ConnectionString"],
+					builder.Configuration["Mongo:Database"])
+				.AddDefaultTokenProviders();
 
-            var app = builder.Build();
+			// Optional: configure Identity options
+			builder.Services.Configure<IdentityOptions>(options =>
+			{
+				options.Password.RequireDigit = true;
+				options.Password.RequiredLength = 6;
+				options.User.RequireUniqueEmail = true;
+			});
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+			// Session
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(30);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+			var app = builder.Build();
 
-            app.UseRouting();
-            app.UseSession();
+			// Middleware pipeline
+			if (!app.Environment.IsDevelopment())
+			{
+				app.UseExceptionHandler("/Home/Error");
+				app.UseHsts();
+			}
 
-            app.UseAuthorization();
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Employees}/{action=Login}/{id?}");
+			app.UseRouting();
+			app.UseSession();
 
-            app.Run();
-        }
-    }
+			app.UseAuthentication();
+			app.UseAuthorization();
+
+			app.MapControllerRoute(
+				name: "default",
+				pattern: "{controller=Employees}/{action=Login}/{id?}");
+
+			app.Run();
+		}
+	}
 }

@@ -37,7 +37,12 @@ namespace NoSQL_Project.Repositories
             return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
         }
 
-        public async Task UpdateEmployeeAsync(string id, Employee employee)
+        public async Task<Employee?> GetByEmailAsync(string email)
+        {
+            return await _employees.Find(s => s.Email == email).FirstOrDefaultAsync();
+		}
+
+		public async Task UpdateEmployeeAsync(string id, Employee employee)
         {
             var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id); ;
 

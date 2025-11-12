@@ -4,8 +4,9 @@ namespace NoSQL_Project.ViewModels
 {
 	public class ForgotPasswordViewModel
 	{
-		[Required, EmailAddress]
-		public string Email { get; set; }
+		[Required(ErrorMessage = "Please enter your email address.")]
+		[EmailAddress(ErrorMessage = "The email address is not valid")]
+		public string Email { get; set; } = null!;
 	}
 }
 

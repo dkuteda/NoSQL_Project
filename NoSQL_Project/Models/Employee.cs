@@ -1,10 +1,12 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using NoSQL_Project.Enums;
+using Microsoft.AspNetCore.Identity;
+using MadEyeMatt.AspNetCore.Identity.MongoDB;
 
 namespace NoSQL_Project.Models
 {
-	public class Employee
+	public class Employee : MongoIdentityUser
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
