@@ -1,7 +1,7 @@
 ﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 @{
     ViewData["Title"] = "Ticket Details";
-    EmployeeDetails? loggedInEmployee = ViewData["LoggedInEmployee"] as EmployeeDetails;
+    Employee? loggedInEmployee = ViewData["LoggedInEmployee"] as Employee;
 }
 
 <div class="container py-4">
@@ -49,7 +49,8 @@
                             <div class="text-muted small mt-1">@step.DateCreated.ToString()</div>
                         </div>
                     }
-                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
+                    @*If you are not the latest handler and you are a service desk or a manager*@
+                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId && loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.service_desk_employee || loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.manager)
                     {
                         <form class="mt-4" action="" method="post">
                             <div class="mb-3">
@@ -67,7 +68,7 @@
                                 </div>
                             </div>
                         </form>
-                        @if (Model.PotentialTransferees.Count>0)
+                        @if (Model.PotentialTransferees.Count > 0)
                         {
                             @foreach (var employee in Model.PotentialTransferees)
                             {
@@ -96,8 +97,8 @@
                         <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
                             <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
                             <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
-                            <input type="hidden" value="@loggedInEmployee.Firstname" name="firstName" />
-                            <input type="hidden" value="@loggedInEmployee.Lastname" name="lastName" />
+                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
+                            <input type="hidden" value="@loggedInEmployee.LastName" name="lastName" />
                             <button class="btn btn-primary m-1" type="submit">Assign myself to this ticket</button>
                         </form>
                     </div>

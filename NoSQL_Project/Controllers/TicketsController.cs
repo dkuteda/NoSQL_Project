@@ -22,7 +22,7 @@ namespace NoSQL_Project.Controllers
 
         public async Task<IActionResult> Index()
         {
-            EmployeeDetails employee = GetEmployeeFromSession();
+            Employee employee = GetEmployeeFromSession();
             List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             TicketViewModel model = await FillViewModel(tickets);
             return View("MyTickets", model);
@@ -216,7 +216,7 @@ namespace NoSQL_Project.Controllers
             List<Ticket> tickets;
             if (userRole == "employee")
             {
-                var employee = new EmployeeDetails { EmployeeId = employeeId };
+                var employee = new Employee { EmployeeId = employeeId };
                 tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
             }
             else
@@ -271,15 +271,23 @@ namespace NoSQL_Project.Controllers
             return model;
         }
 
-        private EmployeeDetails GetEmployeeFromSession()
+        private Employee GetEmployeeFromSession()
         {
-            return new EmployeeDetails
+            string? roleString = HttpContext.Session.GetString("EmployeeRole");
+            UserRole userRole;
+            if (!Enum.TryParse<UserRole>(roleString, out userRole))
+            {
+                userRole = UserRole.employee;
+            }
+
+            return new Employee
             {
                 EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty,
-                Firstname = HttpContext.Session.GetString("EmployeeName") ?? string.Empty,
-                Lastname = HttpContext.Session.GetString("EmployeeLastName") ?? string.Empty,
+                FirstName = HttpContext.Session.GetString("EmployeeName") ?? string.Empty,
+                LastName = HttpContext.Session.GetString("EmployeeLastName") ?? string.Empty,
                 Email = HttpContext.Session.GetString("EmployeeEmail") ?? string.Empty,
-                PhoneNr = HttpContext.Session.GetString("EmployeePhoneNr") ?? string.Empty
+                PhoneNumber = HttpContext.Session.GetString("EmployeePhoneNr") ?? string.Empty,
+                UserRole = userRole
             };
         }
 

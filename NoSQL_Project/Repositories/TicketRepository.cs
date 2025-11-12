@@ -28,7 +28,7 @@ namespace NoSQL_Project.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
+        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee)
         {
             return await _tickets
                 .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId && t.Status == TicketStatus.open)

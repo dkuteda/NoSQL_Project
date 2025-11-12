@@ -19,7 +19,7 @@ namespace NoSQL_Project.Services
             return await _ticketRepo.GetAllTicketsAsync();
         }
 
-        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee)
+        public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee)
         {
             var result = await _ticketRepo.GetTicketsByEmployeeIdAsync(employee);
             return result ?? new List<Ticket>();

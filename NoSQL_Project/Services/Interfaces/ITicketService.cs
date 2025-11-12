@@ -12,7 +12,7 @@ namespace NoSQL_Project.Services.Interfaces
         TicketViewModel FillTicketInfo(Ticket ticket);
 
         Task<List<Ticket>> GetAllTicketsAsync();
-        Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee);
+        Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee);
 
         Task CreateTicketAsync(Ticket ticket);
 
