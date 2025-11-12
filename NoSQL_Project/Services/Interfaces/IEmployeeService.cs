@@ -1,5 +1,8 @@
-﻿using NoSQL_Project.Models;
-using NoSQL_Project.Enums;	
+﻿using NoSQL_Project.Enums;	
+using NoSQL_Project.Models;
+using NoSQL_Project.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 namespace NoSQL_Project.Services
 {
@@ -14,5 +17,9 @@ namespace NoSQL_Project.Services
 		Task<bool> EmailAddressExistsAsync(string email);
 		Task<List<Employee>> AutocompleteSearchEmployees(string name);
 
-    }
+
+		//New Methods for Forgot Password
+		Task<bool> SendPasswordResetLinkAsync(string email);
+		Task<IdentityResult> ResetPasswordAsync(ResetPasswordViewModel model);
+	}
 }
