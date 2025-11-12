@@ -77,5 +77,10 @@ namespace NoSQL_Project.Services
         {
             return _ticketRepo.FillEscalateInfo(ticket);
         }
+
+        public Task UpdateEscalation(EscalateViewModel escalationTicket)
+        { 
+            return _ticketRepo.UpdateEscalation(escalationTicket);
+        }
     }
 }

@@ -11,6 +11,8 @@ namespace NoSQL_Project.ViewModels
 
         public DateTime NewDeadline { get; set; }
 
+        public EscalateViewModel() { }
+
         public EscalateViewModel(Ticket ticket, Priority newPriority, DateTime newDeadline)
         {
             Ticket = ticket;

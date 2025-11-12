@@ -26,5 +26,6 @@ namespace NoSQL_Project.Services.Interfaces
         Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details);
 
         EscalateViewModel FillEscalateInfo(Ticket ticket);
+        Task UpdateEscalation(EscalateViewModel escalationTicket);
     }
 }

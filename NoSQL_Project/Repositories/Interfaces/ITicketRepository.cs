@@ -25,6 +25,7 @@ namespace NoSQL_Project.Repositories.Interfaces
         Task AddResolutionStep(string ticketId, EmployeeDetails details);
 
         EscalateViewModel FillEscalateInfo(Ticket ticket);
+        Task UpdateEscalation(EscalateViewModel escalationTicket);
 
     }
 }

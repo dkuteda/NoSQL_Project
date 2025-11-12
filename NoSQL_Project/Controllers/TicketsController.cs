@@ -188,7 +188,7 @@ namespace NoSQL_Project.Controllers
             }
         }
 
-        [HttpGet("EscalateTicket")]
+        [HttpGet]
         public IActionResult EscalateTicket(string id)
         {
             var ticket = _ticketService.GetByIdAsync(id).Result;
@@ -196,27 +196,23 @@ namespace NoSQL_Project.Controllers
             {
                 return NotFound();
             }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
+            var ViewModel = _ticketService.FillEscalateInfo(ticket);
 
             return View(ViewModel);
         }
 
-        [HttpPost("EscalateTicket")]
-        public async Task<IActionResult> EscalateTicket(Ticket ticket)
+        [HttpPost]
+        public async Task<IActionResult> EscalateTicket(EscalateViewModel escalationTicket)
         {
             try
             {
-                //_ticketService.UpdateEscalation(ticket);
+                await _ticketService.UpdateEscalation(escalationTicket);
                 return Redirect("Index");
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                };
-                return View(viewModel);
+                return View("Index");
             }
         }
 

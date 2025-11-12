@@ -7,6 +7,7 @@ using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.ViewModels;
+using Org.BouncyCastle.Bcpg;
 
 namespace NoSQL_Project.Repositories
 {
@@ -172,12 +173,20 @@ namespace NoSQL_Project.Repositories
             else
             {
                 newPriority = Priority.high;
-                newDeadline = now;
+                newDeadline = ticket.Deadline;
             }
 
 
             return new EscalateViewModel(ticket, newPriority, newDeadline);
         }
 
+        public async Task UpdateEscalation(EscalateViewModel escalationTicket)
+        { 
+            var update = Builders<Ticket>.Update
+    .Set(t => t.Priority, escalationTicket.NewPriority)
+    .Set(t => t.Deadline, escalationTicket.NewDeadline);
+
+            await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
+        }
     }
 }
