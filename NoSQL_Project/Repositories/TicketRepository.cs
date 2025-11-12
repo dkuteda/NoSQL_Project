@@ -152,7 +152,6 @@ namespace NoSQL_Project.Repositories
             else { Console.WriteLine("Update successful"); }
         }
 
-<<<<<<< HEAD
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             Priority newPriority;
@@ -189,7 +188,6 @@ namespace NoSQL_Project.Repositories
 
             await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
         }
-=======
         public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
             ResolutionStep step = new ResolutionStep(details, "Assigned to self");
@@ -203,7 +201,5 @@ namespace NoSQL_Project.Repositories
             }
             else { Console.WriteLine("Update successful"); }
         }
-
->>>>>>> 79eb3eff80630b68ad5b3a51d82a1820c29df4d7
     }
 }
