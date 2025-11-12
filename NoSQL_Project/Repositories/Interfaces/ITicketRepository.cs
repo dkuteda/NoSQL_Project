@@ -13,7 +13,7 @@ namespace NoSQL_Project.Repositories.Interfaces
         TicketViewModel FillTicketInfo(Ticket ticket);
 
         Task<List<Ticket>> GetAllTicketsAsync();
-        Task<List<Ticket>> GetTicketsByEmployeeIdAsync(EmployeeDetails employee);
+        Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee);
 
         Task CreateTicketAsync(Ticket ticket);
 
@@ -23,6 +23,7 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
         Task AddResolutionStep(string ticketId, EmployeeDetails details);
+        Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details);
 
     }
 }
