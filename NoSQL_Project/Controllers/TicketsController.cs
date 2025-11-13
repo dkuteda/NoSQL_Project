@@ -30,22 +30,14 @@ namespace NoSQL_Project.Controllers
         }
 
         [HttpGet("TicketDetails")]
-        public async Task<IActionResult> TicketDetails(string id)
+        public IActionResult TicketDetails(string id)
         {
 
-            var ticket = await _ticketService.GetByIdAsync(id);
-            var presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
+            var ticket = _ticketService.GetByIdAsync(id).Result;
             if (ticket == null) return NotFound();
-            var employee = new EmployeeDetails
-            {
-                EmployeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty,
-                Firstname = HttpContext.Session.GetString("EmployeeName") ?? string.Empty,
-                Lastname = HttpContext.Session.GetString("EmployeeLastName") ?? string.Empty,
-                Email = HttpContext.Session.GetString("EmployeeEmail") ?? string.Empty,
-                PhoneNr = HttpContext.Session.GetString("EmployeePhoneNr") ?? string.Empty
-            };
-            ViewData["LoggedInEmployee"] = employee;
-            bool isAssignee = presentHandler != null && presentHandler.EmployeeId == employee.EmployeeId;
+            var employeeId = HttpContext.Session.GetString("EmployeeId") ?? string.Empty;
+            bool isAssignee = ticket.ResolutionSteps.Last().PresentHandler != null && ticket.ResolutionSteps.Last().PresentHandler.EmployeeId == employeeId;
+            ViewData["isAssignee"] = isAssignee;
             return View(ticket);
         }
 

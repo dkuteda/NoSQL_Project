@@ -49,11 +49,13 @@ namespace NoSQL_Project
 
 			builder.Services.AddControllersWithViews();
 
-			// Register ASP.NET Core Identity with MongoDB stores
-			builder.Services.AddIdentity<Employee, MongoIdentityRole>()
+			// ✅ Correct Identity setup with MongoDB stores
+			builder.Services
+				.AddIdentity<Employee, MongoIdentityRole>()
 				.AddMongoDbStores<Employee, MongoIdentityRole, Guid>(
-					builder.Configuration["Mongo:ConnectionString"],
-					builder.Configuration["Mongo:Database"])
+					builder.Configuration["Mongo:ConnectionString"], // connection string
+					builder.Configuration["Mongo:Database"]          // database name
+				)
 				.AddDefaultTokenProviders();
 
 			// Optional: configure Identity options
