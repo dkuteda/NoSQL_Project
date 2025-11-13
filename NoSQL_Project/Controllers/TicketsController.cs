@@ -277,12 +277,9 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-<<<<<<< HEAD
+
                 TicketList = tickets.Take(5).ToList(), // normal dashboard limit
                 MayCloseTicket = CanCloseTicket
-=======
-                TicketList = tickets.Take(5).ToList() 
->>>>>>> abd96b1229be7f9e610bdb44061fc58e1bc2a4ec
             };
 
             ViewBag.SearchText = text;
