@@ -211,7 +211,7 @@ namespace NoSQL_Project.Controllers
         }
 
         //Hamza's Code
-        [HttpGet("Dashboard")]
+        [HttpGet]
         public async Task<IActionResult> Dashboard(string text, bool and = false)
         {
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
@@ -220,12 +220,12 @@ namespace NoSQL_Project.Controllers
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                // ✅ search mode
+                
                 tickets = await _ticketService.SearchTicketsAsync(text, and);
             }
             else
             {
-                // ✅ default dashboard load
+                
                 if (employee.UserRole == UserRole.employee)
                     tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
                 else
@@ -243,14 +243,14 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList() // normal dashboard limit
+                TicketList = tickets.Take(5).ToList() 
             };
 
-            ViewBag.SearchText = text; // optional (keep input value)
+            ViewBag.SearchText = text;
             return View(model);
         }
 
-        [HttpGet]
+        [HttpGet] //Hamza's functionality for searching tickets
         public async Task<IActionResult> Search(string text, bool and = false)
         {
             var results = await _ticketService.SearchTicketsAsync(text, and);

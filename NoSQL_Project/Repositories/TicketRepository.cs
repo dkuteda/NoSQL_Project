@@ -95,35 +95,35 @@ namespace NoSQL_Project.Repositories
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
 
-        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string Lastname)
+        public async Task<(int total, int open, int resolved, int closed)>
+        GetDashboardStatsAsync(string? employeeId) //Hamza's method for getting stats
         {
+            FilterDefinition<Ticket> filter;
 
-            var tickets = await _tickets.Find(_ => true).ToListAsync();
+            
+            if (!string.IsNullOrEmpty(employeeId))
+            {
+                filter = Builders<Ticket>.Filter.Eq(t => t.CreatedBy.EmployeeId, employeeId);
+            }
+            else
+            {
+                
+                filter = Builders<Ticket>.Filter.Empty;
+            }
 
+            
+            var tickets = await _tickets.Find(filter).ToListAsync();
 
-            var handledTickets = tickets
-                .Where(t => t.ResolutionSteps.Last().PresentHandler != null &&
-                    (t.ResolutionSteps.Last().PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     t.ResolutionSteps.Last().PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+        
+            int total = tickets.Count;
+            int open = tickets.Count(t => t.Status == TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
 
-
-            int total = handledTickets.Count;
-            int resolved = handledTickets.Count(t => t.Status == TicketStatus.resolved || t.Status == TicketStatus.closed);
-
-
-            int transferred = tickets
-                .SelectMany(t => t.ResolutionSteps ?? new())
-                .Count(s => s.PresentHandler != null &&
-                    (s.PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     s.PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)) &&
-                    s.Action.Equals("Transferred", StringComparison.OrdinalIgnoreCase));
-
-
-            return (total, resolved, transferred);
+            return (total, open, resolved, closed);
         }
 
-        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd) //hamzas method for searching tickets(funtionality)
         {
             if (string.IsNullOrWhiteSpace(searchText))
                 return await _tickets.Find(_ => true)
