@@ -93,6 +93,18 @@
 
                                 </div>
                             </td>
+                            @if (Model.MayCloseTicket)
+                            {
+                                <td>
+                                    <a href="@Url.Action("EscalateTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-dark btn-sm">
+                                        Escalate
+                                    </a>
+
+                                    <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
+                                        Close
+                                    </a>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>

@@ -11,8 +11,6 @@ namespace NoSQL_Project.ViewModels
 
         public List<Ticket> TicketList { get; set; } = new List<Ticket>();
 
-     
-
-       
+        public bool MayCloseTicket { get; set; }
     }
 }

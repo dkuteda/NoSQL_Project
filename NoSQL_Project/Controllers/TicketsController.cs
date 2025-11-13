@@ -203,13 +203,13 @@ namespace NoSQL_Project.Controllers
                 {
                     TempData["ErrorMessage"] = "Ticket not found or already closed";
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Dashboard");
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
                 var viewModel = new TicketViewModel(ticket);
-                return View("Index", viewModel);
+                return View("Dashboard", viewModel);
             }
         }
 
@@ -232,12 +232,12 @@ namespace NoSQL_Project.Controllers
             try
             {
                 await _ticketService.UpdateEscalation(escalationTicket);
-                return Redirect("Index");
+                return RedirectToAction("Dashboard");
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                return View("Index");
+                return View("Dashboard");
             }
         }
 
@@ -248,6 +248,7 @@ namespace NoSQL_Project.Controllers
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
 
             List<Ticket> tickets;
+            bool CanCloseTicket = false;
 
             if (!string.IsNullOrWhiteSpace(text))
             {
@@ -260,7 +261,10 @@ namespace NoSQL_Project.Controllers
                 if (employee.UserRole == UserRole.employee)
                     tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
                 else
+                {
                     tickets = await _ticketService.GetAllTicketsAsync();
+                    CanCloseTicket = true;
+                }
             }
 
             int total = tickets.Count;
@@ -274,7 +278,9 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList() 
+
+                TicketList = tickets.Take(5).ToList(), // normal dashboard limit
+                MayCloseTicket = CanCloseTicket
             };
 
             ViewBag.SearchText = text;
