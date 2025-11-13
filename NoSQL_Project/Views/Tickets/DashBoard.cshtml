@@ -75,6 +75,19 @@
                                 <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"
                                    class="btn btn-sm btn-outline-info">View</a>
                             </td>
+                            @if (Model.MayCloseTicket)
+                            {
+                            <td>
+                                <a href="@Url.Action("EscalateTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-dark btn-sm">
+                                    Escalate
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
+                                    Close
+                                </a>
+                            </td>
+                            }
                         </tr>
                     }
                 </tbody>

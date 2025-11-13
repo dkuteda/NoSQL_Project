@@ -17,5 +17,7 @@ namespace NoSQL_Project.ViewModels
         public int ResolvedTickets { get; set; }
         public int TransferredTickets { get; set; }
         public bool ShowReport { get; set; } = false;
+
+        public bool MayCloseTicket { get; set; }
     }
 }
