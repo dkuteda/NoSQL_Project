@@ -19,31 +19,31 @@
             <a href="/Tickets/Index" class="btn btn-outline-secondary">Reset</a>
         </form>
 
-        <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
-            Create a New Ticket
-        </a>
-
-@*         <!-- 📊 Stats Cards -->
+        <!-- 📊 Stats Cards -->
         <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-3 text-center">
                     <h6 class="text-muted mb-1">Open Tickets</h6>
-                    <h3 class="fw-bold text-warning">@Model.OpenPercent%</h3>
+                    <h3 class="fw-bold text-warning">@Model.percentOpenTickets %</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-3 text-center">
                     <h6 class="text-muted mb-1">Resolved Tickets</h6>
-                    <h3 class="fw-bold text-success">@Model.ResolvedPercent%</h3>
+                    <h3 class="fw-bold text-success">@Model.percentResolvedTickets %</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-3 text-center">
                     <h6 class="text-muted mb-1">Closed Tickets</h6>
-                    <h3 class="fw-bold text-danger">@Model.ClosedPercent%</h3>
+                    <h3 class="fw-bold text-muted">@Model.percentClosedTickets %</h3>
                 </div>
             </div>
-        </div> *@
+        </div>
+
+        <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary mb-3 d-flex justify-content-center">
+            Create a New Ticket
+        </a>
     </div>
 
     @if (TempData["ErrorMessage"] != null)

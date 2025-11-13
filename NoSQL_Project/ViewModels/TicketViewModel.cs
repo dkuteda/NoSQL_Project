@@ -6,12 +6,24 @@ namespace NoSQL_Project.ViewModels
 {
     public class TicketViewModel
     {
-        //used for CRUD of a single ticket
-        public Ticket? Ticket { get; set; }
+        public Ticket? Ticket { get; set; } //used for CRUD of a single ticket
         public List<Ticket> TicketList { get; set; } = new List<Ticket>();
         public List<Employee> PotentialTransferees { get; set; } = new List<Employee>();
 
-        // Enums
+        //Calculated properties
+        int totalTickets => TicketList.Count;
+        int openTickets => TicketList.Count(t => t.Status == TicketStatus.open);
+        int resolvedTickets => TicketList.Count(t => t.Status == TicketStatus.resolved);
+        int closedTickets => TicketList.Count(t => t.Status == TicketStatus.closed);
+
+        public double percentOpenTickets =>
+            totalTickets == 0 ? 0 : (double)openTickets / totalTickets * 100;
+        public double percentResolvedTickets =>
+            totalTickets == 0 ? 0 : (double)resolvedTickets / totalTickets * 100;
+        public double percentClosedTickets =>
+            totalTickets == 0 ? 0 : (double)closedTickets / totalTickets * 100;
+
+        // Properties to hold SelectListItems for dropdowns
         public IEnumerable<SelectListItem>? StatusOptions { get; set; }
                = Enum.GetValues(typeof(TicketStatus))
                      .Cast<TicketStatus>()

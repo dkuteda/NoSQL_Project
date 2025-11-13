@@ -25,7 +25,6 @@ namespace NoSQL_Project.Repositories
                 .ThenBy(t => t.Priority)          // higher priority first
                 .ToListAsync();
         }
-
         public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee)
         {
             return await _tickets
@@ -34,12 +33,10 @@ namespace NoSQL_Project.Repositories
                 .ThenBy(t => t.Status)
                 .ToListAsync();
         }
-
         public async Task CreateTicketAsync(Ticket ticket)
         {
             await _tickets.InsertOneAsync(ticket);
         }
-
         public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
         {
             ResolutionStep step = new ResolutionStep(details, "Ticket transferred");
@@ -54,7 +51,6 @@ namespace NoSQL_Project.Repositories
             }
             else { Console.WriteLine("Update successful"); }
         }
-
         public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
             ResolutionStep step = new ResolutionStep(details, "Assigned to self");

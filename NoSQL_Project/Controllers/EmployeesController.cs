@@ -57,7 +57,7 @@ namespace NoSQL_Project.Controllers
             switch (employee.UserRole.ToString().ToLower())
             {
                 case "employee":
-                    return RedirectToAction("DashBoard", "Tickets");
+                    return RedirectToAction("Index", "Tickets");
                 case "service_desk_employee":
                     return RedirectToAction("DashBoard", "Tickets");
                 case "manager":
