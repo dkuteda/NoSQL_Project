@@ -9,8 +9,6 @@ namespace NoSQL_Project.Services.Interfaces
 
         Task<Ticket> GetByIdAsync(string id);
 
-        TicketViewModel FillTicketInfo(Ticket ticket);
-
         Task<List<Ticket>> GetAllTicketsAsync();
         Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee);
 

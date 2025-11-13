@@ -122,7 +122,7 @@ namespace NoSQL_Project.Controllers
             {
                 return NotFound();
             }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
+            var ViewModel = new TicketViewModel(ticket);
 
             return View(ViewModel);
         }
@@ -135,7 +135,7 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return Redirect("/MyTickets");
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -152,7 +152,7 @@ namespace NoSQL_Project.Controllers
             {
                 return NotFound();
             }
-            var ViewModel = _ticketService.FillTicketInfo(ticket);
+            var ViewModel = new TicketViewModel(ticket);
 
             return View(ViewModel);
         }
@@ -257,21 +257,6 @@ namespace NoSQL_Project.Controllers
             var model = new TicketViewModel(results);
             return View("MyTickets", model);
         }
-
-        //Helper code
-        private async Task<TicketViewModel> FillViewModel(List<Ticket> tickets)
-        {
-            ViewData["LoggedInEmployee"] = this.CurrentUser;
-            if (tickets.Count > 0 || tickets != null)
-            {
-                tickets = await _ticketService.GetAllTicketsAsync();
-            }
-            else tickets = new List<Ticket>();
-
-            TicketViewModel model = new TicketViewModel(tickets);
-            return model;
-        }
-
     }
 
 }

@@ -86,23 +86,6 @@ namespace NoSQL_Project.Repositories
             return await _tickets.Find(s => s.TicketId == id).FirstOrDefaultAsync();
         }
 
-        public TicketViewModel FillTicketInfo(Ticket ticket)
-        {
-            return new TicketViewModel
-            {
-                Ticket = ticket,
-                // Enums converted to select options
-                StatusOptions = Enum.GetValues(typeof(TicketStatus))
-            .Cast<TicketStatus>()
-            .Select(s => new SelectListItem { Text = s.ToString(), Value = s.ToString() }),
-                //hi Kyra, there was an error here because i moved my select thingies into the viewmodel
-                //so I removed it... that ok? btw, these can be computed properties in the viewmodel
-                PriorityOptions = Enum.GetValues(typeof(Priority))
-            .Cast<Priority>()
-            .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
-            };
-        }
-
         public async Task<bool> CloseAsync(Ticket ticket)
         {
             var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);

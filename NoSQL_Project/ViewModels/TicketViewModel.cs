@@ -8,17 +8,25 @@ namespace NoSQL_Project.ViewModels
     {
         //used for CRUD of a single ticket
         public Ticket? Ticket { get; set; }
+        public List<Ticket> TicketList { get; set; } = new List<Ticket>();
+        public List<Employee> PotentialTransferees { get; set; } = new List<Employee>();
 
         // Enums
         public IEnumerable<SelectListItem>? StatusOptions { get; set; }
+               = Enum.GetValues(typeof(TicketStatus))
+                     .Cast<TicketStatus>()
+                     .Select(s => new SelectListItem { Text = s.ToString(), Value = s.ToString() });
         public IEnumerable<SelectListItem> TypeOfIncidentOptions =>
-                                           Enum.GetValues<TypeOfIncident>().Cast<TypeOfIncident>()
-                                                                           .Select(e => new SelectListItem { Value = e.ToString(), Text = e.ToString() });
-        public IEnumerable<SelectListItem>? PriorityOptions { get; set; }
-
-        public List<Ticket> TicketList { get; set; } = new List<Ticket>();
-
-        public List<Employee> PotentialTransferees { get; set; } = new List<Employee>();
+                 Enum.GetValues<TypeOfIncident>().Cast<TypeOfIncident>()
+                     .Select(e => new SelectListItem { Value = e.ToString(), Text = e.ToString() });
+        public IEnumerable<SelectListItem>? PriorityOptions { get; set; } =
+                 Enum.GetValues(typeof(Priority))
+                     .Cast<Priority>()
+                     .Select(p => new SelectListItem
+                     {
+                         Text = p.ToString(),
+                         Value = p.ToString()
+                     });
 
         public TicketViewModel(Ticket ticket, List<Ticket> tickets, List<Employee> potentialTransferees)
         {
@@ -44,5 +52,7 @@ namespace NoSQL_Project.ViewModels
         {
             PotentialTransferees = potentialTransferees;
         }
+
+        public TicketViewModel () { }
     }
 }
