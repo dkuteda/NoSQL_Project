@@ -80,35 +80,9 @@ namespace NoSQL_Project.Repositories
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
 
-        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string Lastname)
-        {
+      
 
-            var tickets = await _tickets.Find(_ => true).ToListAsync();
-
-
-            var handledTickets = tickets
-                .Where(t => t.ResolutionSteps.Last().PresentHandler != null &&
-                    (t.ResolutionSteps.Last().PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     t.ResolutionSteps.Last().PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-
-
-            int total = handledTickets.Count;
-            int resolved = handledTickets.Count(t => t.Status == TicketStatus.resolved || t.Status == TicketStatus.closed);
-
-
-            int transferred = tickets
-                .SelectMany(t => t.ResolutionSteps ?? new())
-                .Count(s => s.PresentHandler != null &&
-                    (s.PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     s.PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)) &&
-                    s.Action.Equals("Transferred", StringComparison.OrdinalIgnoreCase));
-
-
-            return (total, resolved, transferred);
-        }
-
-        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)//Hamza's method for searching tickets
         {
             if (string.IsNullOrWhiteSpace(searchText))
                 return await _tickets.Find(_ => true)
@@ -197,5 +171,35 @@ namespace NoSQL_Project.Repositories
             }
             else { Console.WriteLine("Update successful"); }
         }
+
+        public async Task<(int total, int open, int resolved, int closed)> GetDashboardStatsAsync(string? employeeId)//Hamza's method for stats
+        {
+            FilterDefinition<Ticket> filter;
+
+            if (employeeId == null)
+            {
+                // Manager + SDE → all tickets
+                filter = Builders<Ticket>.Filter.Empty;
+            }
+            else
+            {
+                // Employee → only own tickets
+                filter = Builders<Ticket>.Filter.Eq(t => t.CreatedBy.EmployeeId, employeeId);
+            }
+
+            // Fetch tickets filtered by DB
+            var tickets = await _tickets.Find(filter).ToListAsync();
+
+            int total = tickets.Count;
+            int open = tickets.Count(t => t.Status == TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
+
+            return (total, open, resolved, closed);
+        }
+
+
+
+
     }
 }

@@ -18,7 +18,8 @@ namespace NoSQL_Project.Repositories.Interfaces
 
         Task<bool> CloseAsync(Ticket ticket);
 
-        Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName);
+        Task<(int total, int open, int resolved, int closed)> GetDashboardStatsAsync(string? employeeId);
+
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
         Task AddResolutionStep(string ticketId, EmployeeDetails details);

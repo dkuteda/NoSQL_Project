@@ -232,9 +232,7 @@ namespace NoSQL_Project.Controllers
                 return View("Index");
             }
         }
-
-        [HttpGet("Dashboard")]
-        [HttpGet]
+        [HttpGet]//Hamza's code for ticket statistics 
         public async Task<IActionResult> Dashboard(string text, bool and = false)
         {
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
@@ -243,22 +241,24 @@ namespace NoSQL_Project.Controllers
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                // ✅ search mode
                 tickets = await _ticketService.SearchTicketsAsync(text, and);
             }
             else
             {
-                // ✅ default dashboard load
                 if (employee.UserRole == UserRole.employee)
                     tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
                 else
                     tickets = await _ticketService.GetAllTicketsAsync();
             }
 
-            int total = tickets.Count;
-            int open = tickets.Count(t => t.Status == TicketStatus.open);
-            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
-            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
+
+            int limit = Request.Query.ContainsKey("more") ? 99999 : 5;
+
+            string? employeeIdForStats =
+                employee.UserRole == UserRole.employee ? employee.EmployeeId : null;
+
+            var (total, open, resolved, closed) =
+                await _ticketService.GetDashboardStatsAsync(employeeIdForStats);
 
             var model = new DashboardViewModel
             {
@@ -266,16 +266,20 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList() // normal dashboard limit
+
+                TicketList = Request.Query.ContainsKey("more")
+                ? tickets
+                : tickets.Take(5).ToList(),
+
             };
 
-            ViewBag.SearchText = text; // optional (keep input value)
+            ViewBag.SearchText = text;
             return View(model);
         }
 
 
 
-        [HttpGet]
+        [HttpGet]//Hamza's functionality for ticket search
         public async Task<IActionResult> Search(string text, bool and = false)
         {
             var results = await _ticketService.SearchTicketsAsync(text, and);

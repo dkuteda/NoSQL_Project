@@ -18,7 +18,9 @@ namespace NoSQL_Project.Services.Interfaces
 
         Task<bool> CloseAsync(Ticket ticket);
 
-        Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName);
+        Task<(int total, int open, int resolved, int closed)> GetDashboardStatsAsync(string? employeeId);
+
+
 
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
 
