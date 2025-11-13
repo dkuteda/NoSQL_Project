@@ -48,38 +48,66 @@
                             <div class="text-muted small mt-1">@step.DateCreated.ToString()</div>
                         </div>
                     }
-                    @*If you are the latest handler you can search for a person to transfer to*@
-                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
+                    @* If you are the latest handler you can search for a person to transfer to *@
+                    @if (loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
                     {
-                        <form method="get" action="@Url.Action("OnSearch")">
-                            <div class="input-group">
-                                <input class="m-1" type="hidden" value="@Model.Ticket.TicketId" name="ticketId" id="nameQuery" />
-                                <input type="text" class="form-control m-1" placeholder="Enter search term" name="nameQuery" id="nameQuery" />
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">Search</button>
-                                </div>
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Transfer this Ticket</h6>
+                                <small class="text-white">You are the current handler</small>
                             </div>
-                        </form>
-                        @if (Model.PotentialTransferees.Count > 0)
-                        {
-                            @foreach (var employee in Model.PotentialTransferees)
-                            {
-                                <div class="d-flex">
-                                    <p>Transfer Ticket to @employee.FirstName @employee.LastName</p>
-                                    <form asp-action="TransferTicket" asp-controller="Tickets" method="post">
-                                        <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
-                                        <input type="hidden" value="@employee.EmployeeId" name="employeeId" />
-                                        <input type="hidden" value="@employee.FirstName" name="firstName" />
-                                        <input type="hidden" value="@employee.LastName" name="lastName" />
-                                        <button type="submit" class="btn btn-primary">Transfer Ticket</button>
-                                    </form>
-                                </div>
-                            }
-                        }
+
+                            <div class="card-body">
+                                <form method="get" action="@Url.Action("OnSearch")" class="mb-3">
+                                    <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
+                                    <div class="input-group">
+                                        <input type="search" class="form-control" placeholder="Search employees by name or email" name="nameQuery" aria-label="Search transferees" />
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bi bi-search me-1"></i> Search
+                                        </button>
+                                    </div>
+                                </form>
+
+                                @if (Model.PotentialTransferees.Count > 0)
+                                {
+                                    <div class="list-group">
+                                        @foreach (var employee in Model.PotentialTransferees)
+                                        {
+                                            <div class="list-group-item d-flex gap-3 align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-semibold">@employee.FirstName @employee.LastName</div>
+                                                    <div class="text-muted small">@employee.Email</div>
+                                                </div>
+
+                                                <div class="d-flex align-items-center">
+                                                    <form asp-action="TransferTicket" asp-controller="Tickets" method="post" class="m-0">
+                                                        <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
+                                                        <input type="hidden" value="@employee.EmployeeId" name="employeeId" />
+                                                        <input type="hidden" value="@employee.FirstName" name="firstName" />
+                                                        <input type="hidden" value="@employee.LastName" name="lastName" />
+                                                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                            <i class="bi bi-arrow-right-square me-1"></i> Transfer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning mb-0" role="alert">
+                                        No matching transferees found. Try a different search term.
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     }
-                    else{
-                        <div class="alert alert-info mt-4">
-                            You are not assigned to this ticket. You cannot transfer it to someone else.
+                    else
+                    {
+                        <div class="alert alert-info mt-4 d-flex align-items-center" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <div>You are not assigned to this ticket. You cannot transfer it to someone else.</div>
                         </div>
                     }
                 }
