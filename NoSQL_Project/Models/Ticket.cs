@@ -1,19 +1,16 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using NoSQL_Project.Enums;
-using MongoDB.Bson.Serialization.IdGenerators;
-using System.Globalization;
-using Sprache;
 
 namespace NoSQL_Project.Models
 {
-	public class Ticket
-	{ 
-		[BsonId]
-		[BsonRepresentation(BsonType.ObjectId)]
-		public required string TicketId { get; set; }
+    public class Ticket
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string TicketId { get; set; }
         public string Title { get; set; } = "";
-		public string Description { get; set; } = "";
+        public string Description { get; set; } = "";
 
         [BsonRepresentation(BsonType.String)]
         public TicketStatus Status { get; set; } = TicketStatus.open;
@@ -36,7 +33,7 @@ namespace NoSQL_Project.Models
         [BsonElement("ResolutionSteps")]
         public List<ResolutionStep> ResolutionSteps { get; set; } = new();
 
-        public Ticket () {}
+        public Ticket() { }
 
-	}
+    }
 }

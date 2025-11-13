@@ -1,13 +1,9 @@
-﻿using System.Net.Sockets;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Driver;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.ViewModels;
-using Org.BouncyCastle.Bcpg;
 
 namespace NoSQL_Project.Repositories
 {
@@ -181,7 +177,7 @@ namespace NoSQL_Project.Repositories
         }
 
         public async Task UpdateEscalation(EscalateViewModel escalationTicket)
-        { 
+        {
             var update = Builders<Ticket>.Update
     .Set(t => t.Priority, escalationTicket.NewPriority)
     .Set(t => t.Deadline, escalationTicket.NewDeadline);

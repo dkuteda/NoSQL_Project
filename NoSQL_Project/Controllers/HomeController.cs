@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NoSQL_Project.Models;
+using System.Diagnostics;
 
 namespace NoSQL_Project.Controllers
 {

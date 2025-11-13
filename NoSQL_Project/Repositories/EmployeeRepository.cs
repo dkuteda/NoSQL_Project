@@ -1,5 +1,4 @@
 ﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;

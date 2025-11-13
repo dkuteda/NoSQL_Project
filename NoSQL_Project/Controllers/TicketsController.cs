@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Services;
@@ -17,7 +16,7 @@ namespace NoSQL_Project.Controllers
         public TicketsController(ITicketService ticketService, IEmployeeService employeeService)
         {
             _ticketService = ticketService;
-            _employeeService =employeeService;
+            _employeeService = employeeService;
         }
 
         public async Task<IActionResult> Index()
@@ -73,7 +72,7 @@ namespace NoSQL_Project.Controllers
             }
             var ViewModel = _ticketService.FillTicketInfo(ticket);
 
-            return View( ViewModel);
+            return View(ViewModel);
         }
 
         [HttpPost("UpdateTicket")]
@@ -89,19 +88,19 @@ namespace NoSQL_Project.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                return View( ticketViewModel);
+                return View(ticketViewModel);
             }
         }
 
         [HttpPost]
         public IActionResult AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
-            try 
+            try
             {
                 _ticketService.AssignMyselfToTicket(ticket, details);
                 return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
@@ -128,7 +127,7 @@ namespace NoSQL_Project.Controllers
                 _ticketService.AddResolutionStep(ticketId, details);
                 return RedirectToAction("TicketDetails", new { id = ticketId });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("TicketDetails", new { id = ticketId });
@@ -202,7 +201,7 @@ namespace NoSQL_Project.Controllers
                 {
                     Ticket = ticket,
                 };
-                return View("Index",viewModel);
+                return View("Index", viewModel);
             }
         }
 
@@ -286,12 +285,12 @@ namespace NoSQL_Project.Controllers
             return View("MyTickets", model);
         }
 
-        private async Task<TicketViewModel> FillViewModel(List<Ticket>tickets)
+        private async Task<TicketViewModel> FillViewModel(List<Ticket> tickets)
         {
             ViewData["LoggedInEmployee"] = GetEmployeeFromSession();
             if (tickets.Count > 0 || tickets != null)
             {
-                tickets = await _ticketService.GetAllTicketsAsync(); 
+                tickets = await _ticketService.GetAllTicketsAsync();
             }
             else tickets = new List<Ticket>();
 
@@ -299,7 +298,7 @@ namespace NoSQL_Project.Controllers
             {
                 TicketList = tickets,
                 PotentialTransferees = new List<Employee>()
-            };          
+            };
             return model;
         }
 
