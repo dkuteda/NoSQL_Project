@@ -12,35 +12,29 @@ namespace NoSQL_Project.Controllers
 		public AccountController(IEmployeeService employeeService)
 			=> _employeeService = employeeService;
 
-		// Step 1: ForgotPassword GET
 		[HttpGet]
 		public async Task<IActionResult> ForgotPassword(string email)
 		{
 			if (string.IsNullOrEmpty(email))
 			{
-				// Just show the page with the email input
 				return View();
 			}
 
 			var employee = await _employeeService.GetByEmailAsync(email);
 			if (employee == null)
 			{
-				// Employee not found → stay on ForgotPassword page
 				return View();
 			}
 
-			// Employee found → redirect to ResetPassword GET
 			return RedirectToAction("ResetPassword", new { email = employee.Email });
 		}
 
-		// Step 2: ResetPassword GET (shows the form)
 		[HttpGet]
 		public async Task<IActionResult> ResetPassword(string email)
 		{
 			var employee = await _employeeService.GetByEmailAsync(email);
 			if (employee == null)
 			{
-				// If email not found, go back to ForgotPassword
 				return RedirectToAction("ForgotPassword");
 			}
 
@@ -52,7 +46,6 @@ namespace NoSQL_Project.Controllers
 			return View(viewModel);
 		}
 
-		// Step 3: ResetPassword POST (handles form submission)
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ResetPassword(Employee employee)
@@ -67,14 +60,11 @@ namespace NoSQL_Project.Controllers
 				var existingEmployee = await _employeeService.GetByEmailAsync(employee.Email);
 				if (existingEmployee == null)
 				{
-					// If not found, go back to ForgotPassword
 					return RedirectToAction("ForgotPassword");
 				}
 
-				// Update employee with new password
 				await _employeeService.UpdateEmployeeAsync(employee.EmployeeId, employee);
 
-				// After reset, redirect to ForgotPassword (since no Index exists)
 				return RedirectToAction("Login", "Employees");
 			}
 			catch (Exception ex)
