@@ -64,7 +64,7 @@
 
                             <p class="text-truncate">@ticket.Description</p>
 
-                            <a href="@Url.Action("TicketDetails", "Tickets", new{ id=ticket.TicketId})" class="stretched-link"></a>
+                            <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })" class="stretched-link"></a>
                         </div>
 
                         <div class="card-footer bg-white border-0 d-flex justify-content-between">
@@ -72,7 +72,7 @@
                                 Edit
                             </a>
 
-                            <a href="@Url.Action("CloseTicket","Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
+                            <a href="@Url.Action("CloseTicket", "Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
                                 Close
                             </a>
                         </div>
@@ -88,4 +88,4 @@
             <p>Try another search or create a new ticket.</p>
         </div>
     }
-</div>
+</div>

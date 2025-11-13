@@ -39,11 +39,6 @@ namespace NoSQL_Project.Services
             return await _ticketRepo.GetByIdAsync(id);
         }
 
-        public TicketViewModel FillTicketInfo(Ticket ticket)
-        {
-            return _ticketRepo.FillTicketInfo(ticket);
-        }
-
         public Task<bool> CloseAsync(Ticket ticket)
         {
             return _ticketRepo.CloseAsync(ticket);

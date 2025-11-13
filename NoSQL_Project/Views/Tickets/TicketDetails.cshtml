@@ -12,18 +12,17 @@
             </a>
             <h5 class="mb-0">Ticket Details</h5>
 
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
-                </div>
-            }
-
-            <!-- Error Message -->
-            @if (TempData["ErrorMessage"] != null)
+            <!-- Error & Success Messages -->
+            @if (ViewBag.ErrorMessage != null)
             {
                 <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+                    <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+                </div>
+            }
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.SuccessMessage
                 </div>
             }
         </div>
@@ -49,16 +48,9 @@
                             <div class="text-muted small mt-1">@step.DateCreated.ToString()</div>
                         </div>
                     }
-                    @*If you are not the latest handler and you are a service desk or a manager*@
-                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId && loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.service_desk_employee || loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.manager)
+                    @*If you are the latest handler you can search for a person to transfer to*@
+                    @if(loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
                     {
-                        <form class="mt-4" action="" method="post">
-                            <div class="mb-3">
-                                <textarea name="action" id="action" class="form-control" rows="3" placeholder="Type your response..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Add Response</button>
-                        </form>
-
                         <form method="get" action="@Url.Action("OnSearch")">
                             <div class="input-group">
                                 <input class="m-1" type="hidden" value="@Model.Ticket.TicketId" name="ticketId" id="nameQuery" />
@@ -87,21 +79,25 @@
                     }
                     else{
                         <div class="alert alert-info mt-4">
-                            You are not assigned to this ticket. You cannot add responses, nor transfer it.
+                            You are not assigned to this ticket. You cannot transfer it to someone else.
                         </div>
                     }
                 }
                 else
                 {
-                    <div>
-                        <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
-                            <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
-                            <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
-                            <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
-                            <input type="hidden" value="@loggedInEmployee.LastName" name="lastName" />
-                            <button class="btn btn-primary m-1" type="submit">Assign myself to this ticket</button>
-                        </form>
-                    </div>
+                    @*You can only assign a ticket to yourself if you are a manager or a service desk employee AND there's no one assigned to it*@
+                    if (loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.service_desk_employee || loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.manager)
+                    {
+                        <div>
+                            <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">
+                                <input type="hidden" value="@Model.Ticket.TicketId" name="ticketId" />
+                                <input type="hidden" value="@loggedInEmployee.EmployeeId" name="employeeId" />
+                                <input type="hidden" value="@loggedInEmployee.FirstName" name="firstName" />
+                                <input type="hidden" value="@loggedInEmployee.LastName" name="lastName" />
+                                <button class="btn btn-primary m-1" type="submit">Assign myself to this ticket</button>
+                            </form>
+                        </div>
+                    }
                 }
             </div>
         </div>
