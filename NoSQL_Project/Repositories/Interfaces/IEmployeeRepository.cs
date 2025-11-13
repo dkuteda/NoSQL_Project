@@ -7,9 +7,9 @@ namespace NoSQL_Project.Repositories.Interfaces
     {
         Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole);
         Task<Employee> GetByIdAsync(string id);
-        Task AddEmployeeAsync(Employee employees);
+        Task<Employee> GetByEmailAsync(string email);
+		Task AddEmployeeAsync(Employee employees);
         Task UpdateEmployeeAsync(string id, Employee employees);
-        Task<bool> SoftDeleteAsync(string id);
         Task<Employee?> GetByLoginCredentialAsync(string email, string password);
         Task<bool> EmailAddressExistsAsync(string email);
         Task<List<Employee>> AutocompleteSearchEmployees(string name);

@@ -34,16 +34,12 @@ namespace NoSQL_Project.Services
             employees.Password = HashPassword(employees.Password);
             await _employeeRepo.AddEmployeeAsync(employees);
         }
+        public async Task<Employee> GetByEmailAsync(string email) 
+        { 
+            return await _employeeRepo.GetByEmailAsync(email);
+		}
 
-        /*public async Task UpdateEmployeeAsync(string id, Employee employees) 
-		{
-			*//*if (EmailAddressExistsAsync(employees.Email).Result)
-				throw new Exception("Email address already in use");*//*
-
-			await _employeeRepo.UpdateEmployeeAsync(id, employees);
-		}*/
-
-        public async Task UpdateEmployeeAsync(string id, Employee employee)
+		public async Task UpdateEmployeeAsync(string id, Employee employee)
         {
             if (!string.IsNullOrWhiteSpace(employee.Password))
             {
@@ -59,10 +55,6 @@ namespace NoSQL_Project.Services
                     await _employeeRepo.UpdateEmployeeAsync(id, employee);
                 }
             }
-        }
-        public async Task<bool> SoftDeleteAsync(string id)
-        {
-            return await _employeeRepo.SoftDeleteAsync(id);
         }
 
         public async Task<bool> EmailAddressExistsAsync(string email)
