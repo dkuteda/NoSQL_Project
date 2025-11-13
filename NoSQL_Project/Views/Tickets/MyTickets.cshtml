@@ -30,6 +30,18 @@
             <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
         </div>
     }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+        </div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+        </div>
+    }
 
     <!-- Ticket Cards -->
     @if (Model.TicketList != null && Model.TicketList.Any())
