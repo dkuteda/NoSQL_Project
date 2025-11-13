@@ -128,11 +128,11 @@ namespace NoSQL_Project.Repositories
             );
 
             var finalFilter = useAnd
-                ? Builders<Ticket>.Filter.And(filters)  // ALL words must match
-                : Builders<Ticket>.Filter.Or(filters);  // ANY word can match
+                ? Builders<Ticket>.Filter.And(filters)  
+                : Builders<Ticket>.Filter.Or(filters); 
 
             return await _tickets.Find(finalFilter)
-                                 .SortByDescending(t => t.CreatedAt) // newest first
+                                 .SortByDescending(t => t.CreatedAt) 
                                  .ToListAsync();
         }
 

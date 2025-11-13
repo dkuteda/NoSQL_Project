@@ -1,91 +1,116 @@
-@model NoSQL_Project.ViewModels.TicketViewModel
+@model NoSQL_Project.ViewModels.EmployeeViewModel
+@using NoSQL_Project.Models
+@using NoSQL_Project.Enums
 
-<div class="container py-4">
+@{
+    var user = Context.Session.GetObject<Employee>("LoggedInUser");
+}
 
-    <!-- Header -->
-    <div class="bg-light p-4 rounded-3 mb-4 shadow-sm">
-        <h1 class="display-6 fw-bold mb-3">My Tickets</h1>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-        <!-- Search Bar -->
-        <form class="d-flex gap-2 mb-2" method="get" action="/Tickets/Search">
-            <input name="text" class="form-control" placeholder="Search by title or description..." />
-
-            <select name="and" class="form-select w-auto">
-                <option value="false">OR (Any word)</option>
-                <option value="true">AND (All words)</option>
-            </select>
-
-            <button class="btn btn-dark">Search</button>
-            <a href="/Tickets/Index" class="btn btn-outline-secondary">Reset</a>
-        </form>
-
-        <a href="@Url.Action("AddTicket", "Tickets")" class="btn btn-primary">
-            Create a New Ticket
-        </a>
+@if (user is { UserRole: UserRole.manager or UserRole.service_desk_employee })
+{
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold text-mountain-dark">Employee Management</h1>
+        <p class="lead text-muted">Manage your team members with ease</p>
     </div>
 
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger">
-            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
-        </div>
-    }
-
-    <!-- Ticket Cards -->
-    @if (Model.TicketList != null && Model.TicketList.Any())
-    {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var ticket in Model.TicketList)
+    <form asp-controller="Employees" asp-action="Index" method="get">
+        <label>Role:</label>
+        <select name="UserRole">
+            <option value="">-- Select Role --</option>
+            @foreach (var role in Model.UserRoles)
             {
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body position-relative">
-
-                            <div class="d-flex justify-content-between">
-                                <h5 class="text-primary">@ticket.Title</h5>
-
-                                @if (ticket.Status == NoSQL_Project.Enums.TicketStatus.open)
-                                {
-                                    <span class="badge bg-success">Open</span>
-                                }
-                                else if (ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved)
-                                {
-                                    <span class="badge bg-warning">Resolved</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Closed</span>
-                                }
-                            </div>
-
-                            <p class="small text-muted mb-1">
-                                Created: @ticket.CreatedAt.ToString("dd MMM yyyy")
-                            </p>
-
-                            <p class="text-truncate">@ticket.Description</p>
-
-                            <a href="@Url.Action("TicketDetails", "Tickets", new{ id=ticket.TicketId})" class="stretched-link"></a>
-                        </div>
-
-                        <div class="card-footer bg-white border-0 d-flex justify-content-between">
-                            <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })" class="btn btn-outline-primary btn-sm">
-                                Edit
-                            </a>
-
-                            <a href="@Url.Action("CloseTicket","Tickets", new { id = ticket.TicketId }, null)" class="btn btn-outline-danger btn-sm">
-                                Close
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <option value="@role" selected="@(role == Model.SelectedUserRole ? "selected" : null)">@role</option>
             }
-        </div>
-    }
-    else
-    {
-        <div class="text-center text-muted py-5">
-            <h5>No tickets found</h5>
-            <p>Try another search or create a new ticket.</p>
-        </div>
-    }
+        </select>
+
+        <label>Location:</label>
+        <select name="Location">
+            <option value="">-- Select Location --</option>
+            @foreach (var loc in Model.Locations)
+            {
+                <option value="@loc" selected="@(loc == Model.SelectedLocation ? "selected" : null)">@loc</option>
+            }
+        </select>
+
+        <button type="submit">View Employees</button>
+    </form>
+}
+
+@if (user?.UserRole == UserRole.manager)
+{
+    <div class="text-end mb-3">
+        <a href="/Employees/AddEmployee" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Create New Employee
+        </a>
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Status</th>
+                @if (user?.UserRole == UserRole.manager)
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var employee in Model.EmployeesList)
+            {
+                var rowClass = employee.IsActive ? "table-success" : "table-secondary";
+
+                <tr class="@rowClass">
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.Email</td>
+                    <td>@employee.PhoneNumber</td>
+                    <td>@employee.UserRole</td>
+                    <td>@employee.Location</td>
+                    <td>
+                        <span class="badge bg-@(employee.IsActive ? "success" : "secondary")">
+                            @(employee.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+
+                    @if (user?.UserRole == UserRole.manager)
+                    {
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="@Url.Action("UpdateEmployee", "Employees", new { id = employee.EmployeeId })" class="btn btn-outline-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="@Url.Action("SoftDeleteEmployee", "Employees", new { id = employee.EmployeeId })" class="btn btn-outline-danger">
+                                    <i class="fas fa-user-slash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+@if (Model.EmployeesList == null || !Model.EmployeesList.Any())
+{
+    <div class="alert alert-info text-center mt-4">
+        <i class="fas fa-info-circle"></i> No employees found.
+    </div>
+}

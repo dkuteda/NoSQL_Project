@@ -207,24 +207,25 @@ namespace NoSQL_Project.Controllers
         }
 
         [HttpGet("Dashboard")]
-        public async Task<IActionResult> Dashboard()
+        [HttpGet]
+        public async Task<IActionResult> Dashboard(string text, bool and = false)
         {
-            // ✅ Get Employee object from session
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
 
-            // If session empty → go login
-            if (employee == null)
-                return RedirectToAction("Login", "Employees");
-
-            // get all tickets or only user's tickets depending on role
             List<Ticket> tickets;
-            if (employee.UserRole == UserRole.employee)
+
+            if (!string.IsNullOrWhiteSpace(text))
             {
-                tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
+                // ✅ search mode
+                tickets = await _ticketService.SearchTicketsAsync(text, and);
             }
             else
             {
-                tickets = await _ticketService.GetAllTicketsAsync();
+                // ✅ default dashboard load
+                if (employee.UserRole == UserRole.employee)
+                    tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
+                else
+                    tickets = await _ticketService.GetAllTicketsAsync();
             }
 
             int total = tickets.Count;
@@ -238,11 +239,13 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
-                TicketList = tickets.Take(5).ToList()
+                TicketList = tickets.Take(5).ToList() // normal dashboard limit
             };
 
+            ViewBag.SearchText = text; // optional (keep input value)
             return View(model);
         }
+
 
 
         [HttpGet]
