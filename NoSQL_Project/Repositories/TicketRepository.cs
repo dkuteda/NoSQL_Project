@@ -16,12 +16,14 @@ namespace NoSQL_Project.Repositories
             _tickets = db.GetCollection<Ticket>("tickets");
         }
 
+        //Nana Yaa's stuff
         public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _tickets
-                .Find(s => true)
-                .SortByDescending(e => e.Status)  // open first
-                .ThenBy(e => e.Priority)          // higher priority first
+                .Find(t => true)
+                .SortByDescending(t => t.CreatedAt)
+                .SortByDescending(t => t.Status)  // open first
+                .ThenBy(t => t.Priority)          // higher priority first
                 .ToListAsync();
         }
 
@@ -29,17 +31,52 @@ namespace NoSQL_Project.Repositories
         {
             return await _tickets
                 .Find(t => t.CreatedBy.EmployeeId == employee.EmployeeId && t.Status == TicketStatus.open)
-                .SortByDescending(e => e.CreatedAt)
-                .ThenBy(e => e.Status)
+                .SortByDescending(t => t.CreatedAt)
+                .ThenBy(t => t.Status)
                 .ToListAsync();
         }
 
+        public async Task CreateTicketAsync(Ticket ticket)
+        {
+            await _tickets.InsertOneAsync(ticket);
+        }
+
+        public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, "Transferrred to me");
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
+            var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
+
+            var result = await _tickets.UpdateOneAsync(filter, update);
+
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
+
+        public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
+        {
+            ResolutionStep step = new ResolutionStep(details, "Assigned to self");
+            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticket.TicketId);
+            var update = Builders<Ticket>.Update
+                .Set(t => t.ResolutionSteps[0], step);
+            var result = await _tickets.UpdateOneAsync(filter, update);
+            if (!result.IsAcknowledged)
+            {
+                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
+            }
+            else { Console.WriteLine("Update successful"); }
+        }
+        // end of Nana Yaa's Stuff
+       
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             var update = Builders<Ticket>.Update
-    .Set(t => t.Status, ticket.Status)
-    .Set(t => t.Title, ticket.Title)
-    .Set(t => t.Description, ticket.Description);
+                                         .Set(t => t.Status, ticket.Status)
+                                         .Set(t => t.Title, ticket.Title)
+                                         .Set(t => t.Description, ticket.Description);
 
             await _tickets.UpdateOneAsync(t => t.TicketId == ticket.TicketId, update);
         }
@@ -64,11 +101,6 @@ namespace NoSQL_Project.Repositories
             .Cast<Priority>()
             .Select(p => new SelectListItem { Text = p.ToString(), Value = p.ToString() })
             };
-        }
-
-        public async Task CreateTicketAsync(Ticket ticket)
-        {
-            await _tickets.InsertOneAsync(ticket);
         }
 
         public async Task<bool> CloseAsync(Ticket ticket)
@@ -133,21 +165,6 @@ namespace NoSQL_Project.Repositories
                                  .ToListAsync();
         }
 
-        public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
-        {
-            ResolutionStep step = new ResolutionStep(details, string.Empty);
-            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
-            var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
-
-            var result = await _tickets.UpdateOneAsync(filter, update);
-
-            if (!result.IsAcknowledged)
-            {
-                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
-            }
-            else { Console.WriteLine("Update successful"); }
-        }
-
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             Priority newPriority;
@@ -179,23 +196,11 @@ namespace NoSQL_Project.Repositories
         public async Task UpdateEscalation(EscalateViewModel escalationTicket)
         {
             var update = Builders<Ticket>.Update
-    .Set(t => t.Priority, escalationTicket.NewPriority)
-    .Set(t => t.Deadline, escalationTicket.NewDeadline);
+                                         .Set(t => t.Priority, escalationTicket.NewPriority)
+                                         .Set(t => t.Deadline, escalationTicket.NewDeadline);
 
             await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
         }
-        public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
-        {
-            ResolutionStep step = new ResolutionStep(details, "Assigned to self");
-            var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticket.TicketId);
-            var update = Builders<Ticket>.Update
-                .Set(t => t.ResolutionSteps[0], step);
-            var result = await _tickets.UpdateOneAsync(filter, update);
-            if (!result.IsAcknowledged)
-            {
-                throw new InvalidOperationException("Write not acknowledged by MongoDB.");
-            }
-            else { Console.WriteLine("Update successful"); }
-        }
+
     }
 }

@@ -8,7 +8,7 @@ using NoSQL_Project.ViewModels;
 namespace NoSQL_Project.Controllers
 {
     [Route("[controller]/[action]")]
-    public class TicketsController : Controller
+    public class TicketsController : BaseController
     {
         private readonly ITicketService _ticketService;
         private readonly IEmployeeService _employeeService;
@@ -19,11 +19,13 @@ namespace NoSQL_Project.Controllers
             _employeeService = employeeService;
         }
 
+        //Nana Yaa's Code
         public async Task<IActionResult> Index()
         {
-            Employee employee = GetEmployeeFromSession();
+            Employee? employee = this.CurrentUser;
+
             List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
-            TicketViewModel model = await FillViewModel(tickets);
+            TicketViewModel model = new TicketViewModel(tickets);
             return View("MyTickets", model);
         }
 
@@ -32,36 +34,86 @@ namespace NoSQL_Project.Controllers
         {
             EmployeeDetails presentHandler;
             bool isAssignee = false;
-            var employee = GetEmployeeFromSession();
-            List<Ticket> ticketList = await _ticketService.GetAllTicketsAsync();
-            TicketViewModel model = new TicketViewModel()
-            {
-                TicketList = ticketList,
-                PotentialTransferees = new List<Employee>()
-            };
-            Ticket ticket = model.Ticket = await _ticketService.GetByIdAsync(id);
+            Ticket ticket = await _ticketService.GetByIdAsync(id);
+            TicketViewModel model = new TicketViewModel(ticket);
             //TO DO: do something in case ticket is null
             if (ticket.ResolutionSteps.Count != 0)
             {
                 presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
-                isAssignee = presentHandler != null && presentHandler.EmployeeId == employee.EmployeeId;
+                isAssignee = presentHandler != null && presentHandler.EmployeeId == this.CurrentUser.EmployeeId;
             }
-            ViewData["LoggedInEmployee"] = employee;
+            ViewData["LoggedInEmployee"] = this.CurrentUser;
             ViewData["IsAssignee"] = isAssignee;
             return View(model);
         }
 
-        [HttpGet("TicketDashboard")]
-        public async Task<IActionResult> TicketDashboard()
+        [HttpPost]
+        public IActionResult AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
-            List<Ticket> tickets = await _ticketService.GetAllTicketsAsync();
-            var model = new TicketViewModel()
+            try
             {
-                TicketList = tickets
-            };
-            return View();
+                _ticketService.AssignMyselfToTicket(ticket, details);
+                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
+            }
+        }
+        [HttpGet] //TO DO: Figure out a try catch here
+        public async Task<IActionResult> OnSearch(string nameQuery, string ticketId)
+        {
+            List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
+            TicketViewModel model = new TicketViewModel(await _ticketService.GetByIdAsync(ticketId), potentialTransferees);
+            ViewData["LoggedInEmployee"] = this.CurrentUser;
+            return View("TicketDetails", model);
         }
 
+        [HttpPost]
+        public IActionResult TransferTicket(string ticketId, EmployeeDetails details)
+        {
+            try
+            {
+                _ticketService.AddResolutionStep(ticketId, details);
+                return RedirectToAction("TicketDetails", new { id = ticketId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("TicketDetails", new { id = ticketId });
+            }
+        }
+
+        [HttpGet("AddTicket")]
+        public IActionResult AddTicket()
+        {
+            ViewData["LoggedInEmployee"] = this.CurrentUser;
+            Ticket ticket = new() { TicketId = Guid.NewGuid().ToString() };
+            var viewModel = new TicketViewModel(ticket);
+            return View(viewModel);
+        }
+
+        [HttpPost("AddTicket")]
+        public async Task<IActionResult> AddTicket(TicketViewModel model)
+        {
+            try
+            {
+                model.Ticket.ResolutionSteps = model.Ticket.ResolutionSteps ?? new List<ResolutionStep>();
+                await _ticketService.CreateTicketAsync(model.Ticket);
+
+                TempData["SuccessMessage"] = "Ticket has been created successfully";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                ViewBag.ErrorMessage = $"{ex}";
+                return View("AddTicket", model);
+            }
+        }
+
+        //Thijmen's Code
         [HttpGet("UpdateTicket")]
         public IActionResult UpdateTicket(string id)
         {
@@ -89,78 +141,6 @@ namespace NoSQL_Project.Controllers
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
                 return View(ticketViewModel);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
-        {
-            try
-            {
-                _ticketService.AssignMyselfToTicket(ticket, details);
-                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-                return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
-            }
-        }
-        [HttpGet] //TO DO: Figure out a try catch here
-        public async Task<IActionResult> OnSearch(string nameQuery, string ticketId)
-        {
-            List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
-            TicketViewModel model = new TicketViewModel
-            {
-                Ticket = await _ticketService.GetByIdAsync(ticketId),
-                PotentialTransferees = potentialTransferees
-            };
-            ViewData["LoggedInEmployee"] = GetEmployeeFromSession();
-            return View("TicketDetails", model);
-        }
-
-        [HttpPost]
-        public IActionResult TransferTicket(string ticketId, EmployeeDetails details)
-        {
-            try
-            {
-                _ticketService.AddResolutionStep(ticketId, details);
-                return RedirectToAction("TicketDetails", new { id = ticketId });
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-                return RedirectToAction("TicketDetails", new { id = ticketId });
-            }
-        }
-
-        [HttpGet("AddTicket")]
-        public IActionResult AddTicket()
-        {
-            ViewData["EmployeeDetails"] = GetEmployeeFromSession();
-            var viewModel = new TicketViewModel
-            {
-                Ticket = new() { TicketId = Guid.NewGuid().ToString() }
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost("AddTicket")]
-        public async Task<IActionResult> AddTicket(TicketViewModel model)
-        {
-            try
-            {
-                model.Ticket.ResolutionSteps = model.Ticket.ResolutionSteps ?? new List<ResolutionStep>();
-                await _ticketService.CreateTicketAsync(model.Ticket);
-
-                TempData["SuccessMessage"] = "Ticket has been created successfully";
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                ViewBag.ErrorMessage = $"{ex}";
-                return View("AddTicket", model);
             }
         }
 
@@ -197,10 +177,7 @@ namespace NoSQL_Project.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var viewModel = new TicketViewModel
-                {
-                    Ticket = ticket,
-                };
+                var viewModel = new TicketViewModel(ticket);
                 return View("Index", viewModel);
             }
         }
@@ -233,8 +210,8 @@ namespace NoSQL_Project.Controllers
             }
         }
 
+        //Hamza's Code
         [HttpGet("Dashboard")]
-        [HttpGet]
         public async Task<IActionResult> Dashboard(string text, bool and = false)
         {
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
@@ -273,41 +250,26 @@ namespace NoSQL_Project.Controllers
             return View(model);
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> Search(string text, bool and = false)
         {
             var results = await _ticketService.SearchTicketsAsync(text, and);
-
-            var model = new TicketViewModel
-            {
-                TicketList = results
-            };
-
+            var model = new TicketViewModel(results);
             return View("MyTickets", model);
         }
 
+        //Helper code
         private async Task<TicketViewModel> FillViewModel(List<Ticket> tickets)
         {
-            ViewData["LoggedInEmployee"] = GetEmployeeFromSession();
+            ViewData["LoggedInEmployee"] = this.CurrentUser;
             if (tickets.Count > 0 || tickets != null)
             {
                 tickets = await _ticketService.GetAllTicketsAsync();
             }
             else tickets = new List<Ticket>();
 
-            TicketViewModel model = new TicketViewModel()
-            {
-                TicketList = tickets,
-                PotentialTransferees = new List<Employee>()
-            };
+            TicketViewModel model = new TicketViewModel(tickets);
             return model;
-        }
-
-        private Employee GetEmployeeFromSession()
-        {
-            return HttpContext.Session.GetObject<Employee>("LoggedInUser");
         }
 
     }
