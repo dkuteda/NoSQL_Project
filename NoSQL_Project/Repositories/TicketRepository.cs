@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
@@ -16,7 +15,7 @@ namespace NoSQL_Project.Repositories
             _tickets = db.GetCollection<Ticket>("tickets");
         }
 
-        //Nana Yaa's stuff
+        //Nana Yaa's code
         public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _tickets
@@ -43,7 +42,7 @@ namespace NoSQL_Project.Repositories
 
         public async Task AddResolutionStep(string ticketId, EmployeeDetails details)
         {
-            ResolutionStep step = new ResolutionStep(details, "Transferrred to me");
+            ResolutionStep step = new ResolutionStep(details, "Ticket transferred");
             var filter = Builders<Ticket>.Filter.Eq(t => t.TicketId, ticketId);
             var update = Builders<Ticket>.Update.Push(t => t.ResolutionSteps, step);
 
@@ -69,8 +68,12 @@ namespace NoSQL_Project.Repositories
             }
             else { Console.WriteLine("Update successful"); }
         }
-        // end of Nana Yaa's Stuff
-       
+
+        // Thijmen's code
+        public async Task<Ticket> GetByIdAsync(string id)
+        {
+            return await _tickets.Find(s => s.TicketId == id).FirstOrDefaultAsync();
+        }
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             var update = Builders<Ticket>.Update
@@ -79,11 +82,6 @@ namespace NoSQL_Project.Repositories
                                          .Set(t => t.Description, ticket.Description);
 
             await _tickets.UpdateOneAsync(t => t.TicketId == ticket.TicketId, update);
-        }
-
-        public async Task<Ticket> GetByIdAsync(string id)
-        {
-            return await _tickets.Find(s => s.TicketId == id).FirstOrDefaultAsync();
         }
 
         public async Task<bool> CloseAsync(Ticket ticket)
@@ -95,35 +93,36 @@ namespace NoSQL_Project.Repositories
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
 
-        public async Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string Lastname)
+        //Hamza's code
+        public async Task<(int total, int open, int resolved, int closed)>
+        GetDashboardStatsAsync(string? employeeId) //Hamza's method for getting stats
         {
+            FilterDefinition<Ticket> filter;
 
-            var tickets = await _tickets.Find(_ => true).ToListAsync();
+            
+            if (!string.IsNullOrEmpty(employeeId))
+            {
+                filter = Builders<Ticket>.Filter.Eq(t => t.CreatedBy.EmployeeId, employeeId);
+            }
+            else
+            {
+                
+                filter = Builders<Ticket>.Filter.Empty;
+            }
 
+            
+            var tickets = await _tickets.Find(filter).ToListAsync();
 
-            var handledTickets = tickets
-                .Where(t => t.ResolutionSteps.Last().PresentHandler != null &&
-                    (t.ResolutionSteps.Last().PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     t.ResolutionSteps.Last().PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+        
+            int total = tickets.Count;
+            int open = tickets.Count(t => t.Status == TicketStatus.open);
+            int resolved = tickets.Count(t => t.Status == TicketStatus.resolved);
+            int closed = tickets.Count(t => t.Status == TicketStatus.closed);
 
-
-            int total = handledTickets.Count;
-            int resolved = handledTickets.Count(t => t.Status == TicketStatus.resolved || t.Status == TicketStatus.closed);
-
-
-            int transferred = tickets
-                .SelectMany(t => t.ResolutionSteps ?? new())
-                .Count(s => s.PresentHandler != null &&
-                    (s.PresentHandler.Firstname.Equals(firstName, StringComparison.OrdinalIgnoreCase) ||
-                     s.PresentHandler.Lastname.Equals(Lastname, StringComparison.OrdinalIgnoreCase)) &&
-                    s.Action.Equals("Transferred", StringComparison.OrdinalIgnoreCase));
-
-
-            return (total, resolved, transferred);
+            return (total, open, resolved, closed);
         }
 
-        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        public async Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd) //hamzas method for searching tickets(funtionality)
         {
             if (string.IsNullOrWhiteSpace(searchText))
                 return await _tickets.Find(_ => true)
@@ -147,43 +146,5 @@ namespace NoSQL_Project.Repositories
                                  .SortByDescending(t => t.CreatedAt) 
                                  .ToListAsync();
         }
-
-        public EscalateViewModel FillEscalateInfo(Ticket ticket)
-        {
-            Priority newPriority;
-            DateTime now = DateTime.Now;
-            DateTime newDeadline;
-
-            if (ticket.Priority == Priority.low)
-            {
-                newPriority = Priority.normal;
-                TimeSpan time = new TimeSpan(2, 0, 0, 0);
-                newDeadline = now.Add(time);
-            }
-            else if (ticket.Priority == Priority.normal)
-            {
-                newPriority = Priority.high;
-                TimeSpan time = new TimeSpan(1, 0, 0, 0);
-                newDeadline = now.Add(time);
-            }
-            else
-            {
-                newPriority = Priority.high;
-                newDeadline = ticket.Deadline;
-            }
-
-
-            return new EscalateViewModel(ticket, newPriority, newDeadline);
-        }
-
-        public async Task UpdateEscalation(EscalateViewModel escalationTicket)
-        {
-            var update = Builders<Ticket>.Update
-                                         .Set(t => t.Priority, escalationTicket.NewPriority)
-                                         .Set(t => t.Deadline, escalationTicket.NewDeadline);
-
-            await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
-        }
-
     }
 }

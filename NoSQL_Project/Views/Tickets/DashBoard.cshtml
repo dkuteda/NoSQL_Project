@@ -4,8 +4,9 @@
     <h2 class="fw-bold mb-4 text-primary">Dashboard</h2>
 
     <!-- 🔍 Search Bar -->
-    <form class="d-flex gap-2 mb-4" method="get" action="/Tickets/DashBoard">
-        <input name="text" class="form-control" placeholder="Search tickets by title or description..." />
+    <form class="d-flex gap-2 mb-4" method="get" action="/Tickets/Dashboard">
+        <input name="text" value="@ViewBag.SearchText" class="form-control"
+               placeholder="Search tickets by title or description..." />
 
         <select name="and" class="form-select w-auto">
             <option value="false">OR (Any word)</option>
@@ -54,26 +55,43 @@
                         <th>Priority</th>
                         <th>Created By</th>
                         <th>Created At</th>
-                        <th></th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var ticket in Model.TicketList)
                     {
                         <tr>
                             <td>@ticket.Title</td>
+
                             <td>
                                 <span class="badge bg-@(
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.open ? "warning" :
                                     ticket.Status == NoSQL_Project.Enums.TicketStatus.resolved ? "success" : "secondary"
                                 )">@ticket.Status</span>
                             </td>
+
                             <td>@ticket.Priority</td>
                             <td>@ticket.CreatedBy?.Firstname</td>
                             <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
-                            <td>
-                                <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"
-                                   class="btn btn-sm btn-outline-info">View</a>
+
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+
+                                    <!-- View Button -->
+                                    <a href="@Url.Action("TicketDetails", "Tickets", new { id = ticket.TicketId })"
+                                       class="btn btn-outline-info">
+                                        View
+                                    </a>
+
+                                    <!-- Edit Button -->
+                                    <a href="@Url.Action("UpdateTicket", "Tickets", new { id = ticket.TicketId })"
+                                       class="btn btn-outline-primary">
+                                        Edit
+                                    </a>
+
+                                </div>
                             </td>
                             @if (Model.MayCloseTicket)
                             {
@@ -92,6 +110,15 @@
                     }
                 </tbody>
             </table>
+            @if (!Context.Request.Query.ContainsKey("more"))
+            {
+                <div class="text-center mt-3">
+                    <a class="btn btn-outline-secondary" href="/Tickets/Dashboard?more=true">
+                        Load More
+                    </a>
+                </div>
+            }
+
         }
         else
         {

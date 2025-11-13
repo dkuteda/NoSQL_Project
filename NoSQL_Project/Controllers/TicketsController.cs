@@ -22,29 +22,44 @@ namespace NoSQL_Project.Controllers
         //Nana Yaa's Code
         public async Task<IActionResult> Index()
         {
-            Employee? employee = this.CurrentUser;
-
-            List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
-            TicketViewModel model = new TicketViewModel(tickets);
-            return View("MyTickets", model);
+            try
+            {
+                Employee? employee = this.CurrentUser;
+                List<Ticket> tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
+                TicketViewModel model = new TicketViewModel(tickets);
+                return View("MyTickets", model);
+            }
+            catch(Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet("TicketDetails")]
         public async Task<IActionResult> TicketDetails(string id)
         {
-            EmployeeDetails presentHandler;
-            bool isAssignee = false;
-            Ticket ticket = await _ticketService.GetByIdAsync(id);
-            TicketViewModel model = new TicketViewModel(ticket);
-            //TO DO: do something in case ticket is null
-            if (ticket.ResolutionSteps.Count != 0)
+            try
             {
-                presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
-                isAssignee = presentHandler != null && presentHandler.EmployeeId == this.CurrentUser.EmployeeId;
+                bool isAssignee = false;
+                Ticket ticket = await _ticketService.GetByIdAsync(id);
+                TicketViewModel model = new TicketViewModel(ticket);
+
+                if (ticket.ResolutionSteps?.Any() == true)
+                {
+                    EmployeeDetails presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
+                    isAssignee = presentHandler.EmployeeId == this.CurrentUser.EmployeeId;
+                }
+
+                ViewData["LoggedInEmployee"] = this.CurrentUser;
+                ViewData["IsAssignee"] = isAssignee;
+                return View(model);
             }
-            ViewData["LoggedInEmployee"] = this.CurrentUser;
-            ViewData["IsAssignee"] = isAssignee;
-            return View(model);
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -61,26 +76,36 @@ namespace NoSQL_Project.Controllers
                 return RedirectToAction("TicketDetails", new { id = ticket.TicketId });
             }
         }
-        [HttpGet] //TO DO: Figure out a try catch here
-        public async Task<IActionResult> OnSearch(string nameQuery, string ticketId)
-        {
-            List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
-            TicketViewModel model = new TicketViewModel(await _ticketService.GetByIdAsync(ticketId), potentialTransferees);
-            ViewData["LoggedInEmployee"] = this.CurrentUser;
-            return View("TicketDetails", model);
-        }
 
-        [HttpPost]
-        public IActionResult TransferTicket(string ticketId, EmployeeDetails details)
+        [HttpGet]
+        public async Task<IActionResult> OnSearch(string nameQuery, string ticketId)
         {
             try
             {
-                _ticketService.AddResolutionStep(ticketId, details);
+                List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
+                Ticket ticket = await _ticketService.GetByIdAsync(ticketId);
+                var model = new TicketViewModel(ticket, potentialTransferees);
+                ViewData["LoggedInEmployee"] = this.CurrentUser;
+                return View("TicketDetails", model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while searching for transferees.";
+                return RedirectToAction("TicketDetails", new { id = ticketId });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TransferTicket(string ticketId, EmployeeDetails details)
+        {
+            try
+            {
+                await _ticketService.AddResolutionStep(ticketId, details);
                 return RedirectToAction("TicketDetails", new { id = ticketId });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = "An error occurred while transferring the ticket.";
                 return RedirectToAction("TicketDetails", new { id = ticketId });
             }
         }
@@ -99,6 +124,11 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
+                if (model.Ticket == null)
+                {
+                    ViewBag.ErrorMessage = "Ticket information is missing.";
+                    return View("AddTicket", model);
+                }
                 model.Ticket.ResolutionSteps = model.Ticket.ResolutionSteps ?? new List<ResolutionStep>();
                 await _ticketService.CreateTicketAsync(model.Ticket);
 
@@ -211,7 +241,7 @@ namespace NoSQL_Project.Controllers
         }
 
         //Hamza's Code
-        [HttpGet("Dashboard")]
+        [HttpGet]
         public async Task<IActionResult> Dashboard(string text, bool and = false)
         {
             var employee = HttpContext.Session.GetObject<Employee>("LoggedInUser");
@@ -221,12 +251,12 @@ namespace NoSQL_Project.Controllers
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                // ✅ search mode
+                
                 tickets = await _ticketService.SearchTicketsAsync(text, and);
             }
             else
             {
-                // ✅ default dashboard load
+                
                 if (employee.UserRole == UserRole.employee)
                     tickets = await _ticketService.GetTicketsByEmployeeIdAsync(employee);
                 else
@@ -247,15 +277,19 @@ namespace NoSQL_Project.Controllers
                 OpenPercent = total > 0 ? (open * 100) / total : 0,
                 ResolvedPercent = total > 0 ? (resolved * 100) / total : 0,
                 ClosedPercent = total > 0 ? (closed * 100) / total : 0,
+<<<<<<< HEAD
                 TicketList = tickets.Take(5).ToList(), // normal dashboard limit
                 MayCloseTicket = CanCloseTicket
+=======
+                TicketList = tickets.Take(5).ToList() 
+>>>>>>> abd96b1229be7f9e610bdb44061fc58e1bc2a4ec
             };
 
-            ViewBag.SearchText = text; // optional (keep input value)
+            ViewBag.SearchText = text;
             return View(model);
         }
 
-        [HttpGet]
+        [HttpGet] //Hamza's functionality for searching tickets
         public async Task<IActionResult> Search(string text, bool and = false)
         {
             var results = await _ticketService.SearchTicketsAsync(text, and);
