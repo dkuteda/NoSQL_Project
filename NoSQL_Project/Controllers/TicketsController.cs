@@ -145,17 +145,18 @@ namespace NoSQL_Project.Controllers
 
         //Thijmen's Code
         [HttpGet("UpdateTicket")]
-        public IActionResult UpdateTicket(string id)
+        public async Task<IActionResult> UpdateTicket(string id)
         {
-            var ticket = _ticketService.GetByIdAsync(id).Result; // Synchronously wait for the result
+            var ticket = await _ticketService.GetByIdAsync(id);
             if (ticket == null)
             {
-                return NotFound();
+                ViewBag.ErrorMessage = "Ticket not found.";
+                return View(new TicketViewModel());
             }
-            var ViewModel = new TicketViewModel(ticket);
-
-            return View(ViewModel);
+            var viewModel = new TicketViewModel(ticket);
+            return View(viewModel);
         }
+
 
         [HttpPost("UpdateTicket")]
         [ValidateAntiForgeryToken]
