@@ -14,53 +14,24 @@ namespace NoSQL_Project.Services
             _ticketRepo = ticketRepository;
         }
 
+        //Nana Yaa's code
         public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _ticketRepo.GetAllTicketsAsync();
         }
-
         public async Task<List<Ticket>> GetTicketsByEmployeeIdAsync(Employee employee)
         {
             var result = await _ticketRepo.GetTicketsByEmployeeIdAsync(employee);
             return result ?? new List<Ticket>();
         }
-
-        public async Task UpdateTicketAsync(Ticket ticket)
-        {
-            await _ticketRepo.UpdateTicketAsync(ticket);
-        }
         public async Task CreateTicketAsync(Ticket ticket)
         {
             await _ticketRepo.CreateTicketAsync(ticket);
         }
-
-        public async Task<Ticket> GetByIdAsync(string id)
-        {
-            return await _ticketRepo.GetByIdAsync(id);
-        }
-
-        public Task<bool> CloseAsync(Ticket ticket)
-        {
-            return _ticketRepo.CloseAsync(ticket);
-        }
-
-        public Task<(int total, int open, int resolved, int closed)> GetDashboardStatsAsync(string? employeeId)
-        {
-            return _ticketRepo.GetDashboardStatsAsync(employeeId);
-        }
-
-
-
-        public Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
-        {
-            return _ticketRepo.SearchTicketsAsync(searchText, useAnd);
-        }
-
         public Task AddResolutionStep(string ticketId, EmployeeDetails details)
         {
             return _ticketRepo.AddResolutionStep(ticketId, details);
         }
-
         public Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
             if (ticket.ResolutionSteps == null || !ticket.ResolutionSteps.Any())
@@ -70,14 +41,36 @@ namespace NoSQL_Project.Services
             throw new InvalidOperationException("This ticket is assigned to someone else/you're already assigned to it.");
         }
 
+        //Thijmen's code
+        public async Task<Ticket> GetByIdAsync(string id)
+        {
+            return await _ticketRepo.GetByIdAsync(id);
+        }
+        public async Task UpdateTicketAsync(Ticket ticket)
+        {
+            await _ticketRepo.UpdateTicketAsync(ticket);
+        }
+        public Task<bool> CloseAsync(Ticket ticket)
+        {
+            return _ticketRepo.CloseAsync(ticket);
+        }
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             return _ticketRepo.FillEscalateInfo(ticket);
         }
-
         public Task UpdateEscalation(EscalateViewModel escalationTicket)
         {
             return _ticketRepo.UpdateEscalation(escalationTicket);
+        }
+
+        //Hamza's code
+        public Task<(int total, int open, int resolved, int closed)> GetDashboardStatsAsync(string? employeeId)
+        {
+            return _ticketRepo.GetDashboardStatsAsync(employeeId);
+        }
+        public Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
+        {
+            return _ticketRepo.SearchTicketsAsync(searchText, useAnd);
         }
     }
 }
