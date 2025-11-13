@@ -204,29 +204,34 @@ namespace NoSQL_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SoftDeleteEmployeeConfirmed(string id)
         {
-            try
-            {
-                bool isDeleted = await _employeeService.SoftDeleteAsync(id);
-                if (isDeleted)
-                {
-                    TempData["SuccessMessage"] = "Employee has been deactivated successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Employee not found or already inactive";
-                }
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
-                var employee = await _employeeService.GetByIdAsync(id);
-                var viewModel = new EmployeeViewModel
-                {
-                    Employee = employee,
-                };
-                return View(viewModel);
-            }
-        }
+			try
+			{
+				var employee = await _employeeService.GetByIdAsync(id);
+				if (employee == null)
+				{
+					TempData["ErrorMessage"] = "Employee not found.";
+					return RedirectToAction("Index");
+				}
+
+				// Set IsActive to false
+				employee.IsActive = false;
+
+				// Use your UpdateEmployeeAsync method
+				await _employeeService.UpdateEmployeeAsync(id, employee);
+
+				TempData["SuccessMessage"] = "Employee has been deactivated successfully";
+				return RedirectToAction("Index");
+			}
+			catch (Exception ex)
+			{
+				ViewBag.ErrorMessage = $"Exception occurred: {ex.Message}";
+				var employee = await _employeeService.GetByIdAsync(id);
+				var viewModel = new EmployeeViewModel
+				{
+					Employee = employee
+				};
+				return View(viewModel);
+			}
+		}        
     }
 }

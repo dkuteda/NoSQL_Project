@@ -17,60 +17,73 @@ namespace NoSQL_Project.Repositories
             _employees = db.GetCollection<Employee>("Employees");
         }
 
-        public async Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole)
-        {
-            // remove gender
-            var filterBuilder = Builders<Employee>.Filter;
-            var filter = filterBuilder.Empty;
+		public async Task<List<Employee>> GetAllAsync(Location? location, UserRole? userRole)
+		{
+			var filterBuilder = Builders<Employee>.Filter;
 
-            if (location.HasValue)
-                filter &= filterBuilder.Eq(e => e.Location, location.Value);
+			var filter = filterBuilder.Eq(e => e.IsActive, true);
 
-            if (userRole.HasValue)
-                filter &= filterBuilder.Eq(e => e.UserRole, userRole.Value);
+			if (location.HasValue)
+				filter &= filterBuilder.Eq(e => e.Location, location.Value);
 
-            return await _employees.Find(filter).ToListAsync();
-        }
+			if (userRole.HasValue)
+				filter &= filterBuilder.Eq(e => e.UserRole, userRole.Value);
 
-        public async Task<Employee> GetByIdAsync(string id)
+			return await _employees.Find(filter).ToListAsync();
+		}
+
+		public async Task<Employee> GetByIdAsync(string id)
         {
             return await _employees.Find(s => s.EmployeeId == id).FirstOrDefaultAsync();
         }
 
-        public async Task UpdateEmployeeAsync(string id, Employee employee)
+        public async Task<Employee> GetByEmailAsync(string email)
         {
-            var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id); ;
+            return await _employees.Find(s => s.Email == email).FirstOrDefaultAsync();
+		}
 
-            var update = Builders<Employee>.Update
-                .Set(s => s.FirstName, employee.FirstName)
-                .Set(s => s.LastName, employee.LastName)
-                .Set(s => s.Password, employee.Password)
-                .Set(s => s.Email, employee.Email)
-                .Set(s => s.PhoneNumber, employee.PhoneNumber)
-                .Set(s => s.Location, employee.Location)
-                .Set(s => s.UserRole, employee.UserRole);
+		public async Task AddEmployeeAsync(Employee employees)
+		{
+			await _employees.InsertOneAsync(employees);
+		}
+		public async Task UpdateEmployeeAsync(string id, Employee employee)
+		{
+			var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id);
 
-            await _employees.UpdateOneAsync(filter, update);
-        }
+			var updates = new List<UpdateDefinition<Employee>>();
 
-        public async Task AddEmployeeAsync(Employee employees)
-        {
-            await _employees.InsertOneAsync(employees);
-        }
+			// Strings
+			if (!string.IsNullOrEmpty(employee.FirstName))
+				updates.Add(Builders<Employee>.Update.Set(e => e.FirstName, employee.FirstName));
 
-        public async Task<bool> SoftDeleteAsync(string id)
-        {
-            // use update and change in service layer
-            var employee = await GetByIdAsync(id);
-            if (employee == null || !employee.IsActive)
-                return false; // Not found or already inactive
+			if (!string.IsNullOrEmpty(employee.LastName))
+				updates.Add(Builders<Employee>.Update.Set(e => e.LastName, employee.LastName));
 
-            var filter = Builders<Employee>.Filter.Eq(e => e.EmployeeId, id);
-            var update = Builders<Employee>.Update.Set(e => e.IsActive, false);
+			if (!string.IsNullOrEmpty(employee.Password))
+				updates.Add(Builders<Employee>.Update.Set(e => e.Password, employee.Password));
 
-            var result = await _employees.UpdateOneAsync(filter, update);
-            return result.IsAcknowledged && result.ModifiedCount > 0;
-        }
+			if (!string.IsNullOrEmpty(employee.Email))
+				updates.Add(Builders<Employee>.Update.Set(e => e.Email, employee.Email));
+
+			if (!string.IsNullOrEmpty(employee.PhoneNumber))
+				updates.Add(Builders<Employee>.Update.Set(e => e.PhoneNumber, employee.PhoneNumber));
+
+			// Nullable Enums — only update if HasValue
+			if (employee.Location.HasValue)
+				updates.Add(Builders<Employee>.Update.Set(e => e.Location, employee.Location.Value));
+
+			if (employee.UserRole.HasValue)
+				updates.Add(Builders<Employee>.Update.Set(e => e.UserRole, employee.UserRole.Value));
+
+			// Boolean — always update (since bool always has a value)
+			updates.Add(Builders<Employee>.Update.Set(e => e.IsActive, employee.IsActive));
+
+			if (updates.Count > 0)
+			{
+				var update = Builders<Employee>.Update.Combine(updates);
+				await _employees.UpdateOneAsync(filter, update);
+			}
+		}
 
         public async Task<bool> EmailAddressExistsAsync(string email)
         {
