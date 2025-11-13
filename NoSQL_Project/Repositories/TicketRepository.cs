@@ -128,43 +128,6 @@ namespace NoSQL_Project.Repositories
             await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
         }
 
-        public EscalateViewModel FillEscalateInfo(Ticket ticket)
-        {
-            Priority newPriority;
-            DateTime now = DateTime.Now;
-            DateTime newDeadline;
-
-            if (ticket.Priority == Priority.low)
-            {
-                newPriority = Priority.normal;
-                TimeSpan time = new TimeSpan(2, 0, 0, 0);
-                newDeadline = now.Add(time);
-            }
-            else if (ticket.Priority == Priority.normal)
-            {
-                newPriority = Priority.high;
-                TimeSpan time = new TimeSpan(1, 0, 0, 0);
-                newDeadline = now.Add(time);
-            }
-            else
-            {
-                newPriority = Priority.high;
-                newDeadline = now;
-            }
-
-            return new EscalateViewModel(ticket, newPriority, newDeadline);
-        }
-
-        public async Task UpdateEscalation(EscalateViewModel escalationTicket)
-        {
-            var update = Builders<Ticket>.Update
-                                         .Set(t => t.Priority, escalationTicket.NewPriority)
-                                         .Set(t => t.Deadline, escalationTicket.NewDeadline);
-
-            await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
-        }
-
-
         //Hamza's code
         public async Task<(int total, int open, int resolved, int closed)>
         GetDashboardStatsAsync(string? employeeId) //Hamza's method for getting stats
