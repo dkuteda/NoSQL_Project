@@ -9,7 +9,7 @@ namespace NoSQL_Project.ViewModels
         //used for CRUD of a single ticket
         public Ticket Ticket { get; set; }
 
-        public int TotalTickets { get; set; }= 0;
+        public int TotalTickets { get; set; } = 0;
 
         // Enums
         public IEnumerable<SelectListItem>? StatusOptions { get; set; }

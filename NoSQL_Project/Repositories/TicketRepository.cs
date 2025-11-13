@@ -1,7 +1,4 @@
-﻿using System.Net.Sockets;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Driver;
 using NoSQL_Project.Enums;
 using NoSQL_Project.Models;
@@ -151,6 +148,42 @@ namespace NoSQL_Project.Repositories
             else { Console.WriteLine("Update successful"); }
         }
 
+        public EscalateViewModel FillEscalateInfo(Ticket ticket)
+        {
+            Priority newPriority;
+            DateTime now = DateTime.Now;
+            DateTime newDeadline;
+
+            if (ticket.Priority == Priority.low)
+            {
+                newPriority = Priority.normal;
+                TimeSpan time = new TimeSpan(2, 0, 0, 0);
+                newDeadline = now.Add(time);
+            }
+            else if (ticket.Priority == Priority.normal)
+            {
+                newPriority = Priority.high;
+                TimeSpan time = new TimeSpan(1, 0, 0, 0);
+                newDeadline = now.Add(time);
+            }
+            else
+            {
+                newPriority = Priority.high;
+                newDeadline = ticket.Deadline;
+            }
+
+
+            return new EscalateViewModel(ticket, newPriority, newDeadline);
+        }
+
+        public async Task UpdateEscalation(EscalateViewModel escalationTicket)
+        {
+            var update = Builders<Ticket>.Update
+    .Set(t => t.Priority, escalationTicket.NewPriority)
+    .Set(t => t.Deadline, escalationTicket.NewDeadline);
+
+            await _tickets.UpdateOneAsync(t => t.TicketId == escalationTicket.Ticket.TicketId, update);
+        }
         public async Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details)
         {
             ResolutionStep step = new ResolutionStep(details, "Assigned to self");
@@ -164,6 +197,5 @@ namespace NoSQL_Project.Repositories
             }
             else { Console.WriteLine("Update successful"); }
         }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using NoSQL_Project.Models;
+﻿using NoSQL_Project.Models;
 
 namespace NoSQL_Project.ViewModels
 {
@@ -14,7 +13,7 @@ namespace NoSQL_Project.ViewModels
 
         public string? SearchFirstName { get; set; }
         public string? SearchLastName { get; set; }
-        
+
         public int ResolvedTickets { get; set; }
         public int TransferredTickets { get; set; }
         public bool ShowReport { get; set; } = false;

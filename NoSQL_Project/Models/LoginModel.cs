@@ -1,15 +1,15 @@
 ﻿namespace NoSQL_Project.Models;
+
 using System.ComponentModel.DataAnnotations;
-using MongoDB.Bson;
 
-	public class LoginModel
-	{
-		
-        [Required(ErrorMessage = "Email is required.")]  
-          public string Email{ get; set; } = string.Empty;
+public class LoginModel
+{
 
-		[Required]
-		[DataType(DataType.Password)]
-		public string Password { get; set; } = string.Empty;
-	}
+    [Required(ErrorMessage = "Email is required.")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; } = string.Empty;
+}
 

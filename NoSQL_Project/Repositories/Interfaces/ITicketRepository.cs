@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using NoSQL_Project.Models;
 using NoSQL_Project.ViewModels;
 
@@ -24,6 +23,9 @@ namespace NoSQL_Project.Repositories.Interfaces
         Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd);
         Task AddResolutionStep(string ticketId, EmployeeDetails details);
         Task AssignMyselfToTicket(Ticket ticket, EmployeeDetails details);
+
+        EscalateViewModel FillEscalateInfo(Ticket ticket);
+        Task UpdateEscalation(EscalateViewModel escalationTicket);
 
     }
 }

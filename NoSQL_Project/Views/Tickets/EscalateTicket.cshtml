@@ -1,17 +1,8 @@
-﻿@model NoSQL_Project.ViewModels.TicketViewModel
+﻿@model NoSQL_Project.ViewModels.EscalateViewModel
 
 @{
-    ViewData["Title"] = "Deactivate Ticket";
+    ViewData["Title"] = "Escalate Ticket";
 }
-
-<div class="form-page-header" style="background: linear-gradient(135deg, #c44536 0%, #d63031 100%);">
-    <div class="container">
-        <h1 class="display-5 fw-bold">
-            <i class="fas fa-user-slash me-3"></i>Close Ticket
-        </h1>
-        <p class="lead mb-0">Temporarily close a ticket access</p>
-    </div>
-</div>
 
 <div class="container">
     <div class="form-container">
@@ -31,80 +22,80 @@
             </div>
         }
 
-        <!-- Confirmation Warning -->
-        <div class="delete-confirmation text-center">
-            <div class="warning-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 class="text-danger mb-3">Deactivation Warning</h3>
-            <p class="mb-4">
-                You are about to deactivate this employee. They will no longer be able to access the system
-                or receive new ticket assignments. This action can be reversed later.
-            </p>
-        </div>
-
-        <!-- Employee Information -->
         <div class="form-section">
             <h3 class="form-section-title">
                 <i class="fas fa-user-circle"></i>Ticket Details
             </h3>
 
             <div class="ticket-details">
+                <div class="col-md-6">
+                    <dl>
+                        <dt><i class="fas fa-user me-2"></i>Title:</dt>
+                        <dd>@Model.Ticket.Title</dd>
+
+                        <dt><i class="fas fa-user-tag me-2"></i>Description:</dt>
+                        <dd>@Model.Ticket.Description</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-user-circle"></i>Escalation Details
+            </h3>
+
+            <div class="ticket-details">
                 <div class="row">
                     <div class="col-md-6">
                         <dl>
-                            <dt><i class="fas fa-user me-2"></i>Title:</dt>
-                            <dd>@Model.Ticket.Title</dd>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Old priority:</dt>
+                            <dd>@Model.Ticket.Priority</dd>
 
-                            <dt><i class="fas fa-user-tag me-2"></i>Description:</dt>
-                            <dd>@Model.Ticket.Description</dd>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>New priority:</dt>
+                            <dd>@Model.NewPriority</dd>
                         </dl>
                     </div>
                     <div class="col-md-6">
                         <dl>
-
-                            <dt><i class="fas fa-map-marker-alt me-2"></i>Priority:</dt>
-                            <dd>@Model.Ticket.Priority</dd>
-
-                            <dt><i class="fas fa-map-marker-alt me-2"></i>Deadline:</dt>
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>Old Deadline:</dt>
                             <dd>@Model.Ticket.Deadline</dd>
+
+                            <dt><i class="fas fa-map-marker-alt me-2"></i>New deadline:</dt>
+                            <dd>@Model.NewDeadline</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
-  
-<!-- Delete Form -->
-<form asp-controller="Tickets" asp-action="CloseTicket" method="post" id="CloseForm">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Ticket.TicketId" />
-    <input type="hidden" asp-for="Ticket.Description" />
-    <input type="hidden" asp-for="Ticket.Status" />
-    <input type="hidden" asp-for="Ticket.Priority" />
-    <input type="hidden" asp-for="Ticket.Deadline" />
-    <input type="hidden" asp-for="Ticket.CreatedBy" />
-    <input type="hidden" asp-for="Ticket.CreatedAt" />
-    <input type="hidden" asp-for="Ticket.TypeOfIncident" />
-    <input type="hidden" asp-for="Ticket.ResolutionSteps" />
 
-    <div class="form-group-enhanced text-center">
-        <label for="confirmationText" class="form-label h5">
-            <i class="fas fa-shield-alt me-2"></i>Security Confirmation
-        </label>
-        <p class="text-muted mb-3">
-            To confirm deactivation, please type <strong class="text-danger">CLOSE</strong> in the box below:
-        </p>
-        <input type="text" id="confirmationText" class="form-control confirmation-input"
-               placeholder="TYPE: CLOSE" oninput="toggleDeleteButton()"
-               style="max-width: 300px; margin: 0 auto;" />
-    </div>
+        @if (Model.NewDeadline == Model.Ticket.Deadline)
+        {
+            <h1>The priority is already at the maximum level.</h1>
+        }
+  
+<form asp-controller="Tickets" asp-action="EscalateTicket" method="post" id="CloseForm">
+    @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="@Model.Ticket.TicketId" />
+            <input type="hidden" asp-for="@Model.Ticket.Title" />
+            <input type="hidden" asp-for="@Model.Ticket.Description" />
+            <input type="hidden" asp-for="@Model.Ticket.Status" />
+            <input type="hidden" asp-for="@Model.Ticket.Priority" />
+            <input type="hidden" asp-for="@Model.Ticket.Deadline" />
+            <input type="hidden" asp-for="@Model.Ticket.CreatedBy" />
+            <input type="hidden" asp-for="@Model.Ticket.CreatedAt" />
+            <input type="hidden" asp-for="@Model.Ticket.TypeOfIncident" />
+            <input type="hidden" asp-for="@Model.Ticket.ResolutionSteps" />
+
+            <input type="hidden" asp-for="@Model.NewPriority" />
+            <input type="hidden" asp-for="@Model.NewDeadline" />
 
     <div class="form-actions">
         <div class="btn-group-form">
-            <button type="submit" id="deleteButton" class="btn btn-danger btn-lg" disabled>
-                <i class="fas fa-user-slash me-2"></i>Confirm Closing
+            <button type="submit" id="escalateButton" class="btn btn-dark btn-lg">
+                Confirm escalation
             </button>
-            <a href="@Url.Action("MyTickets", "Tickets")" class="btn btn-secondary btn-lg">
+            <a href="@Url.Action("Index", "Tickets")" class="btn btn-secondary btn-lg">
                 <i class="fas fa-arrow-left me-2"></i>Cancel
             </a>
         </div>

@@ -51,7 +51,7 @@ namespace NoSQL_Project.Services
 
         public Task<(int total, int resolved, int transferred)> GetEmployeeStatsAsync(string firstName, string lastName)
         {
-            return  _ticketRepo.GetEmployeeStatsAsync(firstName, lastName);
+            return _ticketRepo.GetEmployeeStatsAsync(firstName, lastName);
         }
 
         public Task<List<Ticket>> SearchTicketsAsync(string searchText, bool useAnd)
@@ -73,5 +73,14 @@ namespace NoSQL_Project.Services
             throw new InvalidOperationException("This ticket is assigned to someone else/you're already assigned to it.");
         }
 
+        public EscalateViewModel FillEscalateInfo(Ticket ticket)
+        {
+            return _ticketRepo.FillEscalateInfo(ticket);
+        }
+
+        public Task UpdateEscalation(EscalateViewModel escalationTicket)
+        {
+            return _ticketRepo.UpdateEscalation(escalationTicket);
+        }
     }
 }
