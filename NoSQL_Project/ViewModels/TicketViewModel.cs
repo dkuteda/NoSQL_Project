@@ -10,7 +10,10 @@ namespace NoSQL_Project.ViewModels
         public List<Ticket> TicketList { get; set; } = new List<Ticket>();
         public List<Employee> PotentialTransferees { get; set; } = new List<Employee>();
 
-        //Calculated properties
+        //Calculated/computed properties
+        public EmployeeDetails? LastPresentHandler => Ticket?.ResolutionSteps?.LastOrDefault()?.PresentHandler;
+        public bool IsAssignee { get; private set; }
+        public bool CanAssignToSelf { get; private set; }
         int totalTickets => TicketList.Count;
         int openTickets => TicketList.Count(t => t.Status == TicketStatus.open);
         int resolvedTickets => TicketList.Count(t => t.Status == TicketStatus.resolved);
@@ -40,12 +43,8 @@ namespace NoSQL_Project.ViewModels
                          Value = p.ToString()
                      });
 
-        public TicketViewModel(Ticket ticket, List<Ticket> tickets, List<Employee> potentialTransferees)
-        {
-            Ticket = ticket;
-            TicketList = tickets;
-            PotentialTransferees = potentialTransferees;
-        }
+        //Constructors
+        public TicketViewModel() { }
 
         public TicketViewModel(List<Ticket> tickets)
         {
@@ -60,11 +59,21 @@ namespace NoSQL_Project.ViewModels
             Ticket = ticket;
             PotentialTransferees = potentialTransferees;
         }
-        public TicketViewModel(List<Employee>potentialTransferees)
+        public TicketViewModel(Ticket ticket, Employee employee)
         {
-            PotentialTransferees = potentialTransferees;
+            Ticket = ticket;
+            if (!string.IsNullOrEmpty(employee.EmployeeId))
+            {
+                IsAssignee = LastPresentHandler?.EmployeeId == employee.EmployeeId;
+                CanAssignToSelf = !IsAssignee
+                                  && ticket.Status == TicketStatus.open
+                                  && employee.UserRole != UserRole.employee;
+            }
+            else
+            {
+                IsAssignee = false;
+                CanAssignToSelf = false;
+            }
         }
-
-        public TicketViewModel () { }
     }
 }

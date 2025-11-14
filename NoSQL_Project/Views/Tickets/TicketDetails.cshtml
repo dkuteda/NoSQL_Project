@@ -1,7 +1,7 @@
 ﻿@model NoSQL_Project.ViewModels.TicketViewModel;
 @{
     ViewData["Title"] = "Ticket Details";
-    Employee? loggedInEmployee = ViewData["LoggedInEmployee"] as Employee;
+    Employee? loggedInEmployee = (Employee?)ViewData["LoggedInEmployee"];
 }
 
 <div class="container py-4">
@@ -49,7 +49,7 @@
                         </div>
                     }
                     @* If you are the latest handler you can search for a person to transfer to *@
-                    @if (loggedInEmployee?.EmployeeId == Model.Ticket.ResolutionSteps.Last().PresentHandler.EmployeeId)
+                    @if (Model.IsAssignee)
                     {
                         <div class="card mt-4">
                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -114,7 +114,7 @@
                 else
                 {
                     @*You can only assign a ticket to yourself if you are a manager or a service desk employee AND there's no one assigned to it*@
-                    if (loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.service_desk_employee || loggedInEmployee.UserRole == NoSQL_Project.Enums.UserRole.manager)
+                    if (Model.CanAssignToSelf)
                     {
                         <div>
                             <form asp-controller="Tickets" asp-action="AssignMyselfToTicket" method="post">

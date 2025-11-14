@@ -41,18 +41,9 @@ namespace NoSQL_Project.Controllers
         {
             try
             {
-                bool isAssignee = false;
                 Ticket ticket = await _ticketService.GetByIdAsync(id);
-                TicketViewModel model = new TicketViewModel(ticket);
-
-                if (ticket.ResolutionSteps?.Any() == true)
-                {
-                    EmployeeDetails presentHandler = ticket.ResolutionSteps.Last().PresentHandler;
-                    isAssignee = presentHandler.EmployeeId == this.CurrentUser.EmployeeId;
-                }
-
+                TicketViewModel model = new TicketViewModel(ticket, this.CurrentUser);
                 ViewData["LoggedInEmployee"] = this.CurrentUser;
-                ViewData["IsAssignee"] = isAssignee;
                 return View(model);
             }
             catch (Exception ex)

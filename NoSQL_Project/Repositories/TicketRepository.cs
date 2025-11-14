@@ -19,7 +19,7 @@ namespace NoSQL_Project.Repositories
         public async Task<List<Ticket>> GetAllTicketsAsync()
         {
             return await _tickets
-                .Find(t => true)
+                .Find(t => t.Status == TicketStatus.open)
                 .SortByDescending(t => t.CreatedAt)
                 .SortByDescending(t => t.Status)  // open first
                 .ThenBy(t => t.Priority)          // higher priority first
