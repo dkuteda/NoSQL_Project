@@ -1,4 +1,5 @@
-﻿using NoSQL_Project.Models;
+﻿using NoSQL_Project.Enums;
+using NoSQL_Project.Models;
 using NoSQL_Project.Repositories.Interfaces;
 using NoSQL_Project.Services.Interfaces;
 using NoSQL_Project.ViewModels;
@@ -56,7 +57,28 @@ namespace NoSQL_Project.Services
         }
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
-            return _ticketRepo.FillEscalateInfo(ticket);
+            Priority newPriority;
+            DateTime now = DateTime.Now;
+            DateTime newDeadline;
+
+            if (ticket.Priority == Priority.low)
+            {
+                newPriority = Priority.normal;
+                TimeSpan time = new TimeSpan(2, 0, 0, 0);
+                newDeadline = now.Add(time);
+            }
+            else if (ticket.Priority == Priority.normal)
+            {
+                newPriority = Priority.high;
+                TimeSpan time = new TimeSpan(1, 0, 0, 0);
+                newDeadline = now.Add(time);
+            }
+            else
+            {
+                newPriority = Priority.high;
+                newDeadline = ticket.Deadline;
+            }
+            return new EscalateViewModel(ticket, newPriority, newDeadline);
         }
         public Task UpdateEscalation(EscalateViewModel escalationTicket)
         {
