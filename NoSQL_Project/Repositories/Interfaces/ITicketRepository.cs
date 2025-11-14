@@ -15,7 +15,6 @@ namespace NoSQL_Project.Repositories.Interfaces
         //Thijmen's methods
         Task<Ticket> GetByIdAsync(string id);
         Task UpdateTicketAsync(Ticket ticket);
-        EscalateViewModel FillEscalateInfo(Ticket ticket);
         Task UpdateEscalation(EscalateViewModel escalationTicket);
         Task<bool> CloseAsync(Ticket ticket);
 
