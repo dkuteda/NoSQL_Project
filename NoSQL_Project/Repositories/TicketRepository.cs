@@ -70,6 +70,7 @@ namespace NoSQL_Project.Repositories
         {
             return await _tickets.Find(s => s.TicketId == id).FirstOrDefaultAsync();
         }
+
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             var update = Builders<Ticket>.Update
@@ -80,6 +81,7 @@ namespace NoSQL_Project.Repositories
 
             await _tickets.UpdateOneAsync(t => t.TicketId == ticket.TicketId, update);
         }
+
         public async Task<bool> CloseAsync(Ticket ticket)
         {
             var filter = Builders<Ticket>.Filter.Eq(e => e.TicketId, ticket.TicketId);

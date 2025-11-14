@@ -47,14 +47,17 @@ namespace NoSQL_Project.Services
         {
             return await _ticketRepo.GetByIdAsync(id);
         }
+
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             await _ticketRepo.UpdateTicketAsync(ticket);
         }
+
         public Task<bool> CloseAsync(Ticket ticket)
         {
             return _ticketRepo.CloseAsync(ticket);
         }
+
         public EscalateViewModel FillEscalateInfo(Ticket ticket)
         {
             Priority newPriority;
@@ -80,6 +83,7 @@ namespace NoSQL_Project.Services
             }
             return new EscalateViewModel(ticket, newPriority, newDeadline);
         }
+
         public Task UpdateEscalation(EscalateViewModel escalationTicket)
         {
             return _ticketRepo.UpdateEscalation(escalationTicket);
