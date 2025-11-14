@@ -1,3 +1,5 @@
+Github Repo: https://github.com/dkuteda/NoSQL_Project.git
+
 Heyo ok so here are the tasks of everyone (assignment 2):
 
 David
