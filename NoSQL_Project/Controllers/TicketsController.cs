@@ -75,7 +75,7 @@ namespace NoSQL_Project.Controllers
             {
                 List<Employee> potentialTransferees = await _employeeService.AutocompleteSearchEmployees(nameQuery);
                 Ticket ticket = await _ticketService.GetByIdAsync(ticketId);
-                var model = new TicketViewModel(ticket, potentialTransferees);
+                var model = new TicketViewModel(ticket, this.CurrentUser, potentialTransferees);
                 ViewData["LoggedInEmployee"] = this.CurrentUser;
                 return View("TicketDetails", model);
             }

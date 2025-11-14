@@ -45,14 +45,18 @@ namespace NoSQL_Project.ViewModels
         {
             Ticket = ticket;
         }
-        public TicketViewModel(Ticket ticket, List<Employee> potentialTransferees)
-        {
-            Ticket = ticket;
-            PotentialTransferees = potentialTransferees;
-        }
         public TicketViewModel(Ticket ticket, Employee employee)
         {
             Ticket = ticket;
+            IsAssignee = LastPresentHandler?.EmployeeId == employee.EmployeeId
+             && employee.UserRole != UserRole.employee;
+            CanAssignToSelf = !IsAssignee
+                              && employee.UserRole != UserRole.employee;
+        }
+        public TicketViewModel(Ticket ticket, Employee employee, List<Employee> potentialTransferees)
+        {
+            Ticket = ticket;
+            PotentialTransferees = potentialTransferees;
             IsAssignee = LastPresentHandler?.EmployeeId == employee.EmployeeId 
                          && employee.UserRole != UserRole.employee;
             CanAssignToSelf = !IsAssignee
