@@ -81,7 +81,7 @@ namespace NoSQL_Project.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "An error occurred while searching for transferees.";
+                TempData["ErrorMessage"] = $"An error occurred while searching for transferees. Exception: {ex}";
                 return RedirectToAction("TicketDetails", new { id = ticketId });
             }
         }

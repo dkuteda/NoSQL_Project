@@ -132,11 +132,8 @@ namespace NoSQL_Project.Repositories
                 }),
                 new BsonDocument("$limit", 10)
             };
-
             var results = await _employees.Aggregate<Employee>(pipeline).ToListAsync();
-
             return results;
-
         }
 
 
