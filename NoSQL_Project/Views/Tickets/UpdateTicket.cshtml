@@ -28,7 +28,6 @@
             <input type="hidden" asp-for="Ticket.TicketId" />
             <input type="hidden" asp-for="Ticket.ResolutionSteps" />
             <input type="hidden" asp-for="Ticket.Priority" />
-            <input type="hidden" asp-for="Ticket.TypeOfIncident" />
             <input type="hidden" asp-for="Ticket.Deadline" />
             <input type="hidden" asp-for="Ticket.CreatedAt" />
             <input type="hidden" asp-for="Ticket.CreatedBy" />
@@ -60,20 +59,31 @@
                 </div>
             </div>
 
-            <!-- Contact Information Section -->
             <div class="form-section">
                 <h3 class="form-section-title">
                     <i class="fas fa-address-book"></i>Contact Information
                 </h3>
 
-                <div class="col-md-6">
-                    <div class="form-group-enhanced">
-                        <label asp-for="@Model.Ticket.Status" class="form-label">
-                            <i class="fas fa-map-marker-alt me-2"></i>Status
-                        </label>
-                        <select asp-for="@Model.Ticket.Status" asp-items="Model.StatusOptions"
-                                class="form-control form-control-select"></select>
-                        <span asp-validation-for="@Model.Ticket.Status" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="@Model.Ticket.Status" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Status
+                            </label>
+                            <select asp-for="@Model.Ticket.Status" asp-items="Model.StatusOptions"
+                                    class="form-control form-control-select"></select>
+                            <span asp-validation-for="@Model.Ticket.Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-enhanced">
+                            <label asp-for="@Model.Ticket.TypeOfIncident" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Type of incident
+                            </label>
+                            <select asp-for="@Model.Ticket.TypeOfIncident" asp-items="Model.TypeOfIncidentOptions"
+                                    class="form-control form-control-select"></select>
+                            <span asp-validation-for="@Model.Ticket.TypeOfIncident" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -83,7 +93,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-save me-2"></i>Update Ticket
                         </button>
-                        <a href="/Tickets/Index" class="btn btn-secondary btn-lg">
+                        <a href="/Tickets/Dashboard" class="btn btn-secondary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
                     </div>

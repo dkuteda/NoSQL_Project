@@ -157,7 +157,7 @@ namespace NoSQL_Project.Controllers
             {
                 await _ticketService.UpdateTicketAsync(ticketViewModel.Ticket);
                 TempData["SuccessMessage"] = "Ticket has been updated successfully";
-                return RedirectToAction("Index");
+                return RedirectToAction("Dashboard");
             }
             catch (Exception ex)
             {

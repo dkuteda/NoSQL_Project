@@ -75,7 +75,8 @@ namespace NoSQL_Project.Repositories
             var update = Builders<Ticket>.Update
                                          .Set(t => t.Status, ticket.Status)
                                          .Set(t => t.Title, ticket.Title)
-                                         .Set(t => t.Description, ticket.Description);
+                                         .Set(t => t.Description, ticket.Description)
+                                         .Set(t => t.TypeOfIncident, ticket.TypeOfIncident);
 
             await _tickets.UpdateOneAsync(t => t.TicketId == ticket.TicketId, update);
         }
