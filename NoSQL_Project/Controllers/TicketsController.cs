@@ -96,7 +96,7 @@ namespace NoSQL_Project.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "An error occurred while transferring the ticket.";
+                TempData["ErrorMessage"] = $"An error occurred while transferring the ticket. Exception: {ex}";
                 return RedirectToAction("TicketDetails", new { id = ticketId });
             }
         }
