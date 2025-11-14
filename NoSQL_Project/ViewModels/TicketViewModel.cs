@@ -12,8 +12,8 @@ namespace NoSQL_Project.ViewModels
 
         //Calculated/computed properties
         public EmployeeDetails? LastPresentHandler => Ticket?.ResolutionSteps?.LastOrDefault()?.PresentHandler;
-        public bool IsAssignee { get; private set; }
-        public bool CanAssignToSelf { get; private set; }
+        public bool IsAssignee { get; private set; } = false;
+        public bool CanAssignToSelf { get; private set; } = false;
         int totalTickets => TicketList.Count;
         int openTickets => TicketList.Count(t => t.Status == TicketStatus.open);
         int resolvedTickets => TicketList.Count(t => t.Status == TicketStatus.resolved);
@@ -34,18 +34,9 @@ namespace NoSQL_Project.ViewModels
         public IEnumerable<SelectListItem> TypeOfIncidentOptions =>
                  Enum.GetValues<TypeOfIncident>().Cast<TypeOfIncident>()
                      .Select(e => new SelectListItem { Value = e.ToString(), Text = e.ToString() });
-        public IEnumerable<SelectListItem>? PriorityOptions { get; set; } =
-                 Enum.GetValues(typeof(Priority))
-                     .Cast<Priority>()
-                     .Select(p => new SelectListItem
-                     {
-                         Text = p.ToString(),
-                         Value = p.ToString()
-                     });
 
         //Constructors
         public TicketViewModel() { }
-
         public TicketViewModel(List<Ticket> tickets)
         {
             TicketList = tickets;
@@ -62,18 +53,10 @@ namespace NoSQL_Project.ViewModels
         public TicketViewModel(Ticket ticket, Employee employee)
         {
             Ticket = ticket;
-            if (!string.IsNullOrEmpty(employee.EmployeeId))
-            {
-                IsAssignee = LastPresentHandler?.EmployeeId == employee.EmployeeId;
-                CanAssignToSelf = !IsAssignee
-                                  && ticket.Status == TicketStatus.open
-                                  && employee.UserRole != UserRole.employee;
-            }
-            else
-            {
-                IsAssignee = false;
-                CanAssignToSelf = false;
-            }
+            IsAssignee = LastPresentHandler?.EmployeeId == employee.EmployeeId 
+                         && employee.UserRole != UserRole.employee;
+            CanAssignToSelf = !IsAssignee
+                              && employee.UserRole != UserRole.employee;
         }
     }
 }
